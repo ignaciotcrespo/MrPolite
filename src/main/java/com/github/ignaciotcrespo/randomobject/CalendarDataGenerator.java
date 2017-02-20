@@ -1,0 +1,25 @@
+package com.github.ignaciotcrespo.randomobject;
+
+import java.lang.reflect.Field;
+import java.util.Calendar;
+import java.util.Date;
+
+/**
+ * Created by crespo on 2/20/17.
+ */
+public class CalendarDataGenerator extends DataGenerator {
+
+    Randomizer mRandomizer = new Randomizer();
+
+    @Override
+    protected boolean is(Class<?> type) {
+        return type.equals(Calendar.class);
+    }
+
+    @Override
+    public Object getValue(Field field, int dataFlags) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(Math.abs(mRandomizer.nextLong()));
+        return calendar;
+    }
+}
