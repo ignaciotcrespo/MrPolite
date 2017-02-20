@@ -4,6 +4,8 @@ import com.github.ignaciotcrespo.randomobject.otherpackage.*;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.List;
+
 import static com.github.ignaciotcrespo.randomobject.RandomObject.random;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.MockitoAnnotations.initMocks;
@@ -97,5 +99,27 @@ public class RandomObjectTest {
         object.assertValidData();
     }
 
+    @Test
+    public void fill_list() throws Exception {
+
+        List<MockClassPublicSamePackage> list = random().fill(2, MockClassPublicSamePackage.class);
+
+        assertThat(list).hasSize(2);
+        list.get(0).assertValidData();
+        list.get(1).assertValidData();
+    }
+
+    @Test
+    public void fill_listEmpty() throws Exception {
+
+        List<MockClassPublicSamePackage> list = random().fill(0, MockClassPublicSamePackage.class);
+
+        assertThat(list).isEmpty();
+    }
+
+    // TODO fields with collections, arrays, etc
+    // TODO set class to always null
+    // TODO set class to always a constant
+    // TODO set min/max in numbers
 
 }
