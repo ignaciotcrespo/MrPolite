@@ -1,5 +1,7 @@
 package com.github.ignaciotcrespo.randomobject.otherpackage;
 
+import static com.github.ignaciotcrespo.randomobject.utils.TextUtils.has;
+import static com.github.ignaciotcrespo.randomobject.utils.TextUtils.hasNot;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -66,16 +68,6 @@ public class MockParentClassPublicOtherPackage extends MockGrandParentClassPubli
 
     }
 
-    private void has(String text) {
-        assertThat(text)
-                .isNotNull()
-                .isNotEmpty();
-    }
-
-    private void hasNot(String text) {
-        assertThat(text).isNull();
-    }
-
     public void assertEmptyData() {
         hasNot(parent_textDefault);
         hasNot(parent_textProtected);
@@ -137,16 +129,6 @@ public class MockParentClassPublicOtherPackage extends MockGrandParentClassPubli
             assertThat(parentInner_textProtectedStaticFinal).isSameAs("protected_static_final");
             assertThat(parentInner_textPrivateStaticFinal).isSameAs("private_static_final");
 
-        }
-
-        private void has(String text) {
-            assertThat(text)
-                    .isNotNull()
-                    .isNotEmpty();
-        }
-
-        private void hasNot(String text) {
-            assertThat(text).isNull();
         }
 
         public void assertEmptyData() {
@@ -214,16 +196,6 @@ public class MockParentClassPublicOtherPackage extends MockGrandParentClassPubli
             assertThat(parentInnerStatic_textProtectedStaticFinal).isSameAs("protected_static_final");
             assertThat(parentInnerStatic_textPrivateStaticFinal).isSameAs("private_static_final");
 
-        }
-
-        private void has(String text) {
-            assertThat(text)
-                    .isNotNull()
-                    .isNotEmpty();
-        }
-
-        private void hasNot(String text) {
-            assertThat(text).isNull();
         }
 
         public void assertEmptyData() {

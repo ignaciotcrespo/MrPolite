@@ -1,5 +1,6 @@
 package com.github.ignaciotcrespo.randomobject.otherpackage;
 
+import static com.github.ignaciotcrespo.randomobject.utils.TextUtils.has;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -58,12 +59,6 @@ class MockGrandParentClassDefaultOtherPackage {
         mGrandParentInnerClassStatic.assertValidData();
     }
 
-    private void has(String text) {
-        assertThat(text)
-                .isNotNull()
-                .isNotEmpty();
-    }
-
     // ----- BEGIN: INNER CLASS ------ //
 
     public class GrandParentInnerClass {
@@ -101,11 +96,6 @@ class MockGrandParentClassDefaultOtherPackage {
 
         }
 
-        private void has(String text) {
-            assertThat(text)
-                    .isNotNull()
-                    .isNotEmpty();
-        }
     }
 
     // ----- END: INNER CLASS ------ //
@@ -156,11 +146,6 @@ class MockGrandParentClassDefaultOtherPackage {
 
         }
 
-        private void has(String text) {
-            assertThat(text)
-                    .isNotNull()
-                    .isNotEmpty();
-        }
     }
     // ----- END: STATIC INNER CLASS ------ //
 }

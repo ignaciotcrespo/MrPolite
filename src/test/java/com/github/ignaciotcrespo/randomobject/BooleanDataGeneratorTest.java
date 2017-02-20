@@ -1,13 +1,9 @@
 package com.github.ignaciotcrespo.randomobject;
 
-import org.assertj.core.api.Assertions;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.lang.reflect.Field;
-
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 

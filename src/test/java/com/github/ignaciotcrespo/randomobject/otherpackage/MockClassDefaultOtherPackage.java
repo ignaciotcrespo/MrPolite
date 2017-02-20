@@ -1,5 +1,7 @@
 package com.github.ignaciotcrespo.randomobject.otherpackage;
 
+import static com.github.ignaciotcrespo.randomobject.utils.TextUtils.has;
+import static com.github.ignaciotcrespo.randomobject.utils.TextUtils.hasNot;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -49,16 +51,6 @@ public class MockClassDefaultOtherPackage extends MockParentClassDefaultOtherPac
         assertThat(textProtectedStaticFinal).isSameAs("protected_static_final");
         assertThat(textPrivateStaticFinal).isSameAs("private_static_final");
 
-    }
-
-    private void has(String text) {
-        assertThat(text)
-                .isNotNull()
-                .isNotEmpty();
-    }
-
-    private void hasNot(String text) {
-        assertThat(text).isNull();
     }
 
     public void assertEmptyData() {

@@ -1,7 +1,5 @@
 package com.github.ignaciotcrespo.randomobject.otherpackage;
 
-import org.assertj.core.api.Assertions;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
