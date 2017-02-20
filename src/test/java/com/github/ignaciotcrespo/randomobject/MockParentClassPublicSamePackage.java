@@ -30,7 +30,7 @@ public class MockParentClassPublicSamePackage extends MockGrandParentClassPublic
     ParentInnerClass parent_mParentInnerClass;
     ParentInnerClassStatic parent_mParentInnerClassStatic;
 
-    public void assertValidData() {
+    public void assertValidData(int i) {
         has(parent_textDefault);
         has(parent_textProtected);
         has(parent_textPublic);
@@ -57,7 +57,7 @@ public class MockParentClassPublicSamePackage extends MockGrandParentClassPublic
         assertThat(parent_mParentInnerClassStatic).isNotNull();
         parent_mParentInnerClassStatic.assertValidData();
 
-        super.assertValidData();
+        super.assertValidData(i);
     }
 
     private void has(String text) {

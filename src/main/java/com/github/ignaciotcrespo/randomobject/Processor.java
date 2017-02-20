@@ -7,19 +7,16 @@ import java.lang.reflect.Field;
  */
 public class Processor {
 
-    private final int deepNestedClasses;
-    private int deepNestedClassesProcessed = 0;
+    private final int deepNestedSameClasses;
+    private int deepNestedSameClassesProcessed = 0;
 
-    public Processor(int deepNestedClasses) {
-        this.deepNestedClasses = deepNestedClasses;
+    public Processor(int deepNestedSameClasses) {
+        this.deepNestedSameClasses = deepNestedSameClasses;
     }
 
-    public boolean shouldStopNestedClasses(Field field, Class<?> clazz) {
+    public boolean shouldStopNestedSameClasses(Field field, Class<?> clazz) {
         boolean equals = field.getType().equals(clazz);
-        if (equals) {
-            return deepNestedClasses <= deepNestedClassesProcessed++;
-        }
-        return false;
+        return equals && deepNestedSameClasses <= deepNestedSameClassesProcessed++;
     }
 
 }

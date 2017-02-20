@@ -30,7 +30,7 @@ public class MockParentClassPublicOtherPackage extends MockGrandParentClassPubli
     ParentInnerClass parent_mParentInnerClass;
     ParentInnerClassStatic parent_mParentInnerClassStatic;
 
-    public void assertValidData() {
+    public void assertValidData(int levelsTree) {
         has(parent_textDefault);
         has(parent_textProtected);
         has(parent_textPublic);
@@ -53,17 +53,53 @@ public class MockParentClassPublicOtherPackage extends MockGrandParentClassPubli
         assertThat(parent_textPrivateStaticFinal).isSameAs("private_static_final");
 
         assertThat(parent_mParentInnerClass).isNotNull();
-        parent_mParentInnerClass.assertValidData();
         assertThat(parent_mParentInnerClassStatic).isNotNull();
-        parent_mParentInnerClassStatic.assertValidData();
+        if (levelsTree > 2) {
+            parent_mParentInnerClass.assertValidData();
+            parent_mParentInnerClassStatic.assertValidData();
+            super.assertValidData(levelsTree);
+        } else {
+            parent_mParentInnerClass.assertEmptyData();
+            parent_mParentInnerClassStatic.assertEmptyData();
+            super.assertEmptyData();
+        }
 
-        super.assertValidData();
     }
 
     private void has(String text) {
         assertThat(text)
                 .isNotNull()
                 .isNotEmpty();
+    }
+
+    private void hasNot(String text) {
+        assertThat(text).isNull();
+    }
+
+    public void assertEmptyData() {
+        hasNot(parent_textDefault);
+        hasNot(parent_textProtected);
+        hasNot(parent_textPublic);
+        hasNot(parent_textPrivate);
+
+        hasNot(parent_textDefaultStatic);
+        hasNot(parent_textProtectedStatic);
+        hasNot(parent_textPublicStatic);
+        hasNot(parent_textPrivateStatic);
+
+        // final fields should not be set
+        assertThat(parent_textPublicFinal).isSameAs("public_final");
+        assertThat(parent_textDefaultFinal).isSameAs("default_final");
+        assertThat(parent_textProtectedFinal).isSameAs("protected_final");
+        assertThat(parent_textPrivateFinal).isSameAs("private_final");
+
+        assertThat(parent_textPublicStaticFinal).isSameAs("public_static_final");
+        assertThat(parent_textDefaultStaticFinal).isSameAs("default_static_final");
+        assertThat(parent_textProtectedStaticFinal).isSameAs("protected_static_final");
+        assertThat(parent_textPrivateStaticFinal).isSameAs("private_static_final");
+
+        assertThat(parent_mParentInnerClass).isNull();
+        assertThat(parent_mParentInnerClassStatic).isNull();
     }
 
     // ----- BEGIN: INNER CLASS ------ //
@@ -107,6 +143,28 @@ public class MockParentClassPublicOtherPackage extends MockGrandParentClassPubli
             assertThat(text)
                     .isNotNull()
                     .isNotEmpty();
+        }
+
+        private void hasNot(String text) {
+            assertThat(text).isNull();
+        }
+
+        public void assertEmptyData() {
+            hasNot(parentInner_textDefault);
+            hasNot(parentInner_textProtected);
+            hasNot(parentInner_textPublic);
+            hasNot(parentInner_textPrivate);
+
+            // final fields should not be set
+            assertThat(parentInner_textPublicFinal).isSameAs("public_final");
+            assertThat(parentInner_textDefaultFinal).isSameAs("default_final");
+            assertThat(parentInner_textProtectedFinal).isSameAs("protected_final");
+            assertThat(parentInner_textPrivateFinal).isSameAs("private_final");
+
+            assertThat(parentInner_textPublicStaticFinal).isSameAs("public_static_final");
+            assertThat(parentInner_textDefaultStaticFinal).isSameAs("default_static_final");
+            assertThat(parentInner_textProtectedStaticFinal).isSameAs("protected_static_final");
+            assertThat(parentInner_textPrivateStaticFinal).isSameAs("private_static_final");
         }
     }
 
@@ -162,6 +220,33 @@ public class MockParentClassPublicOtherPackage extends MockGrandParentClassPubli
             assertThat(text)
                     .isNotNull()
                     .isNotEmpty();
+        }
+
+        private void hasNot(String text) {
+            assertThat(text).isNull();
+        }
+
+        public void assertEmptyData() {
+            hasNot(parentInnerStatic_textDefault);
+            hasNot(parentInnerStatic_textProtected);
+            hasNot(parentInnerStatic_textPublic);
+            hasNot(parentInnerStatic_textPrivate);
+
+            hasNot(parentInnerStatic_textDefaultStatic);
+            hasNot(parentInnerStatic_textProtectedStatic);
+            hasNot(parentInnerStatic_textPublicStatic);
+            hasNot(parentInnerStatic_textPrivateStatic);
+
+            // final fields should not be set
+            assertThat(parentInnerStatic_textPublicFinal).isSameAs("public_final");
+            assertThat(parentInnerStatic_textDefaultFinal).isSameAs("default_final");
+            assertThat(parentInnerStatic_textProtectedFinal).isSameAs("protected_final");
+            assertThat(parentInnerStatic_textPrivateFinal).isSameAs("private_final");
+
+            assertThat(parentInnerStatic_textPublicStaticFinal).isSameAs("public_static_final");
+            assertThat(parentInnerStatic_textDefaultStaticFinal).isSameAs("default_static_final");
+            assertThat(parentInnerStatic_textProtectedStaticFinal).isSameAs("protected_static_final");
+            assertThat(parentInnerStatic_textPrivateStaticFinal).isSameAs("private_static_final");
         }
     }
     // ----- END: STATIC INNER CLASS ------ //

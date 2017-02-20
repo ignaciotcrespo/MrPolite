@@ -15,6 +15,7 @@ public class RandomObject {
 
     Processor processor = new Processor(0);
     private int dataFlags;
+    int deepTree = 1;
 
     DataGenerator[] generators = {
             new EnumDataGenerator(),
@@ -34,13 +35,13 @@ public class RandomObject {
         // hide constructor
     }
 
-    public <T> T fillInnerClass(Object parent, Class<T> clazz) {
+    public <T> T fillInnerClass(Object parent, Class<T> clazz, int levelTree) {
         T instance = null;
         try {
             for (Class<?> cls : parent.getClass().getDeclaredClasses()) {
                 if (clazz.equals(cls)) {
                     if (Modifier.isStatic(cls.getModifiers())) {
-                        return fill((Class<T>) cls);
+                        return fill((Class<T>) cls, levelTree);
                     } else {
                         try {
                             Constructor<?> constructor = cls.getDeclaredConstructor(new Class[]{parent.getClass()});
@@ -54,14 +55,14 @@ public class RandomObject {
                 }
             }
             if (instance != null) {
-                processFieldsAndParents(parent, clazz, instance);
+                processFieldsAndParents(parent, clazz, instance, levelTree);
             } else {
                 Class superClazz = parent.getClass().getSuperclass();
                 while (superClazz != null) {
                     for (Class<?> cls : superClazz.getDeclaredClasses()) {
                         if (clazz.equals(cls)) {
                             if (Modifier.isStatic(cls.getModifiers())) {
-                                return fill((Class<T>) cls);
+                                return fill((Class<T>) cls, levelTree);
                             } else {
                                 try {
                                     Constructor<?> constructor = cls.getDeclaredConstructor(new Class[]{superClazz});
@@ -75,7 +76,7 @@ public class RandomObject {
                         }
                     }
                     if (instance != null) {
-                        processFieldsAndParents(parent, clazz, instance);
+                        processFieldsAndParents(parent, clazz, instance, levelTree);
                     }
                     superClazz = superClazz.getSuperclass();
                 }
@@ -92,69 +93,91 @@ public class RandomObject {
         return instance;
     }
 
-    private <T> void processFieldsAndParents(Object parent, Class<T> clazz, T instance) {
-        if (instance != null) {
-            processFields(parent, clazz, instance);
-            processSuperClasses(parent, clazz, instance);
+    private <T> void processFieldsAndParents(Object parent, Class<T> clazz, T instance, int levelTree) {
+        if (instance != null && levelTree < deepTree) {
+            processFields(parent, clazz, instance, levelTree);
+            processSuperClasses(parent, clazz, instance, levelTree);
         }
     }
 
-    private <T> void processSuperClasses(Object parent, Class<T> clazz, T instance) {
+    private boolean isValidClass(Class<?> clazz) {
+        boolean valid = !clazz.getName().startsWith("java.")
+                && !clazz.getName().startsWith("javax.")
+                && !clazz.getName().startsWith("android.")
+                && !clazz.getName().startsWith("com.android.")
+                && !clazz.getName().startsWith("dalvik.");
+        if (!valid) {
+            System.out.println("Ignored class " + clazz.getName());
+        } else {
+            System.out.println("Valid class " + clazz.getName());
+        }
+        return valid;
+    }
+
+    private <T> void processSuperClasses(Object parent, Class<T> clazz, T instance, int levelTree) {
         Class<?> superclazz = clazz.getSuperclass();
-        while (superclazz != null) {
-            processFields(parent, superclazz, instance);
+        levelTree++;
+        while (superclazz != null && isValidClass(superclazz) && levelTree < deepTree) {
+            processFields(parent, superclazz, instance, levelTree);
             superclazz = superclazz.getSuperclass();
+            levelTree++;
         }
     }
 
-    private void processFields(Object parent, Class<?> clazz, Object instance) {
-        for (Field field : clazz.getDeclaredFields()) {
-            if (field.getName().startsWith("this$")) {
-                // avoid inner class reference to outer class
-                continue;
-            }
-            if (processor.shouldStopNestedClasses(field, clazz)) {
-                // ignore same nested class
-                continue;
-            }
-            if (Modifier.isAbstract(field.getType().getModifiers())) {
-                // dont change value in fields with abstract type
-                continue;
-            }
-            Object value = null;
-            try {
-                field.setAccessible(true);
-                value = getRandomValueForField(parent, field, instance);
-                field.set(instance, value);
-            } catch (Exception e) {
-                // e.printStackTrace();
+    private void processFields(Object parent, Class<?> clazz, Object instance, int levelTree) {
+        if (isValidClass(clazz)) {
+            for (Field field : clazz.getDeclaredFields()) {
+                if (field.getName().startsWith("this$")) {
+                    // avoid inner class reference to outer class
+                    continue;
+                }
+                if (processor.shouldStopNestedSameClasses(field, clazz)) {
+                    // ignore same nested class
+                    continue;
+                }
+                if (Modifier.isAbstract(field.getType().getModifiers())) {
+                    // dont change value in fields with abstract type
+                    continue;
+                }
+                Object value = null;
+                try {
+                    field.setAccessible(true);
+                    value = getRandomValueForField(parent, field, instance, levelTree);
+                    field.set(instance, value);
+                } catch (Exception e) {
+                    // e.printStackTrace();
+                }
             }
         }
     }
 
     public <T> T fill(Class<T> clazz) {
+        return fill(clazz, 0);
+    }
+
+    private <T> T fill(Class<T> clazz, int levelTree) {
         if (Modifier.isPrivate(clazz.getModifiers())) {
             return null;
         }
         T instance = ClassUtils.newInstance(clazz);
 
         if (instance != null) {
-            processFieldsAndParents(null, clazz, instance);
+            processFieldsAndParents(null, clazz, instance, levelTree);
         }
         return instance;
     }
 
-    private Object getRandomValueForField(Object parentInnerClass, Field field, Object instance) throws Exception {
+    private Object getRandomValueForField(Object parentInnerClass, Field field, Object instance, int levelTree) throws Exception {
         Class<?> type = field.getType();
         DataGenerator generator = getGenerator(type);
         Object value = generator.getValue(field, dataFlags);
         if (value == null) {
             if (parentInnerClass != null) {
-                value = fillInnerClass(parentInnerClass, type);
+                value = fillInnerClass(parentInnerClass, type, levelTree + 1);
             } else {
-                value = fill(type);
+                value = fill(type, levelTree + 1);
                 if (value == null) {
-                    value = fillInnerClass(instance, type);
+                    value = fillInnerClass(instance, type, levelTree + 1);
                 }
             }
         }
@@ -195,6 +218,11 @@ public class RandomObject {
 
     public RandomObject deepSameTypeFields(int deep) {
         processor = new Processor(deep);
+        return this;
+    }
+
+    public RandomObject levelsTree(int i) {
+        deepTree = i;
         return this;
     }
 }

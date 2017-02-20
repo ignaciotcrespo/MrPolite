@@ -30,7 +30,7 @@ public class MockGrandParentClassPublicSamePackage {
     GrandParentInnerClass mGrandParentInnerClass;
     GrandParentInnerClassStatic mGrandParentInnerClassStatic;
 
-    public void assertValidData() {
+    public void assertValidData(int i) {
         has(grandgrandparent_textDefault);
         has(grandgrandparent_textProtected);
         has(grandgrandparent_textPublic);

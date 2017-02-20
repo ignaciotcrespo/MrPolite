@@ -25,7 +25,37 @@ public class RandomObjectTest {
         MockClassPublicOtherPackage object = random().fill(MockClassPublicOtherPackage.class);
 
         assertThat(object).isNotNull();
-        object.assertValidData();
+        object.assertValidData(1);
+    }
+
+    @Test
+    public void fill_normalClass_public_anotherPackage_levelsTree2() throws Exception {
+        MockClassPublicOtherPackage object = random()
+                .levelsTree(2)
+                .fill(MockClassPublicOtherPackage.class);
+
+        assertThat(object).isNotNull();
+        object.assertValidData(2);
+    }
+
+    @Test
+    public void fill_normalClass_public_anotherPackage_levelsTree3() throws Exception {
+        MockClassPublicOtherPackage object = random()
+                .levelsTree(3)
+                .fill(MockClassPublicOtherPackage.class);
+
+        assertThat(object).isNotNull();
+        object.assertValidData(3);
+    }
+
+    @Test
+    public void fill_normalClass_public_anotherPackage_levelsTree4() throws Exception {
+        MockClassPublicOtherPackage object = random()
+                .levelsTree(4)
+                .fill(MockClassPublicOtherPackage.class);
+
+        assertThat(object).isNotNull();
+        object.assertValidData(4);
     }
 
     @Test
@@ -33,7 +63,37 @@ public class RandomObjectTest {
         MockClassPublicSamePackage object = random().fill(MockClassPublicSamePackage.class);
 
         assertThat(object).isNotNull();
-        object.assertValidData();
+        object.assertValidData(1);
+    }
+
+    @Test
+    public void fill_normalClass_public_samePackage_levelsTree2() throws Exception {
+        MockClassPublicSamePackage object = random()
+                .levelsTree(2)
+                .fill(MockClassPublicSamePackage.class);
+
+        assertThat(object).isNotNull();
+        object.assertValidData(2);
+    }
+
+    @Test
+    public void fill_normalClass_public_samePackage_levelsTree3() throws Exception {
+        MockClassPublicSamePackage object = random()
+                .levelsTree(3)
+                .fill(MockClassPublicSamePackage.class);
+
+        assertThat(object).isNotNull();
+        object.assertValidData(3);
+    }
+
+    @Test
+    public void fill_normalClass_public_samePackage_levelsTree4() throws Exception {
+        MockClassPublicSamePackage object = random()
+                .levelsTree(4)
+                .fill(MockClassPublicSamePackage.class);
+
+        assertThat(object).isNotNull();
+        object.assertValidData(4);
     }
 
     @Test
@@ -88,7 +148,17 @@ public class RandomObjectTest {
         MockClassInnerAll object = random().fill(MockClassInnerAll.class);
 
         assertThat(object).isNotNull();
-        object.assertValidData();
+        object.assertValidData(1);
+    }
+
+    @Test
+    public void fill_innerClasses_levelsTree2() throws Exception {
+        MockClassInnerAll object = random()
+                .levelsTree(2)
+                .fill(MockClassInnerAll.class);
+
+        assertThat(object).isNotNull();
+        object.assertValidData(2);
     }
 
     @Test
@@ -105,8 +175,8 @@ public class RandomObjectTest {
         List<MockClassPublicSamePackage> list = random().fill(2, MockClassPublicSamePackage.class);
 
         assertThat(list).hasSize(2);
-        list.get(0).assertValidData();
-        list.get(1).assertValidData();
+        list.get(0).assertValidData(1);
+        list.get(1).assertValidData(1);
     }
 
     @Test

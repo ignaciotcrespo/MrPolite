@@ -57,4 +57,30 @@ public class MockClassDefaultOtherPackage extends MockParentClassDefaultOtherPac
                 .isNotEmpty();
     }
 
+    private void hasNot(String text) {
+        assertThat(text).isNull();
+    }
+
+    public void assertEmptyData() {
+        hasNot(textDefault);
+        hasNot(textProtected);
+        hasNot(textPublic);
+        hasNot(textPrivate);
+
+        hasNot(textDefaultStatic);
+        hasNot(textProtectedStatic);
+        hasNot(textPublicStatic);
+        hasNot(textPrivateStatic);
+
+        // final fields should not be set
+        assertThat(textPublicFinal).isSameAs("public_final");
+        assertThat(textDefaultFinal).isSameAs("default_final");
+        assertThat(textProtectedFinal).isSameAs("protected_final");
+        assertThat(textPrivateFinal).isSameAs("private_final");
+
+        assertThat(textPublicStaticFinal).isSameAs("public_static_final");
+        assertThat(textDefaultStaticFinal).isSameAs("default_static_final");
+        assertThat(textProtectedStaticFinal).isSameAs("protected_static_final");
+        assertThat(textPrivateStaticFinal).isSameAs("private_static_final");
+    }
 }

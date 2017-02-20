@@ -2,6 +2,8 @@ package com.github.ignaciotcrespo.randomobject.otherpackage;
 
 import org.assertj.core.api.Assertions;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 /**
  * Created by crespo on 2/20/17.
  */
@@ -12,11 +14,22 @@ public class MockClassInnerAll {
     InnerClassProtected mInnerClassProtected;
     InnerClassPublic mInnerClassPublic;
 
-    public void assertValidData() {
-        mInnerClassDefault.assertValidData();
-        mInnerClassProtected.assertValidData();
-        mInnerClassPublic.assertValidData();
-        mInnerClassPrivate.assertValidData();
+    public void assertValidData(int levelsTree) {
+        assertThat(mInnerClassDefault).isNotNull();
+        assertThat(mInnerClassProtected).isNotNull();
+        assertThat(mInnerClassPublic).isNotNull();
+        assertThat(mInnerClassPrivate).isNotNull();
+        if (levelsTree > 1) {
+            mInnerClassDefault.assertValidData();
+            mInnerClassProtected.assertValidData();
+            mInnerClassPublic.assertValidData();
+            mInnerClassPrivate.assertValidData();
+        } else {
+            mInnerClassDefault.assertEmptyData();
+            mInnerClassProtected.assertEmptyData();
+            mInnerClassPublic.assertEmptyData();
+            mInnerClassPrivate.assertEmptyData();
+        }
     }
 
     class InnerClassDefault {
@@ -24,9 +37,12 @@ public class MockClassInnerAll {
         private String text;
 
         public void assertValidData() {
-            Assertions.assertThat(text).isNotNull().isNotEmpty();
+            assertThat(text).isNotNull().isNotEmpty();
         }
 
+        public void assertEmptyData() {
+            assertThat(text).isNull();
+        }
     }
 
     private class InnerClassPrivate {
@@ -34,7 +50,11 @@ public class MockClassInnerAll {
         private String text;
 
         public void assertValidData() {
-            Assertions.assertThat(text).isNotNull().isNotEmpty();
+            assertThat(text).isNotNull().isNotEmpty();
+        }
+
+        public void assertEmptyData() {
+            assertThat(text).isNull();
         }
 
     }
@@ -44,7 +64,11 @@ public class MockClassInnerAll {
         private String text;
 
         public void assertValidData() {
-            Assertions.assertThat(text).isNotNull().isNotEmpty();
+            assertThat(text).isNotNull().isNotEmpty();
+        }
+
+        public void assertEmptyData() {
+            assertThat(text).isNull();
         }
 
     }
@@ -54,7 +78,11 @@ public class MockClassInnerAll {
         private String text;
 
         public void assertValidData() {
-            Assertions.assertThat(text).isNotNull().isNotEmpty();
+            assertThat(text).isNotNull().isNotEmpty();
+        }
+
+        public void assertEmptyData() {
+            assertThat(text).isNull();
         }
 
     }
