@@ -16,7 +16,7 @@ public class RandomObject {
 
     Processor processor = new Processor(0);
     private int dataFlags;
-    int deepTree = 1;
+    int levelsTree = 1;
 
     DataGenerator[] generators = {
             new EnumDataGenerator(),
@@ -95,7 +95,7 @@ public class RandomObject {
     }
 
     private <T> void processFieldsAndParents(Object parent, Class<T> clazz, T instance, int levelTree) {
-        if (instance != null && levelTree < deepTree) {
+        if (instance != null && levelTree < levelsTree) {
             processFields(parent, clazz, instance, levelTree);
             processSuperClasses(parent, clazz, instance, levelTree);
         }
@@ -109,8 +109,6 @@ public class RandomObject {
                 && !clazz.getName().startsWith("dalvik.");
         if (!valid) {
             System.out.println("Ignored class " + clazz.getName());
-        } else {
-            System.out.println("Valid class " + clazz.getName());
         }
         return valid;
     }
@@ -118,7 +116,7 @@ public class RandomObject {
     private <T> void processSuperClasses(Object parent, Class<T> clazz, T instance, int levelTree) {
         Class<?> superclazz = clazz.getSuperclass();
         levelTree++;
-        while (superclazz != null && isValidClass(superclazz) && levelTree < deepTree) {
+        while (superclazz != null && isValidClass(superclazz) && levelTree < levelsTree) {
             processFields(parent, superclazz, instance, levelTree);
             superclazz = superclazz.getSuperclass();
             levelTree++;
@@ -213,7 +211,7 @@ public class RandomObject {
         return this;
     }
 
-    public static RandomObject random() {
+    private static RandomObject random() {
         return new RandomObject();
     }
 
@@ -223,7 +221,55 @@ public class RandomObject {
     }
 
     public RandomObject levelsTree(int i) {
-        deepTree = i;
+        levelsTree = i;
         return this;
+    }
+
+    public static <T> One<T> one(Class<T> clazz) {
+        return new One<>(clazz);
+    }
+
+    public static <T> Many<T> many(Class<T> clazz) {
+        return new Many<>(clazz);
+    }
+
+
+    public static class One<T> {
+
+        private final Class<T> clazz;
+        private int levelsTree = 1;
+
+        private One(Class<T> clazz) {
+            this.clazz = clazz;
+        }
+
+        public T please() {
+            T object = random().levelsTree(levelsTree).fill(clazz);
+            return object;
+        }
+
+        public One<T> deep(int levelsTree) {
+            this.levelsTree = levelsTree;
+            return this;
+        }
+
+    }
+
+    public static class Many<T> {
+        private final Class<T> clazz;
+        private int size;
+
+        private Many(Class<T> clazz) {
+            this.clazz = clazz;
+        }
+
+        public List<T> listOf(int size) {
+            this.size = size;
+            return please();
+        }
+
+        private List<T> please() {
+            return random().fill(size, clazz);
+        }
     }
 }
