@@ -18,4 +18,5 @@ public class IntegerDataGenerator extends DataGenerator {
     public Object getValue(Field field, int dataFlags) {
         return mRandomizer.nextInt();
     }
+
 }

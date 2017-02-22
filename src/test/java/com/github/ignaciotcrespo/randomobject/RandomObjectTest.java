@@ -188,9 +188,27 @@ public class RandomObjectTest {
         assertThat(list).isEmpty();
     }
 
+    @Test
+    public void withNumbers() throws Exception {
+        RandomObject.One<MockClassPrimitives> one = one(MockClassPrimitives.class).withNumbers(-23, 42);
+
+        NumbersConstraint constraint = (NumbersConstraint) one.mRandom.constraints.get(0);
+        assertThat(constraint.getMin()).isEqualTo(-23);
+        assertThat(constraint.getMax()).isEqualTo(42);
+    }
+
+    @Test
+    public void withStringMaxLength() throws Exception {
+        MockClassPrimitives object = one(MockClassPrimitives.class)
+                .withStringsMaxLength(3)
+                .please();
+
+        object.assertStringLen(3);
+    }
+
+
     // TODO fields with collections, arrays, etc
     // TODO set class to always null
     // TODO set class to always a constant
-    // TODO set min/max in numbers
 
 }

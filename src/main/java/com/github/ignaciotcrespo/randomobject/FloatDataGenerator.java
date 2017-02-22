@@ -18,4 +18,5 @@ public class FloatDataGenerator extends DataGenerator {
     public Object getValue(Field field, int dataFlags) {
         return mRandomizer.nextFloat();
     }
+
 }

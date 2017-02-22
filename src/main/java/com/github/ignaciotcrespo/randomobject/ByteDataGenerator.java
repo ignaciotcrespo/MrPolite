@@ -18,4 +18,5 @@ public class ByteDataGenerator extends DataGenerator {
     public Object getValue(Field field, int dataFlags) {
         return (byte) mRandomizer.nextInt();
     }
+
 }

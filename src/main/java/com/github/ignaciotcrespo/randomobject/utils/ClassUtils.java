@@ -103,4 +103,8 @@ public class ClassUtils {
         }
         return instance;
     }
+
+    public static boolean isAbstract(Class<?> type) {
+        return Modifier.isAbstract(type.getModifiers());
+    }
 }

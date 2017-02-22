@@ -9,6 +9,8 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.github.ignaciotcrespo.randomobject.utils.ClassUtils.isAbstract;
+
 /**
  * Created by crespo on 2/18/17.
  */
@@ -31,6 +33,8 @@ public class RandomObject {
             new DateDataGenerator(),
             new CalendarDataGenerator()
     };
+
+    List<Constraint> constraints = new ArrayList<>();
 
     private RandomObject() {
         // hide constructor
@@ -134,7 +138,7 @@ public class RandomObject {
                     // ignore same nested class
                     continue;
                 }
-                if (Modifier.isAbstract(field.getType().getModifiers())) {
+                if (!field.getType().isPrimitive() && isAbstract(field.getType())) {
                     // dont change value in fields with abstract type
                     continue;
                 }
@@ -170,6 +174,13 @@ public class RandomObject {
         Class<?> type = field.getType();
         DataGenerator generator = getGenerator(type);
         Object value = generator.getValue(field, dataFlags);
+        if (value != null) {
+            for (Constraint constraint : constraints) {
+                if (constraint.canApply(value)) {
+                    value = constraint.apply(value);
+                }
+            }
+        }
         if (value == null) {
             if (parentInnerClass != null) {
                 value = fillInnerClass(parentInnerClass, type, levelTree + 1);
@@ -234,18 +245,16 @@ public class RandomObject {
     }
 
 
-    public static class One<T> {
+    public static class One<T> extends BaseRandom<T> {
 
-        private final Class<T> clazz;
         private int levelsTree = 1;
 
         private One(Class<T> clazz) {
-            this.clazz = clazz;
+            super(clazz);
         }
 
         public T please() {
-            T object = random().levelsTree(levelsTree).fill(clazz);
-            return object;
+            return mRandom.levelsTree(levelsTree).fill(clazz);
         }
 
         public One<T> deep(int levelsTree) {
@@ -253,14 +262,26 @@ public class RandomObject {
             return this;
         }
 
+        @Override
+        public One<T> withNumbers(Number min, Number max) {
+            return (One<T>) super.withNumbers(min, max);
+        }
+
+        @Override
+        public One<T> withStringsMaxLength(int len) {
+            return (One<T>) super.withStringsMaxLength(len);
+        }
     }
 
-    public static class Many<T> {
-        private final Class<T> clazz;
+    private void addConstraint(Constraint constraint) {
+        constraints.add(constraint);
+    }
+
+    public static class Many<T> extends BaseRandom<T> {
         private int size;
 
         private Many(Class<T> clazz) {
-            this.clazz = clazz;
+            super(clazz);
         }
 
         public List<T> listOf(int size) {
@@ -271,5 +292,38 @@ public class RandomObject {
         private List<T> please() {
             return random().fill(size, clazz);
         }
+
+        @Override
+        public Many<T> withNumbers(Number min, Number max) {
+            return (Many<T>) super.withNumbers(min, max);
+        }
+
+        @Override
+        public Many<T> withStringsMaxLength(int len) {
+            return (Many<T>) super.withStringsMaxLength(len);
+        }
+
+
+    }
+
+    private static class BaseRandom<T> {
+        final Class<T> clazz;
+        RandomObject mRandom;
+
+        private BaseRandom(Class<T> clazz) {
+            this.clazz = clazz;
+            mRandom = random();
+        }
+
+        public BaseRandom<T> withNumbers(Number min, Number max) {
+            mRandom.addConstraint(NumbersConstraint.from(min, max));
+            return this;
+        }
+
+        public BaseRandom<T> withStringsMaxLength(int len) {
+            mRandom.addConstraint(new StringLengthConstraint(len));
+            return this;
+        }
+
     }
 }

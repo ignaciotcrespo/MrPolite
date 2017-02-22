@@ -18,4 +18,5 @@ public class ShortDataGenerator extends DataGenerator {
     public Object getValue(Field field, int dataFlags) {
         return (short) mRandomizer.nextInt();
     }
+
 }

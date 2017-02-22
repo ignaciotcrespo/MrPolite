@@ -18,4 +18,5 @@ public class DoubleDataGenerator extends DataGenerator {
     public Object getValue(Field field, int dataFlags) {
         return mRandomizer.nextDouble();
     }
+
 }
