@@ -5,7 +5,7 @@ import java.lang.reflect.Field;
 /**
  * Created by crespo on 2/21/17.
  */
-public abstract class Constraint {
+abstract class Constraint {
 
     public abstract Object apply(Field field, Object value);
 

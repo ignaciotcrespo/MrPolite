@@ -2,10 +2,7 @@ package com.github.ignaciotcrespo.randomobject;
 
 import com.github.ignaciotcrespo.randomobject.utils.ClassUtils;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Modifier;
+import java.lang.reflect.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,16 +11,20 @@ import static com.github.ignaciotcrespo.randomobject.utils.ClassUtils.isAbstract
 /**
  * Created by crespo on 2/18/17.
  */
-public class RandomObject {
+class RandomObject {
 
-    Processor processor = new Processor(0);
-    private int dataFlags;
-    int levelsTree = 1;
+    static final Range DEFAULT_COLLECTION_RANGE = new Range(2, 5);
 
-    DataGenerator[] generators;
+    private Processor processor = new Processor(0);
+    private int levelsTree = 1;
 
-    List<Constraint> constraints = new ArrayList<>();
+    private DataGenerator[] generators;
+
+    final List<Constraint> constraints = new ArrayList<>();
     private int seed;
+    private Range collectionSizeRange = DEFAULT_COLLECTION_RANGE;
+    private List<String> excludeFields = new ArrayList<>();
+    private List<Class<?>> excludeClasses = new ArrayList<>();
 
     private RandomObject() {
         // hide constructor
@@ -47,7 +48,7 @@ public class RandomObject {
         };
     }
 
-    public <T> T fillInnerClass(Object parent, Class<T> clazz, int levelTree) {
+    private <T> T fillInnerClass(Object parent, Class<T> clazz, int levelTree) {
         T instance = null;
         try {
             for (Class<?> cls : parent.getClass().getDeclaredClasses()) {
@@ -56,7 +57,7 @@ public class RandomObject {
                         return fill((Class<T>) cls, levelTree);
                     } else {
                         try {
-                            Constructor<?> constructor = cls.getDeclaredConstructor(new Class[]{parent.getClass()});
+                            Constructor<?> constructor = cls.getDeclaredConstructor(parent.getClass());
                             constructor.setAccessible(true);
                             instance = (T) constructor.newInstance(parent);
                             break;
@@ -77,7 +78,7 @@ public class RandomObject {
                                 return fill((Class<T>) cls, levelTree);
                             } else {
                                 try {
-                                    Constructor<?> constructor = cls.getDeclaredConstructor(new Class[]{superClazz});
+                                    Constructor<?> constructor = cls.getDeclaredConstructor(superClazz);
                                     constructor.setAccessible(true);
                                     instance = (T) constructor.newInstance(parent);
                                     break;
@@ -137,6 +138,9 @@ public class RandomObject {
     private void processFields(Object parent, Class<?> clazz, Object instance, int levelTree) {
         if (isValidClass(clazz)) {
             for (Field field : clazz.getDeclaredFields()) {
+                if (isExcludedField(field)) {
+                    continue;
+                }
                 if (field.getName().startsWith("this$")) {
                     // avoid inner class reference to outer class
                     continue;
@@ -145,6 +149,7 @@ public class RandomObject {
                     // ignore same nested class
                     continue;
                 }
+                Object value;
                 if (!field.getType().isPrimitive() && isAbstract(field.getType())) {
                     // dont change value in fields with abstract type
                     continue;
@@ -152,7 +157,6 @@ public class RandomObject {
                 if (Modifier.isFinal(field.getModifiers())) {
                     continue;
                 }
-                Object value = null;
                 try {
                     field.setAccessible(true);
                     value = getRandomValueForField(parent, field, instance, levelTree);
@@ -162,6 +166,20 @@ public class RandomObject {
                 }
             }
         }
+    }
+
+    private boolean isExcludedField(Field field) {
+        for (String regex : excludeFields) {
+            if (field.getName().matches(regex)) {
+                return true;
+            }
+        }
+        for (Class clazz : excludeClasses) {
+            if (field.getType().equals(clazz)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public <T> T fill(Class<T> clazz) {
@@ -182,8 +200,26 @@ public class RandomObject {
 
     private Object getRandomValueForField(Object parentInnerClass, Field field, Object instance, int levelTree) throws Exception {
         Class<?> type = field.getType();
+        if (type.isArray()) {
+            Class<?> componentType = type.getComponentType();
+            int length = getRandomCollectionSize();
+            Object newInstance = Array.newInstance(componentType, length);
+            for (int i = 0; i < length; i++) {
+                Array.set(newInstance, i, getRandomValueForFieldType(parentInnerClass, field, instance, levelTree, componentType));
+            }
+            return newInstance;
+        } else {
+            return getRandomValueForFieldType(parentInnerClass, field, instance, levelTree, type);
+        }
+    }
+
+    private int getRandomCollectionSize() {
+        return new Randomizer(seed).nextInt(collectionSizeRange.max - collectionSizeRange.min) + collectionSizeRange.min;
+    }
+
+    private Object getRandomValueForFieldType(Object parentInnerClass, Field field, Object instance, int levelTree, Class<?> type) {
         DataGenerator generator = getGenerator(type);
-        Object value = generator.getValue(field, dataFlags);
+        Object value = generator.getValue(field);
         if (value != null) {
             for (Constraint constraint : constraints) {
                 if (constraint.canApply(value)) {
@@ -202,7 +238,6 @@ public class RandomObject {
             }
         }
         return value;
-
     }
 
     private DataGenerator getGenerator(Class<?> type) {
@@ -227,12 +262,7 @@ public class RandomObject {
         return list;
     }
 
-    public RandomObject use(int flags) {
-        this.dataFlags |= flags;
-        return this;
-    }
-
-    private static RandomObject random() {
+    static RandomObject random() {
         return new RandomObject();
     }
 
@@ -246,182 +276,39 @@ public class RandomObject {
         return this;
     }
 
-    public static <T> One<T> one(Class<T> clazz) {
-        return new One<>(clazz);
+
+    RandomObject collectionSizeRange(Range collectionSizeRange) {
+        this.collectionSizeRange = collectionSizeRange;
+        return this;
     }
 
-    public static <T> Many<T> many(Class<T> clazz) {
-        return new Many<>(clazz);
-    }
-
-
-    public static class One<T> extends BaseRandom<T> {
-
-        private One(Class<T> clazz) {
-            super(clazz);
-        }
-
-        public T please() {
-            return mRandom.seed(seed).levelsTree(this.levelsTree).fill(clazz);
-        }
-
-        @Override
-        public One<T> withDepth(int levelsTree) {
-            return (One<T>) super.withDepth(levelsTree);
-        }
-
-        @Override
-        public One<T> withNumberRange(Number min, Number max) {
-            return (One<T>) super.withNumberRange(min, max);
-        }
-
-        @Override
-        public One<T> withStringsMaxLength(int len) {
-            return (One<T>) super.withStringsMaxLength(len);
-        }
-
-        @Override
-        public One<T> withFieldNamesInStrings() {
-            return (One<T>) super.withFieldNamesInStrings();
-        }
-
-        @Override
-        public One<T> withFieldEqualTo(String fieldNameRegex, Object value) {
-            return (One<T>) super.withFieldEqualTo(fieldNameRegex, value);
-        }
-
-        @Override
-        public <K> One<T> withClassEqualTo(Class<K> clazz, K value) {
-            return (One<T>) super.withClassEqualTo(clazz, value);
-        }
-
-        @Override
-        public One<T> withFieldImageLink(String fieldNameRegex, int width, int height) {
-            return (One<T>) super.withFieldImageLink(fieldNameRegex, width, height);
-        }
-
-        @Override
-        public One<T> withSeed(int seed) {
-            return (One<T>) super.withSeed(seed);
-        }
-    }
-
-    private RandomObject seed(int seed) {
+    RandomObject seed(int seed) {
         this.seed = seed;
         initGenerators();
         return this;
     }
 
-    private void addConstraint(Constraint constraint) {
+    void addConstraint(Constraint constraint) {
         constraints.add(constraint);
     }
 
-    public static class Many<T> extends BaseRandom<T> {
-        private int size;
-
-        private Many(Class<T> clazz) {
-            super(clazz);
-        }
-
-        public List<T> listOf(int size) {
-            this.size = size;
-            return please();
-        }
-
-        @Override
-        public Many<T> withDepth(int levelsTree) {
-            return (Many<T>) super.withDepth(levelsTree);
-        }
-
-        private List<T> please() {
-            return random().seed(seed).levelsTree(this.levelsTree).fill(size, clazz);
-        }
-
-        @Override
-        public Many<T> withNumberRange(Number min, Number max) {
-            return (Many<T>) super.withNumberRange(min, max);
-        }
-
-        @Override
-        public Many<T> withStringsMaxLength(int len) {
-            return (Many<T>) super.withStringsMaxLength(len);
-        }
-
-        @Override
-        public Many<T> withFieldNamesInStrings() {
-            return (Many<T>) super.withFieldNamesInStrings();
-        }
-
-        @Override
-        public Many<T> withFieldEqualTo(String fieldNameRegex, Object value) {
-            return (Many<T>) super.withFieldEqualTo(fieldNameRegex, value);
-        }
-
-        @Override
-        public <K> Many<T> withClassEqualTo(Class<K> clazz, K value) {
-            return (Many<T>) super.withClassEqualTo(clazz, value);
-        }
-
-        @Override
-        public Many<T> withFieldImageLink(String fieldNameRegex, int width, int height) {
-            return (Many<T>) super.withFieldImageLink(fieldNameRegex, width, height);
-        }
-
-        @Override
-        public Many<T> withSeed(int seed) {
-            return (Many<T>) super.withSeed(seed);
-        }
+    RandomObject excludeClasses(List<Class<?>> excludeClasses) {
+        this.excludeClasses = excludeClasses;
+        return this;
     }
 
-    private static class BaseRandom<T> {
-        final Class<T> clazz;
-        RandomObject mRandom;
-        int levelsTree = 1;
-        int seed;
+    RandomObject excludeRegex(List<String> excludeFields) {
+        this.excludeFields = excludeFields;
+        return this;
+    }
 
-        private BaseRandom(Class<T> clazz) {
-            this.clazz = clazz;
-            mRandom = random();
-        }
+    static class Range {
+        final int min;
+        final int max;
 
-        public BaseRandom<T> withDepth(int levelsTree) {
-            this.levelsTree = levelsTree;
-            return this;
-        }
-
-        public BaseRandom<T> withNumberRange(Number min, Number max) {
-            mRandom.addConstraint(NumbersConstraint.from(min, max));
-            return this;
-        }
-
-        public BaseRandom<T> withStringsMaxLength(int len) {
-            mRandom.addConstraint(new StringLengthConstraint(len));
-            return this;
-        }
-
-        public BaseRandom<T> withFieldNamesInStrings() {
-            mRandom.addConstraint(new StringFieldNameConstraint());
-            return this;
-        }
-
-        public BaseRandom<T> withFieldEqualTo(String fieldNameRegex, Object value) {
-            mRandom.addConstraint(new FieldNameRegexConstraint(fieldNameRegex, value));
-            return this;
-        }
-
-        public <K> BaseRandom<T> withClassEqualTo(Class<K> clazz, K value) {
-            mRandom.addConstraint(new TypeValueConstraint(clazz, value));
-            return this;
-        }
-
-        public BaseRandom<T> withFieldImageLink(String fieldNameRegex, int width, int height) {
-            mRandom.addConstraint(new FieldNameRegexConstraint(fieldNameRegex, "http://lorempixel.com/" + width + "/" + height));
-            return this;
-        }
-
-        public BaseRandom<T> withSeed(int seed) {
-            this.seed = seed;
-            return this;
+        Range(int min, int max) {
+            this.min = min;
+            this.max = max;
         }
     }
 }

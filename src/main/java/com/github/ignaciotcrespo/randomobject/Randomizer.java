@@ -5,7 +5,7 @@ import java.util.Random;
 /**
  * Created by crespo on 2/20/17.
  */
-public class Randomizer {
+class Randomizer {
 
     private Random random;
 
@@ -13,31 +13,31 @@ public class Randomizer {
         random = new Random();
     }
 
-    public Randomizer(int seed) {
+    Randomizer(int seed) {
         random = new Random(seed);
     }
 
-    public int nextInt(int length) {
+    int nextInt(int length) {
         return random.nextInt(length);
     }
 
-    public int nextInt() {
+    int nextInt() {
         return random.nextInt();
     }
 
-    public long nextLong() {
+    long nextLong() {
         return random.nextLong();
     }
 
-    public double nextDouble() {
+    double nextDouble() {
         return random.nextDouble();
     }
 
-    public float nextFloat() {
+    float nextFloat() {
         return random.nextFloat();
     }
 
-    public boolean nextBoolean() {
+    boolean nextBoolean() {
         return random.nextBoolean();
     }
 }

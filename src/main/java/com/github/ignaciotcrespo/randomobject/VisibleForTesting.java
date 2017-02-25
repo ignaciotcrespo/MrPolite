@@ -8,5 +8,5 @@ import static java.lang.annotation.RetentionPolicy.SOURCE;
  * Created by crespo on 2/20/17.
  */
 @Retention(SOURCE)
-public @interface VisibleForTesting {
+@interface VisibleForTesting {
 }

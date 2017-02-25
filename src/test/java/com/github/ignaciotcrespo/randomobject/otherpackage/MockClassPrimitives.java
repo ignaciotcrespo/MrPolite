@@ -8,6 +8,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class MockClassPrimitives {
 
     String _string;
+    String _string2;
     boolean _boolean;
     byte _byte;
     short _short;
@@ -37,15 +38,20 @@ public class MockClassPrimitives {
 
     public void assertStringLen(int len) {
         assertThat(_string.length()).isLessThanOrEqualTo(3);
+        assertThat(_string2.length()).isLessThanOrEqualTo(3);
     }
 
-    public void assertString(String value) {
-        assertThat(_string).isEqualTo(value);
+    public void assertString(String... value) {
+        assertThat(_string).isEqualTo(value[0]);
+        if (value.length > 1) {
+            assertThat(_string2).isEqualTo(value[1]);
+        }
     }
 
     public void assertByte(byte value) {
         assertThat(_byte).isEqualTo(value);
     }
+
 
     @Override
     public boolean equals(Object o) {
@@ -62,7 +68,8 @@ public class MockClassPrimitives {
         if (_long != that._long) return false;
         if (Float.compare(that._float, _float) != 0) return false;
         if (Double.compare(that._double, _double) != 0) return false;
-        return _string != null ? _string.equals(that._string) : that._string == null;
+        if (_string != null ? !_string.equals(that._string) : that._string != null) return false;
+        return _string2 != null ? _string2.equals(that._string2) : that._string2 == null;
 
     }
 
@@ -71,6 +78,7 @@ public class MockClassPrimitives {
         int result;
         long temp;
         result = _string != null ? _string.hashCode() : 0;
+        result = 31 * result + (_string2 != null ? _string2.hashCode() : 0);
         result = 31 * result + (_boolean ? 1 : 0);
         result = 31 * result + (int) _byte;
         result = 31 * result + (int) _short;
@@ -87,6 +95,7 @@ public class MockClassPrimitives {
     public String toString() {
         return "MockClassPrimitives{" +
                 "_string='" + _string + '\'' +
+                ", _string2='" + _string2 + '\'' +
                 ", _boolean=" + _boolean +
                 ", _byte=" + _byte +
                 ", _short=" + _short +
@@ -96,5 +105,19 @@ public class MockClassPrimitives {
                 ", _float=" + _float +
                 ", _double=" + _double +
                 '}';
+    }
+
+    public void assertStringNull() {
+        assertThat(_string).isNull();
+        assertThat(_string2).isNull();
+    }
+
+    public void assertNumbersRandom() {
+        assertThat(_byte).isNotEqualTo((byte) 0);
+        assertThat(_short).isNotEqualTo((short) 0);
+        assertThat(_int).isNotEqualTo(0);
+        assertThat(_long).isNotEqualTo(0L);
+        assertThat(_float).isNotEqualTo(0F);
+        assertThat(_double).isNotEqualTo(0D);
     }
 }

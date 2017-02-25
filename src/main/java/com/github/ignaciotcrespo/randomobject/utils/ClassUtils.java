@@ -105,6 +105,6 @@ public class ClassUtils {
     }
 
     public static boolean isAbstract(Class<?> type) {
-        return Modifier.isAbstract(type.getModifiers());
+        return Modifier.isAbstract(type.getModifiers()) && !type.isArray();
     }
 }

@@ -17,7 +17,7 @@ class EnumDataGenerator extends RandomGenerator {
     }
 
     @Override
-    public Object getValue(Field field, int dataFlags) {
+    public Object getValue(Field field) {
         Object[] enumValues = field.getType().getEnumConstants();
         return enumValues[mRandomizer.nextInt(enumValues.length)];
     }

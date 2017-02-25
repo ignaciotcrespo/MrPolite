@@ -5,11 +5,11 @@ import java.lang.reflect.Field;
 /**
  * Created by crespo on 2/21/17.
  */
-public class StringLengthConstraint extends Constraint {
+class StringLengthConstraint extends Constraint {
 
     private final int len;
 
-    public StringLengthConstraint(int len) {
+    StringLengthConstraint(int len) {
         this.len = len;
     }
 

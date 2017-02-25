@@ -11,10 +11,8 @@ import static com.github.ignaciotcrespo.randomobject.utils.NumberUtils.isNumeric
  */
 class FieldNameRegexConstraint extends Constraint {
 
-    @VisibleForTesting
-    final String fieldNameRegex;
-    @VisibleForTesting
-    final Object value;
+    private final String fieldNameRegex;
+    private final Object value;
 
     FieldNameRegexConstraint(String fieldNameRegex, Object value) {
         this.fieldNameRegex = fieldNameRegex;
@@ -31,7 +29,7 @@ class FieldNameRegexConstraint extends Constraint {
             }
         }
         if (field.getName().matches(fieldNameRegex) && isAssignableFrom(field, oldValue)) {
-            if(NumberUtils.isNumeric(this.value)){
+            if (NumberUtils.isNumeric(this.value)) {
                 return NumberUtils.castedValue(this.value, oldValue);
             }
             return this.value;
@@ -42,10 +40,8 @@ class FieldNameRegexConstraint extends Constraint {
 
     private boolean isAssignableFrom(Field field, Object oldValue) {
         Class<?> type = field.getType();
-        if (type.isPrimitive() && isNumeric(oldValue)) {
-            return true;
-        }
-        return type.isAssignableFrom(this.value.getClass());
+        return type.isPrimitive() && isNumeric(oldValue)
+                || type.isAssignableFrom(this.value.getClass());
     }
 
     @Override

@@ -12,7 +12,7 @@ class NumbersConstraint extends Constraint {
 
     private final Number min;
     private final Number max;
-    Random random = new Random();
+    private Random random = new Random();
 
     private NumbersConstraint(Number min, Number max) {
         this.min = min;
@@ -39,11 +39,11 @@ class NumbersConstraint extends Constraint {
         return value instanceof Number;
     }
 
-    public double getMin() {
+    double getMin() {
         return min.doubleValue();
     }
 
-    public double getMax() {
+    double getMax() {
         return max.doubleValue();
     }
 

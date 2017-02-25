@@ -18,7 +18,7 @@ class StringDataGenerator extends RandomGenerator {
     }
 
     @Override
-    public Object getValue(Field field, int dataFlags) {
+    public Object getValue(Field field) {
         return new UUID(mRandomizer.nextLong(), mRandomizer.nextLong()).toString();
     }
 

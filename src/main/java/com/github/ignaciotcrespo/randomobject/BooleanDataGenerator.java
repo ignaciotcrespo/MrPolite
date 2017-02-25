@@ -17,7 +17,7 @@ class BooleanDataGenerator extends RandomGenerator {
     }
 
     @Override
-    public Object getValue(Field field, int dataFlags) {
+    public Object getValue(Field field) {
         return mRandomizer.nextBoolean();
     }
 }

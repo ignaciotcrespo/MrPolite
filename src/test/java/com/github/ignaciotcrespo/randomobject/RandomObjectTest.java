@@ -6,8 +6,8 @@ import org.junit.Test;
 
 import java.util.List;
 
-import static com.github.ignaciotcrespo.randomobject.RandomObject.many;
-import static com.github.ignaciotcrespo.randomobject.RandomObject.one;
+import static com.github.ignaciotcrespo.randomobject.Want.many;
+import static com.github.ignaciotcrespo.randomobject.Want.one;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.MockitoAnnotations.initMocks;
 
@@ -190,7 +190,7 @@ public class RandomObjectTest {
 
     @Test
     public void withNumbers() throws Exception {
-        RandomObject.One<MockClassPrimitives> one = one(MockClassPrimitives.class).withNumberRange(-23, 42);
+        Want.One<MockClassPrimitives> one = one(MockClassPrimitives.class).withNumberRange(-23, 42);
 
         NumbersConstraint constraint = (NumbersConstraint) one.mRandom.constraints.get(0);
         assertThat(constraint.getMin()).isEqualTo(-23);
@@ -207,19 +207,30 @@ public class RandomObjectTest {
     }
 
     @Test
-    public void withStringAsFieldName_one() throws Exception {
-        RandomObject.One<MockClassPrimitives> one = one(MockClassPrimitives.class).withFieldNamesInStrings();
+    public void withStringMaxLength_many() throws Exception {
+        List<MockClassPrimitives> list = many(MockClassPrimitives.class)
+                .withStringsMaxLength(3)
+                .listOf(10);
 
-        Constraint constraint = one.mRandom.constraints.get(0);
-        assertThat(constraint).isInstanceOf(StringFieldNameConstraint.class);
+        for (MockClassPrimitives object : list) {
+            object.assertStringLen(3);
+        }
+    }
+
+    @Test
+    public void withStringAsFieldName_one() throws Exception {
+        MockClassPrimitives object = one(MockClassPrimitives.class).withFieldNamesInStrings().please();
+
+        object.assertString("_string", "_string2");
     }
 
     @Test
     public void withStringAsFieldName_many() throws Exception {
-        RandomObject.Many<MockClassPrimitives> many = many(MockClassPrimitives.class).withFieldNamesInStrings();
+        List<MockClassPrimitives> many = many(MockClassPrimitives.class).withFieldNamesInStrings().listOf(5);
 
-        Constraint constraint = many.mRandom.constraints.get(0);
-        assertThat(constraint).isInstanceOf(StringFieldNameConstraint.class);
+        for (MockClassPrimitives object : many) {
+            object.assertString("_string", "_string2");
+        }
     }
 
     @Test
@@ -307,6 +318,53 @@ public class RandomObjectTest {
         assertThat(object1).isNotEqualTo(object2);
     }
 
+    @Test
+    public void fieldArray() throws Exception {
+        ClassWithCollections object = one(ClassWithCollections.class).please();
+
+        assertThat(object._arrayString).doesNotContainNull();
+        assertThat(object._arrayInt).doesNotContain(0);
+    }
+
+    @Test
+    public void fieldArray_collectionSize() throws Exception {
+        ClassWithCollections object = one(ClassWithCollections.class)
+                .withCollectionSizeRange(10, 12)
+                .please();
+
+        assertThat(object._arrayString.length).isBetween(10, 12);
+        assertThat(object._arrayInt.length).isBetween(10, 12);
+    }
+
+    @Test
+    public void fieldCollection_collectionSize() throws Exception {
+        ClassWithCollections object = one(ClassWithCollections.class)
+                .withCollectionSizeRange(10, 12)
+                .please();
+
+        assertThat(object._arrayString.length).isBetween(10, 12);
+        assertThat(object._arrayInt.length).isBetween(10, 12);
+    }
+
+    @Test
+    public void exclude() throws Exception {
+        ClassWithCollections object = one(ClassWithCollections.class)
+                .exclude(".*Int")
+                .please();
+
+        assertThat(object._arrayString).isNotNull();
+        assertThat(object._arrayInt).isNull();
+    }
+
+    @Test
+    public void exclude_class() throws Exception {
+        MockClassPrimitives object = one(MockClassPrimitives.class)
+                .exclude(String.class)
+                .please();
+
+        object.assertStringNull();
+        object.assertNumbersRandom();
+    }
 
     static class ClassWithUri {
         String text;
@@ -314,7 +372,12 @@ public class RandomObjectTest {
         String imageUri;
     }
 
-    // TODO fields with collections, arrays, etc
+    static class ClassWithCollections {
+        String[] _arrayString;
+        int[] _arrayInt;
+    }
+
+    // TODO fields with collections
     // TODO random color
     // TODO random bitmap as byte array
 

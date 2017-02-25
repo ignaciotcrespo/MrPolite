@@ -5,12 +5,12 @@ import java.lang.reflect.Field;
 /**
  * Created by crespo on 2/23/17.
  */
-public class TypeValueConstraint<K> extends Constraint {
+class TypeValueConstraint<K> extends Constraint {
 
     private final Class<K> clazz;
     private final K value;
 
-    public TypeValueConstraint(Class<K> clazz, K value) {
+    TypeValueConstraint(Class<K> clazz, K value) {
         this.clazz = clazz;
         this.value = value;
     }

@@ -32,7 +32,7 @@ public class BooleanDataGeneratorTest {
     public void getValue_true() throws Exception {
         setupRandomizer(true);
 
-        Boolean value = (Boolean) generator.getValue(null, 0);
+        Boolean value = (Boolean) generator.getValue(null);
 
         assertThat(value).isTrue();
     }
@@ -41,7 +41,7 @@ public class BooleanDataGeneratorTest {
     public void getValue_false() throws Exception {
         setupRandomizer(false);
 
-        Boolean value = (Boolean) generator.getValue(null, 0);
+        Boolean value = (Boolean) generator.getValue(null);
 
         assertThat(value).isFalse();
     }

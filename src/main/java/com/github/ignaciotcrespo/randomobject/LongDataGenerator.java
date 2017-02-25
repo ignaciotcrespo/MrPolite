@@ -17,10 +17,8 @@ class LongDataGenerator extends RandomGenerator {
     }
 
     @Override
-    public Object getValue(Field field, int dataFlags) {
-        long number = mRandomizer.nextLong();
-
-        return number;
+    public Object getValue(Field field) {
+        return mRandomizer.nextLong();
     }
 
 }
