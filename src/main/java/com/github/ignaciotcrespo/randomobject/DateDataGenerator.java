@@ -6,9 +6,11 @@ import java.util.Date;
 /**
  * Created by crespo on 2/20/17.
  */
-public class DateDataGenerator extends DataGenerator {
+class DateDataGenerator extends RandomGenerator {
 
-    Randomizer mRandomizer = new Randomizer();
+    DateDataGenerator(int seed) {
+        super(seed);
+    }
 
     @Override
     protected boolean is(Class<?> type) {

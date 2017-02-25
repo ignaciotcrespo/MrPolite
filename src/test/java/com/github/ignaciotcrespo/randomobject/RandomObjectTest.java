@@ -32,7 +32,7 @@ public class RandomObjectTest {
     @Test
     public void fill_normalClass_public_anotherPackage_levelsTree2() throws Exception {
         MockClassPublicOtherPackage object = one(MockClassPublicOtherPackage.class)
-                .deep(2)
+                .withDepth(2)
                 .please();
 
         assertThat(object).isNotNull();
@@ -42,7 +42,7 @@ public class RandomObjectTest {
     @Test
     public void fill_normalClass_public_anotherPackage_levelsTree3() throws Exception {
         MockClassPublicOtherPackage object = one(MockClassPublicOtherPackage.class)
-                .deep(3)
+                .withDepth(3)
                 .please();
 
         assertThat(object).isNotNull();
@@ -52,7 +52,7 @@ public class RandomObjectTest {
     @Test
     public void fill_normalClass_public_anotherPackage_levelsTree4() throws Exception {
         MockClassPublicOtherPackage object = one(MockClassPublicOtherPackage.class)
-                .deep(4)
+                .withDepth(4)
                 .please();
 
         assertThat(object).isNotNull();
@@ -70,7 +70,7 @@ public class RandomObjectTest {
     @Test
     public void fill_normalClass_public_samePackage_levelsTree2() throws Exception {
         MockClassPublicSamePackage object = one(MockClassPublicSamePackage.class)
-                .deep(2)
+                .withDepth(2)
                 .please();
 
         assertThat(object).isNotNull();
@@ -80,7 +80,7 @@ public class RandomObjectTest {
     @Test
     public void fill_normalClass_public_samePackage_levelsTree3() throws Exception {
         MockClassPublicSamePackage object = one(MockClassPublicSamePackage.class)
-                .deep(3)
+                .withDepth(3)
                 .please();
 
         assertThat(object).isNotNull();
@@ -90,7 +90,7 @@ public class RandomObjectTest {
     @Test
     public void fill_normalClass_public_samePackage_levelsTree4() throws Exception {
         MockClassPublicSamePackage object = one(MockClassPublicSamePackage.class)
-                .deep(4)
+                .withDepth(4)
                 .please();
 
         assertThat(object).isNotNull();
@@ -155,7 +155,7 @@ public class RandomObjectTest {
     @Test
     public void fill_innerClasses_levelsTree2() throws Exception {
         MockClassInnerAll object = one(MockClassInnerAll.class)
-                .deep(2)
+                .withDepth(2)
                 .please();
 
         assertThat(object).isNotNull();
@@ -190,7 +190,7 @@ public class RandomObjectTest {
 
     @Test
     public void withNumbers() throws Exception {
-        RandomObject.One<MockClassPrimitives> one = one(MockClassPrimitives.class).withNumbers(-23, 42);
+        RandomObject.One<MockClassPrimitives> one = one(MockClassPrimitives.class).withNumberRange(-23, 42);
 
         NumbersConstraint constraint = (NumbersConstraint) one.mRandom.constraints.get(0);
         assertThat(constraint.getMin()).isEqualTo(-23);
@@ -206,9 +206,116 @@ public class RandomObjectTest {
         object.assertStringLen(3);
     }
 
+    @Test
+    public void withStringAsFieldName_one() throws Exception {
+        RandomObject.One<MockClassPrimitives> one = one(MockClassPrimitives.class).withFieldNamesInStrings();
+
+        Constraint constraint = one.mRandom.constraints.get(0);
+        assertThat(constraint).isInstanceOf(StringFieldNameConstraint.class);
+    }
+
+    @Test
+    public void withStringAsFieldName_many() throws Exception {
+        RandomObject.Many<MockClassPrimitives> many = many(MockClassPrimitives.class).withFieldNamesInStrings();
+
+        Constraint constraint = many.mRandom.constraints.get(0);
+        assertThat(constraint).isInstanceOf(StringFieldNameConstraint.class);
+    }
+
+    @Test
+    public void withField() throws Exception {
+        MockClassPrimitives object = one(MockClassPrimitives.class)
+                .withFieldEqualTo("_byte", 3)
+                .please();
+
+        object.assertByte((byte) 3);
+    }
+
+    @Test
+    public void withField2() throws Exception {
+        MockClassPrimitives object = one(MockClassPrimitives.class)
+                .withFieldEqualTo(".*", 1)
+                .please();
+
+        System.out.println(object);
+    }
+
+    @Test
+    public void withField3() throws Exception {
+        MockClassPrimitives object = one(MockClassPrimitives.class)
+                .withNumberRange(1, 1)
+                .please();
+
+        object.assertNumbers(1);
+    }
+
+    @Test
+    public void withType() throws Exception {
+        MockClassPrimitives object = one(MockClassPrimitives.class)
+                .withClassEqualTo(String.class, "a")
+                .please();
+
+        object.assertString("a");
+    }
+
+    @Test
+    public void withRandomImageLink() throws Exception {
+        ClassWithUri object = one(ClassWithUri.class)
+                .withFieldImageLink(".*[uU]ri.*", 300, 200)
+                .please();
+
+        assertThat(object.imageUri).isEqualTo("http://lorempixel.com/300/200");
+        assertThat(object.text).isNotEqualTo("http://lorempixel.com/300/200");
+        assertThat(object.name).isNotEqualTo("http://lorempixel.com/300/200");
+    }
+
+    @Test
+    public void withSeed_equal() throws Exception {
+        MockClassPrimitives object1 = one(MockClassPrimitives.class)
+                .withSeed(1234)
+                .please();
+
+        MockClassPrimitives object2 = one(MockClassPrimitives.class)
+                .withSeed(1234)
+                .please();
+
+        assertThat(object1).isEqualTo(object2);
+
+    }
+
+
+    @Test
+    public void withSeed_notEqual() throws Exception {
+        MockClassPrimitives object1 = one(MockClassPrimitives.class)
+                .withSeed(1234)
+                .please();
+
+        MockClassPrimitives object2 = one(MockClassPrimitives.class)
+                .withSeed(54656)
+                .please();
+
+        assertThat(object1).isNotEqualTo(object2);
+
+    }
+
+    @Test
+    public void withSeed_default_notEqual() throws Exception {
+        MockClassPrimitives object1 = one(MockClassPrimitives.class).please();
+
+        MockClassPrimitives object2 = one(MockClassPrimitives.class).please();
+
+        assertThat(object1).isNotEqualTo(object2);
+    }
+
+
+    static class ClassWithUri {
+        String text;
+        String name;
+        String imageUri;
+    }
 
     // TODO fields with collections, arrays, etc
-    // TODO set class to always null
-    // TODO set class to always a constant
+    // TODO random color
+    // TODO random bitmap as byte array
 
 }

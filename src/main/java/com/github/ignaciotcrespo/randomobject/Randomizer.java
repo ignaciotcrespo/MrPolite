@@ -7,7 +7,15 @@ import java.util.Random;
  */
 public class Randomizer {
 
-    private Random random = new Random();
+    private Random random;
+
+    Randomizer() {
+        random = new Random();
+    }
+
+    public Randomizer(int seed) {
+        random = new Random(seed);
+    }
 
     public int nextInt(int length) {
         return random.nextInt(length);

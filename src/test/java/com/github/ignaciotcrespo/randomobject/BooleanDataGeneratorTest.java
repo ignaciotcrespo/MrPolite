@@ -16,7 +16,7 @@ public class BooleanDataGeneratorTest {
 
     @Before
     public void setUp() throws Exception {
-        generator = new BooleanDataGenerator();
+        generator = new BooleanDataGenerator(2345);
     }
 
     @Test

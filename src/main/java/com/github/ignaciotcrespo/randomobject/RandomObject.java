@@ -20,24 +20,31 @@ public class RandomObject {
     private int dataFlags;
     int levelsTree = 1;
 
-    DataGenerator[] generators = {
-            new EnumDataGenerator(),
-            new BooleanDataGenerator(),
-            new ByteDataGenerator(),
-            new ShortDataGenerator(),
-            new IntegerDataGenerator(),
-            new LongDataGenerator(),
-            new FloatDataGenerator(),
-            new DoubleDataGenerator(),
-            new StringDataGenerator(),
-            new DateDataGenerator(),
-            new CalendarDataGenerator()
-    };
+    DataGenerator[] generators;
 
     List<Constraint> constraints = new ArrayList<>();
+    private int seed;
 
     private RandomObject() {
         // hide constructor
+        initGenerators();
+    }
+
+    private void initGenerators() {
+        generators = new DataGenerator[]{
+                new EnumDataGenerator(seed),
+                new BooleanDataGenerator(seed),
+                new ByteDataGenerator(seed),
+                new ShortDataGenerator(seed),
+                new CharDataGenerator(seed),
+                new IntegerDataGenerator(seed),
+                new LongDataGenerator(seed),
+                new FloatDataGenerator(seed),
+                new DoubleDataGenerator(seed),
+                new StringDataGenerator(seed),
+                new DateDataGenerator(seed),
+                new CalendarDataGenerator(seed)
+        };
     }
 
     public <T> T fillInnerClass(Object parent, Class<T> clazz, int levelTree) {
@@ -142,13 +149,16 @@ public class RandomObject {
                     // dont change value in fields with abstract type
                     continue;
                 }
+                if (Modifier.isFinal(field.getModifiers())) {
+                    continue;
+                }
                 Object value = null;
                 try {
                     field.setAccessible(true);
                     value = getRandomValueForField(parent, field, instance, levelTree);
                     field.set(instance, value);
                 } catch (Exception e) {
-                    // e.printStackTrace();
+                    e.printStackTrace();
                 }
             }
         }
@@ -177,7 +187,7 @@ public class RandomObject {
         if (value != null) {
             for (Constraint constraint : constraints) {
                 if (constraint.canApply(value)) {
-                    value = constraint.apply(value);
+                    value = constraint.apply(field, value);
                 }
             }
         }
@@ -247,30 +257,59 @@ public class RandomObject {
 
     public static class One<T> extends BaseRandom<T> {
 
-        private int levelsTree = 1;
-
         private One(Class<T> clazz) {
             super(clazz);
         }
 
         public T please() {
-            return mRandom.levelsTree(levelsTree).fill(clazz);
-        }
-
-        public One<T> deep(int levelsTree) {
-            this.levelsTree = levelsTree;
-            return this;
+            return mRandom.seed(seed).levelsTree(this.levelsTree).fill(clazz);
         }
 
         @Override
-        public One<T> withNumbers(Number min, Number max) {
-            return (One<T>) super.withNumbers(min, max);
+        public One<T> withDepth(int levelsTree) {
+            return (One<T>) super.withDepth(levelsTree);
+        }
+
+        @Override
+        public One<T> withNumberRange(Number min, Number max) {
+            return (One<T>) super.withNumberRange(min, max);
         }
 
         @Override
         public One<T> withStringsMaxLength(int len) {
             return (One<T>) super.withStringsMaxLength(len);
         }
+
+        @Override
+        public One<T> withFieldNamesInStrings() {
+            return (One<T>) super.withFieldNamesInStrings();
+        }
+
+        @Override
+        public One<T> withFieldEqualTo(String fieldNameRegex, Object value) {
+            return (One<T>) super.withFieldEqualTo(fieldNameRegex, value);
+        }
+
+        @Override
+        public <K> One<T> withClassEqualTo(Class<K> clazz, K value) {
+            return (One<T>) super.withClassEqualTo(clazz, value);
+        }
+
+        @Override
+        public One<T> withFieldImageLink(String fieldNameRegex, int width, int height) {
+            return (One<T>) super.withFieldImageLink(fieldNameRegex, width, height);
+        }
+
+        @Override
+        public One<T> withSeed(int seed) {
+            return (One<T>) super.withSeed(seed);
+        }
+    }
+
+    private RandomObject seed(int seed) {
+        this.seed = seed;
+        initGenerators();
+        return this;
     }
 
     private void addConstraint(Constraint constraint) {
@@ -289,13 +328,18 @@ public class RandomObject {
             return please();
         }
 
+        @Override
+        public Many<T> withDepth(int levelsTree) {
+            return (Many<T>) super.withDepth(levelsTree);
+        }
+
         private List<T> please() {
-            return random().fill(size, clazz);
+            return random().seed(seed).levelsTree(this.levelsTree).fill(size, clazz);
         }
 
         @Override
-        public Many<T> withNumbers(Number min, Number max) {
-            return (Many<T>) super.withNumbers(min, max);
+        public Many<T> withNumberRange(Number min, Number max) {
+            return (Many<T>) super.withNumberRange(min, max);
         }
 
         @Override
@@ -303,19 +347,49 @@ public class RandomObject {
             return (Many<T>) super.withStringsMaxLength(len);
         }
 
+        @Override
+        public Many<T> withFieldNamesInStrings() {
+            return (Many<T>) super.withFieldNamesInStrings();
+        }
 
+        @Override
+        public Many<T> withFieldEqualTo(String fieldNameRegex, Object value) {
+            return (Many<T>) super.withFieldEqualTo(fieldNameRegex, value);
+        }
+
+        @Override
+        public <K> Many<T> withClassEqualTo(Class<K> clazz, K value) {
+            return (Many<T>) super.withClassEqualTo(clazz, value);
+        }
+
+        @Override
+        public Many<T> withFieldImageLink(String fieldNameRegex, int width, int height) {
+            return (Many<T>) super.withFieldImageLink(fieldNameRegex, width, height);
+        }
+
+        @Override
+        public Many<T> withSeed(int seed) {
+            return (Many<T>) super.withSeed(seed);
+        }
     }
 
     private static class BaseRandom<T> {
         final Class<T> clazz;
         RandomObject mRandom;
+        int levelsTree = 1;
+        int seed;
 
         private BaseRandom(Class<T> clazz) {
             this.clazz = clazz;
             mRandom = random();
         }
 
-        public BaseRandom<T> withNumbers(Number min, Number max) {
+        public BaseRandom<T> withDepth(int levelsTree) {
+            this.levelsTree = levelsTree;
+            return this;
+        }
+
+        public BaseRandom<T> withNumberRange(Number min, Number max) {
             mRandom.addConstraint(NumbersConstraint.from(min, max));
             return this;
         }
@@ -325,5 +399,29 @@ public class RandomObject {
             return this;
         }
 
+        public BaseRandom<T> withFieldNamesInStrings() {
+            mRandom.addConstraint(new StringFieldNameConstraint());
+            return this;
+        }
+
+        public BaseRandom<T> withFieldEqualTo(String fieldNameRegex, Object value) {
+            mRandom.addConstraint(new FieldNameRegexConstraint(fieldNameRegex, value));
+            return this;
+        }
+
+        public <K> BaseRandom<T> withClassEqualTo(Class<K> clazz, K value) {
+            mRandom.addConstraint(new TypeValueConstraint(clazz, value));
+            return this;
+        }
+
+        public BaseRandom<T> withFieldImageLink(String fieldNameRegex, int width, int height) {
+            mRandom.addConstraint(new FieldNameRegexConstraint(fieldNameRegex, "http://lorempixel.com/" + width + "/" + height));
+            return this;
+        }
+
+        public BaseRandom<T> withSeed(int seed) {
+            this.seed = seed;
+            return this;
+        }
     }
 }

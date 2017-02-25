@@ -5,9 +5,11 @@ import java.lang.reflect.Field;
 /**
  * Created by crespo on 2/20/17.
  */
-public class FloatDataGenerator extends DataGenerator {
+class FloatDataGenerator extends RandomGenerator {
 
-    Randomizer mRandomizer = new Randomizer();
+    FloatDataGenerator(int seed) {
+        super(seed);
+    }
 
     @Override
     protected boolean is(Class<?> type) {

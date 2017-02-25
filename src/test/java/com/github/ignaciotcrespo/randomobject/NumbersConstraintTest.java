@@ -1,6 +1,9 @@
 package com.github.ignaciotcrespo.randomobject;
 
+import org.junit.Before;
 import org.junit.Test;
+
+import java.lang.reflect.Field;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -9,16 +12,23 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 public class NumbersConstraintTest {
 
+    private Field field;
+
+    @Before
+    public void setUp() throws Exception {
+        field = String.class.getDeclaredFields()[0];
+    }
+
     @Test
     public void withNumbers_zero() throws Exception {
-        Object value = NumbersConstraint.from(0, 0).apply(32);
+        Object value = NumbersConstraint.from(0, 0).apply(field, 32);
 
         assertThat(value).isEqualTo(0);
     }
 
     @Test
     public void withNumbers_negative() throws Exception {
-        Object value = NumbersConstraint.from(Long.MIN_VALUE, Long.MIN_VALUE).apply(240L);
+        Object value = NumbersConstraint.from(Long.MIN_VALUE, Long.MIN_VALUE).apply(field, 240L);
 
         assertThat(value).isEqualTo(Long.MIN_VALUE);
     }
@@ -26,7 +36,7 @@ public class NumbersConstraintTest {
 
     @Test
     public void withNumbers_positive() throws Exception {
-        Object value = NumbersConstraint.from(Long.MAX_VALUE, Long.MAX_VALUE).apply(-240L);
+        Object value = NumbersConstraint.from(Long.MAX_VALUE, Long.MAX_VALUE).apply(field, -240L);
 
         assertThat(value).isEqualTo(Long.MAX_VALUE);
     }
@@ -35,8 +45,20 @@ public class NumbersConstraintTest {
     public void withNumbers_range() throws Exception {
         NumbersConstraint constraint = NumbersConstraint.from(40, 41);
 
-        assertThat(constraint.apply(-500)).isIn(40, 41);
-        assertThat(constraint.apply(560)).isIn(40, 41);
+        assertThat(constraint.apply(field, -500)).isIn(40, 41);
+        assertThat(constraint.apply(field, 560)).isIn(40, 41);
+    }
+
+    @Test
+    public void withNumbers_range2() throws Exception {
+        NumbersConstraint constraint = NumbersConstraint.from(1, 1);
+
+        assertThat(constraint.apply(ForTest.class.getDeclaredField("number"), -500)).isIn(1, 1);
+        assertThat(constraint.apply(ForTest.class.getDeclaredField("number"), 560)).isIn(1, 1);
+    }
+
+    static class ForTest {
+        byte number;
     }
 
 }

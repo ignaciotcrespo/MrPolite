@@ -6,9 +6,11 @@ import java.util.Calendar;
 /**
  * Created by crespo on 2/20/17.
  */
-public class CalendarDataGenerator extends DataGenerator {
+class CalendarDataGenerator extends RandomGenerator {
 
-    Randomizer mRandomizer = new Randomizer();
+    CalendarDataGenerator(int seed) {
+        super(seed);
+    }
 
     @Override
     protected boolean is(Class<?> type) {
