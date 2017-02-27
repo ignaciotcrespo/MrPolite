@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * Created by crespo on 2/25/17.
  */
-public class Want {
+public class MrPolite {
     public static <T> One<T> one(Class<T> clazz) {
         return new One<>(clazz);
     }
@@ -15,7 +15,7 @@ public class Want {
         return new Many<>(clazz);
     }
 
-    public static class One<T> extends BaseRandom<T> {
+    public static class One<T> extends PoliteRequest<T> {
 
         private One(Class<T> clazz) {
             super(clazz);
@@ -81,25 +81,25 @@ public class Want {
         }
     }
 
-    public static class Many<T> extends BaseRandom<T> {
+    public static class Many<T> extends PoliteRequest<T> {
         private int size;
 
         private Many(Class<T> clazz) {
             super(clazz);
         }
 
-        public List<T> listOf(int size) {
+        public Many<T> listOf(int size) {
             this.size = size;
-            return please();
+            return this;
+        }
+
+        public List<T> please() {
+            return randomObject().fill(size, clazz);
         }
 
         @Override
         public Many<T> withDepth(int levelsTree) {
             return (Many<T>) super.withDepth(levelsTree);
-        }
-
-        private List<T> please() {
-            return randomObject().fill(size, clazz);
         }
 
         @Override
@@ -153,7 +153,7 @@ public class Want {
         }
     }
 
-    private static class BaseRandom<T> {
+    private static class PoliteRequest<T> {
         final Class<T> clazz;
         final RandomObject mRandom;
         int levelsTree = 1;
@@ -162,7 +162,7 @@ public class Want {
         private final List<String> excludeRegex = new ArrayList<>();
         private final List<Class<?>> excludeClasses = new ArrayList<>();
 
-        private BaseRandom(Class<T> clazz) {
+        private PoliteRequest(Class<T> clazz) {
             this.clazz = clazz;
             mRandom = RandomObject.random();
         }
@@ -176,57 +176,57 @@ public class Want {
                     .collectionSizeRange(collectionSizeRange);
         }
 
-        public BaseRandom<T> withDepth(int levelsTree) {
+        public PoliteRequest<T> withDepth(int levelsTree) {
             this.levelsTree = levelsTree;
             return this;
         }
 
-        public BaseRandom<T> withNumberRange(Number min, Number max) {
+        public PoliteRequest<T> withNumberRange(Number min, Number max) {
             mRandom.addConstraint(NumbersConstraint.from(min, max));
             return this;
         }
 
-        public BaseRandom<T> withStringsMaxLength(int len) {
+        public PoliteRequest<T> withStringsMaxLength(int len) {
             mRandom.addConstraint(new StringLengthConstraint(len));
             return this;
         }
 
-        public BaseRandom<T> withFieldNamesInStrings() {
+        public PoliteRequest<T> withFieldNamesInStrings() {
             mRandom.addConstraint(new StringFieldNameConstraint());
             return this;
         }
 
-        public BaseRandom<T> withFieldEqualTo(String fieldNameRegex, Object value) {
+        public PoliteRequest<T> withFieldEqualTo(String fieldNameRegex, Object value) {
             mRandom.addConstraint(new FieldNameRegexConstraint(fieldNameRegex, value));
             return this;
         }
 
-        public <K> BaseRandom<T> withClassEqualTo(Class<K> clazz, K value) {
+        public <K> PoliteRequest<T> withClassEqualTo(Class<K> clazz, K value) {
             mRandom.addConstraint(new TypeValueConstraint<>(clazz, value));
             return this;
         }
 
-        public BaseRandom<T> withFieldImageLink(String fieldNameRegex, int width, int height) {
+        public PoliteRequest<T> withFieldImageLink(String fieldNameRegex, int width, int height) {
             mRandom.addConstraint(new FieldNameRegexConstraint(fieldNameRegex, "http://lorempixel.com/" + width + "/" + height));
             return this;
         }
 
-        public BaseRandom<T> withSeed(int seed) {
+        public PoliteRequest<T> withSeed(int seed) {
             this.seed = seed;
             return this;
         }
 
-        public BaseRandom<T> withCollectionSizeRange(int min, int max) {
+        public PoliteRequest<T> withCollectionSizeRange(int min, int max) {
             collectionSizeRange = new RandomObject.Range(min, max);
             return this;
         }
 
-        public BaseRandom<T> exclude(String fieldNameRegex) {
+        public PoliteRequest<T> exclude(String fieldNameRegex) {
             excludeRegex.add(fieldNameRegex);
             return this;
         }
 
-        public BaseRandom<T> exclude(Class<?> clazz) {
+        public PoliteRequest<T> exclude(Class<?> clazz) {
             excludeClasses.add(clazz);
             return this;
         }

@@ -6,8 +6,8 @@ import org.junit.Test;
 
 import java.util.List;
 
-import static com.github.ignaciotcrespo.randomobject.Want.many;
-import static com.github.ignaciotcrespo.randomobject.Want.one;
+import static com.github.ignaciotcrespo.randomobject.MrPolite.many;
+import static com.github.ignaciotcrespo.randomobject.MrPolite.one;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.MockitoAnnotations.initMocks;
 
@@ -173,7 +173,7 @@ public class RandomObjectTest {
     @Test
     public void fill_list() throws Exception {
 
-        List<MockClassPublicSamePackage> list = many(MockClassPublicSamePackage.class).listOf(2);
+        List<MockClassPublicSamePackage> list = many(MockClassPublicSamePackage.class).listOf(2).please();
 
         assertThat(list).hasSize(2);
         list.get(0).assertValidData(1);
@@ -183,14 +183,14 @@ public class RandomObjectTest {
     @Test
     public void fill_listEmpty() throws Exception {
 
-        List<MockClassPublicSamePackage> list = many(MockClassPublicSamePackage.class).listOf(0);
+        List<MockClassPublicSamePackage> list = many(MockClassPublicSamePackage.class).listOf(0).please();
 
         assertThat(list).isEmpty();
     }
 
     @Test
     public void withNumbers() throws Exception {
-        Want.One<MockClassPrimitives> one = one(MockClassPrimitives.class).withNumberRange(-23, 42);
+        MrPolite.One<MockClassPrimitives> one = one(MockClassPrimitives.class).withNumberRange(-23, 42);
 
         NumbersConstraint constraint = (NumbersConstraint) one.mRandom.constraints.get(0);
         assertThat(constraint.getMin()).isEqualTo(-23);
@@ -210,7 +210,8 @@ public class RandomObjectTest {
     public void withStringMaxLength_many() throws Exception {
         List<MockClassPrimitives> list = many(MockClassPrimitives.class)
                 .withStringsMaxLength(3)
-                .listOf(10);
+                .listOf(10)
+                .please();
 
         for (MockClassPrimitives object : list) {
             object.assertStringLen(3);
@@ -226,7 +227,7 @@ public class RandomObjectTest {
 
     @Test
     public void withStringAsFieldName_many() throws Exception {
-        List<MockClassPrimitives> many = many(MockClassPrimitives.class).withFieldNamesInStrings().listOf(5);
+        List<MockClassPrimitives> many = many(MockClassPrimitives.class).withFieldNamesInStrings().listOf(5).please();
 
         for (MockClassPrimitives object : many) {
             object.assertString("_string", "_string2");
@@ -377,6 +378,9 @@ public class RandomObjectTest {
         int[] _arrayInt;
     }
 
+    // TODO detect android annotations StringDef, etc.
+    // TODO MrPolite.listOf(5, Person.class).please();
+    // TODO MrPolite.arrayOf(5, Person.class).please();
     // TODO fields with collections
     // TODO random color
     // TODO random bitmap as byte array
