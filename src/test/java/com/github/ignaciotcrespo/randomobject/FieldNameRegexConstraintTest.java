@@ -8,11 +8,13 @@ import org.junit.Test;
  */
 public class FieldNameRegexConstraintTest {
 
+    private int seed = 78234;
+
     @Test
     public void apply_wrongValue_shouldNotChange() throws Exception {
         FieldNameRegexConstraint constraint = new FieldNameRegexConstraint("text", 1);
 
-        Object value = constraint.apply(ClassForTest.class.getDeclaredField("text"), "anything");
+        Object value = constraint.apply(ClassForTest.class.getDeclaredField("text"), "anything", seed);
 
         Assertions.assertThat(value).isEqualTo("anything");
     }
@@ -21,7 +23,7 @@ public class FieldNameRegexConstraintTest {
     public void apply_okValue_shouldChange() throws Exception {
         FieldNameRegexConstraint constraint = new FieldNameRegexConstraint("text", "1");
 
-        Object value = constraint.apply(ClassForTest.class.getDeclaredField("text"), "anything");
+        Object value = constraint.apply(ClassForTest.class.getDeclaredField("text"), "anything", seed);
 
         Assertions.assertThat(value).isEqualTo("1");
     }
@@ -30,8 +32,8 @@ public class FieldNameRegexConstraintTest {
     public void apply_regexOk_shouldChange() throws Exception {
         FieldNameRegexConstraint constraint = new FieldNameRegexConstraint("t\\w+", "1");
 
-        Object value = constraint.apply(ClassForTest.class.getDeclaredField("text"), "anything");
-        Object value2 = constraint.apply(ClassForTest.class.getDeclaredField("text2"), "anything");
+        Object value = constraint.apply(ClassForTest.class.getDeclaredField("text"), "anything", seed);
+        Object value2 = constraint.apply(ClassForTest.class.getDeclaredField("text2"), "anything", seed);
 
         Assertions.assertThat(value).isEqualTo("1");
         Assertions.assertThat(value2).isEqualTo("1");

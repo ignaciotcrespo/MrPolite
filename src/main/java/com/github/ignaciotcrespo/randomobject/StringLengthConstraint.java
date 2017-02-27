@@ -14,7 +14,7 @@ class StringLengthConstraint extends Constraint {
     }
 
     @Override
-    public String apply(Field field, Object value) {
+    public String apply(Field field, Object value, int seed) {
         String newValue = (String) value;
         if (newValue.length() > len) {
             newValue = newValue.substring(0, len);

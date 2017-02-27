@@ -272,13 +272,14 @@ public class RandomObjectTest {
 
     @Test
     public void withRandomImageLink() throws Exception {
-        ClassWithUri object = one(ClassWithUri.class)
-                .withFieldImageLink(".*[uU]ri.*", 300, 200)
-                .please();
+        MrPolite.One<ClassWithUri> one = one(ClassWithUri.class)
+                .withFieldImageLink(".*[uU]ri.*", 300, 200);
+        one.seed = 1234;
+        ClassWithUri object = one.please();
 
-        assertThat(object.imageUri).isEqualTo("http://lorempixel.com/300/200");
-        assertThat(object.text).isNotEqualTo("http://lorempixel.com/300/200");
-        assertThat(object.name).isNotEqualTo("http://lorempixel.com/300/200");
+        assertThat(object.imageUri).isEqualTo("http://lorempixel.com/300/200/?rand=-1517918040");
+        assertThat(object.text).isNotEqualTo("http://lorempixel.com/300/200/?rand=-1517918040");
+        assertThat(object.name).isNotEqualTo("http://lorempixel.com/300/200/?rand=-1517918040");
     }
 
     @Test
@@ -378,6 +379,7 @@ public class RandomObjectTest {
         int[] _arrayInt;
     }
 
+    // TODO change(object).field("regex").please()
     // TODO detect android annotations StringDef, etc.
     // TODO MrPolite.listOf(5, Person.class).please();
     // TODO MrPolite.arrayOf(5, Person.class).please();

@@ -16,7 +16,7 @@ class TypeValueConstraint<K> extends Constraint {
     }
 
     @Override
-    public Object apply(Field field, Object oldValue) {
+    public Object apply(Field field, Object oldValue, int seed) {
         return value;
     }
 

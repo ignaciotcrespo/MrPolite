@@ -7,7 +7,7 @@ import java.lang.reflect.Field;
  */
 class StringFieldNameConstraint extends Constraint {
     @Override
-    public String apply(Field field, Object value) {
+    public String apply(Field field, Object value, int seed) {
         return field.getName();
     }
 

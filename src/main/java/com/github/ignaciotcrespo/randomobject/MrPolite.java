@@ -8,11 +8,11 @@ import java.util.List;
  */
 public class MrPolite {
     public static <T> One<T> one(Class<T> clazz) {
-        return new One<>(clazz);
+        return new One<T>(clazz);
     }
 
     public static <T> Many<T> many(Class<T> clazz) {
-        return new Many<>(clazz);
+        return new Many<T>(clazz);
     }
 
     public static class One<T> extends PoliteRequest<T> {
@@ -155,12 +155,14 @@ public class MrPolite {
 
     private static class PoliteRequest<T> {
         final Class<T> clazz;
-        final RandomObject mRandom;
+        @VisibleForTesting
+        RandomObject mRandom;
         int levelsTree = 1;
+        @VisibleForTesting
         int seed;
         RandomObject.Range collectionSizeRange = RandomObject.DEFAULT_COLLECTION_RANGE;
-        private final List<String> excludeRegex = new ArrayList<>();
-        private final List<Class<?>> excludeClasses = new ArrayList<>();
+        private final List<String> excludeRegex = new ArrayList<String>();
+        private final List<Class<?>> excludeClasses = new ArrayList<Class<?>>();
 
         private PoliteRequest(Class<T> clazz) {
             this.clazz = clazz;
@@ -202,12 +204,12 @@ public class MrPolite {
         }
 
         public <K> PoliteRequest<T> withClassEqualTo(Class<K> clazz, K value) {
-            mRandom.addConstraint(new TypeValueConstraint<>(clazz, value));
+            mRandom.addConstraint(new TypeValueConstraint<K>(clazz, value));
             return this;
         }
 
         public PoliteRequest<T> withFieldImageLink(String fieldNameRegex, int width, int height) {
-            mRandom.addConstraint(new FieldNameRegexConstraint(fieldNameRegex, "http://lorempixel.com/" + width + "/" + height));
+            mRandom.addConstraint(new RandoImageConstraint(fieldNameRegex, width, height));
             return this;
         }
 

@@ -20,11 +20,11 @@ class RandomObject {
 
     private DataGenerator[] generators;
 
-    final List<Constraint> constraints = new ArrayList<>();
+    final List<Constraint> constraints = new ArrayList<Constraint>();
     private int seed;
     private Range collectionSizeRange = DEFAULT_COLLECTION_RANGE;
-    private List<String> excludeFields = new ArrayList<>();
-    private List<Class<?>> excludeClasses = new ArrayList<>();
+    private List<String> excludeFields = new ArrayList<String>();
+    private List<Class<?>> excludeClasses = new ArrayList<Class<?>>();
 
     private RandomObject() {
         // hide constructor
@@ -223,7 +223,7 @@ class RandomObject {
         if (value != null) {
             for (Constraint constraint : constraints) {
                 if (constraint.canApply(value)) {
-                    value = constraint.apply(field, value);
+                    value = constraint.apply(field, value, seed);
                 }
             }
         }
@@ -255,7 +255,7 @@ class RandomObject {
     }
 
     public <T> List<T> fill(int size, Class<T> clazz) {
-        List<T> list = new ArrayList<>();
+        List<T> list = new ArrayList<T>();
         for (int i = 0; i < size; i++) {
             list.add(fill(clazz));
         }

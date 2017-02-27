@@ -7,7 +7,7 @@ import java.lang.reflect.Field;
  */
 abstract class Constraint {
 
-    public abstract Object apply(Field field, Object value);
+    public abstract Object apply(Field field, Object value, int seed);
 
     public abstract boolean canApply(Object value);
 }

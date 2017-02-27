@@ -12,6 +12,7 @@ import java.lang.reflect.Field;
 public class StringFieldNameConstraintTest {
 
     private Field[] mFields;
+    private int seed = 1234;
 
     @Before
     public void setUp() throws Exception {
@@ -22,7 +23,7 @@ public class StringFieldNameConstraintTest {
     public void withStringAsFieldName1() throws Exception {
         StringFieldNameConstraint constraint = new StringFieldNameConstraint();
 
-        String value = constraint.apply(mFields[0], "whatever");
+        String value = constraint.apply(mFields[0], "whatever", seed);
 
         Assertions.assertThat(value).isEqualTo("text1");
     }
@@ -31,7 +32,7 @@ public class StringFieldNameConstraintTest {
     public void withStringAsFieldName2() throws Exception {
         StringFieldNameConstraint constraint = new StringFieldNameConstraint();
 
-        String value = constraint.apply(mFields[1], "whatever");
+        String value = constraint.apply(mFields[1], "whatever", seed);
 
         Assertions.assertThat(value).isEqualTo("text2");
     }

@@ -20,7 +20,7 @@ class NumbersConstraint extends Constraint {
     }
 
     @Override
-    public Object apply(Field field, Object value) {
+    public Object apply(Field field, Object value, int seed) {
         double newValue = ((Number) value).doubleValue();
         if (newValue < min.doubleValue() || newValue > max.doubleValue()) {
             double div = max.doubleValue() - min.doubleValue();
