@@ -7,7 +7,7 @@ import java.lang.reflect.Field;
  */
 public abstract class DataGenerator {
 
-    public abstract boolean is(Class<?> type);
+    public abstract boolean canProcess(Class<?> type);
 
     public Object getValue(Field field) {
         return null;

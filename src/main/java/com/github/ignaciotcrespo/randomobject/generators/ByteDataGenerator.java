@@ -12,7 +12,7 @@ class ByteDataGenerator extends RandomGenerator {
     }
 
     @Override
-    public boolean is(Class<?> type) {
+    public boolean canProcess(Class<?> type) {
         return type.equals(Byte.TYPE) || type.equals(Byte.class);
     }
 

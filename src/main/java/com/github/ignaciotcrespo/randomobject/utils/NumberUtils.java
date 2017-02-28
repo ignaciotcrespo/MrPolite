@@ -4,6 +4,7 @@ package com.github.ignaciotcrespo.randomobject.utils;
  * Created by crespo on 2/22/17.
  */
 public class NumberUtils {
+
     public static boolean isNumeric(Object str) {
         return str instanceof Number; // ("" + str).matches("-?\\d+(\\.\\d+)?");  //match a number with optional '-' and decimal.
     }

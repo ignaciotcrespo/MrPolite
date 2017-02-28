@@ -22,11 +22,11 @@ public class BooleanDataGeneratorTest {
 
     @Test
     public void is() throws Exception {
-        assertThat(generator.is(Boolean.class)).isTrue();
-        assertThat(generator.is(boolean.class)).isTrue();
+        assertThat(generator.canProcess(Boolean.class)).isTrue();
+        assertThat(generator.canProcess(boolean.class)).isTrue();
 
-        assertThat(generator.is(String.class)).isFalse();
-        assertThat(generator.is(Object.class)).isFalse();
+        assertThat(generator.canProcess(String.class)).isFalse();
+        assertThat(generator.canProcess(Object.class)).isFalse();
     }
 
     @Test

@@ -24,7 +24,7 @@ class RandomObject {
 
     private DataGenerator[] generators;
 
-    final List<Constraint> constraints = new ArrayList<Constraint>();
+    private final List<Constraint> constraints = new ArrayList<Constraint>();
     private int seed;
     private Range collectionSizeRange = DEFAULT_COLLECTION_RANGE;
     private List<String> excludeFields = new ArrayList<String>();
@@ -36,7 +36,7 @@ class RandomObject {
     }
 
     private void initGenerators() {
-        generators = Generators.create(seed);
+        generators = Generators.createDefault(seed);
     }
 
     private <T> T fillInnerClass(Object parent, Class<T> clazz, int levelTree) {
@@ -173,7 +173,7 @@ class RandomObject {
         return false;
     }
 
-    public <T> T fill(Class<T> clazz) {
+    <T> T fill(Class<T> clazz) {
         return fill(clazz, 0);
     }
 
@@ -233,19 +233,19 @@ class RandomObject {
 
     private DataGenerator getGenerator(Class<?> type) {
         for (DataGenerator generator : generators) {
-            if (generator.is(type)) {
+            if (generator.canProcess(type)) {
                 return generator;
             }
         }
         return new DataGenerator() {
             @Override
-            public boolean is(Class<?> type) {
+            public boolean canProcess(Class<?> type) {
                 return true;
             }
         };
     }
 
-    public <T> List<T> fill(int size, Class<T> clazz) {
+    <T> List<T> fill(int size, Class<T> clazz) {
         List<T> list = new ArrayList<T>();
         for (int i = 0; i < size; i++) {
             list.add(fill(clazz));
@@ -253,7 +253,7 @@ class RandomObject {
         return list;
     }
 
-    public <T> T[] fillArray(int size, Class<T> clazz) {
+    <T> T[] fillArray(int size, Class<T> clazz) {
         T[] list = (T[]) Array.newInstance(clazz, size);
         for (int i = 0; i < size; i++) {
             list[i] = fill(clazz);
@@ -270,7 +270,7 @@ class RandomObject {
         return this;
     }
 
-    public RandomObject levelsTree(int i) {
+    RandomObject levelsTree(int i) {
         levelsTree = i;
         return this;
     }

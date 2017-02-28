@@ -12,7 +12,7 @@ class DoubleDataGenerator extends RandomGenerator {
     }
 
     @Override
-    public boolean is(Class<?> type) {
+    public boolean canProcess(Class<?> type) {
         return type.equals(Double.TYPE) || type.equals(Double.class);
     }
 

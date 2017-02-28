@@ -4,7 +4,8 @@ package com.github.ignaciotcrespo.randomobject.generators;
  * Created by crespo on 2/28/17.
  */
 public class Generators {
-    public static DataGenerator[] create(int seed) {
+
+    public static DataGenerator[] createDefault(int seed) {
         return new DataGenerator[]{
                 new EnumDataGenerator(seed),
                 new BooleanDataGenerator(seed),
@@ -20,4 +21,5 @@ public class Generators {
                 new CalendarDataGenerator(seed)
         };
     }
+
 }
