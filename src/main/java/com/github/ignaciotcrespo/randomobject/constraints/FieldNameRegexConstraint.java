@@ -1,6 +1,7 @@
 package com.github.ignaciotcrespo.randomobject.constraints;
 
 import com.github.ignaciotcrespo.randomobject.utils.NumberUtils;
+import com.github.ignaciotcrespo.randomobject.utils.Randomizer;
 
 import java.lang.reflect.Field;
 
@@ -20,7 +21,7 @@ class FieldNameRegexConstraint extends Constraint {
     }
 
     @Override
-    public Object apply(Field field, Object oldValue, int seed) {
+    public Object apply(Field field, Object oldValue, Randomizer randomizer) {
         if (this.value == null) {
             if (field.getType().isPrimitive()) {
                 return 0;

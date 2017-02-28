@@ -24,11 +24,11 @@ class RandomObject {
 
     private DataGenerator[] generators;
 
-    private final List<Constraint> constraints = new ArrayList<Constraint>();
-    private int seed;
+    private final List<Constraint> constraints = new ArrayList<>();
     private Range collectionSizeRange = DEFAULT_COLLECTION_RANGE;
-    private List<String> excludeFields = new ArrayList<String>();
-    private List<Class<?>> excludeClasses = new ArrayList<Class<?>>();
+    private List<String> excludeFields = new ArrayList<>();
+    private List<Class<?>> excludeClasses = new ArrayList<>();
+    private Randomizer randomizer = new Randomizer();
 
     private RandomObject() {
         // hide constructor
@@ -36,7 +36,7 @@ class RandomObject {
     }
 
     private void initGenerators() {
-        generators = Generators.createDefault(seed);
+        generators = Generators.createDefault(randomizer);
     }
 
     private <T> T fillInnerClass(Object parent, Class<T> clazz, int levelTree) {
@@ -205,7 +205,7 @@ class RandomObject {
     }
 
     private int getRandomCollectionSize() {
-        return new Randomizer(seed).nextInt(collectionSizeRange.max - collectionSizeRange.min) + collectionSizeRange.min;
+        return randomizer.nextInt(collectionSizeRange.max - collectionSizeRange.min) + collectionSizeRange.min;
     }
 
     private Object getRandomValueForFieldType(Object parentInnerClass, Field field, Object instance, int levelTree, Class<?> type) {
@@ -214,7 +214,7 @@ class RandomObject {
         if (value != null) {
             for (Constraint constraint : constraints) {
                 if (constraint.canApply(value)) {
-                    value = constraint.apply(field, value, seed);
+                    value = constraint.apply(field, value, randomizer);
                 }
             }
         }
@@ -246,7 +246,7 @@ class RandomObject {
     }
 
     <T> List<T> fill(int size, Class<T> clazz) {
-        List<T> list = new ArrayList<T>();
+        List<T> list = new ArrayList<>();
         for (int i = 0; i < size; i++) {
             list.add(fill(clazz));
         }
@@ -282,8 +282,10 @@ class RandomObject {
     }
 
     RandomObject seed(int seed) {
-        this.seed = seed;
-        initGenerators();
+        if (seed > 0) {
+            this.randomizer = new Randomizer(seed);
+            initGenerators();
+        }
         return this;
     }
 

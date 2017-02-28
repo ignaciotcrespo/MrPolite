@@ -1,5 +1,7 @@
 package com.github.ignaciotcrespo.randomobject.constraints;
 
+import com.github.ignaciotcrespo.randomobject.utils.Randomizer;
+
 import java.lang.reflect.Field;
 
 /**
@@ -14,7 +16,7 @@ class StringLengthConstraint extends Constraint {
     }
 
     @Override
-    public String apply(Field field, Object value, int seed) {
+    public String apply(Field field, Object value, Randomizer randomizer) {
         String newValue = (String) value;
         if (newValue.length() > len) {
             newValue = newValue.substring(0, len);

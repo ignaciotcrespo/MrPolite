@@ -304,9 +304,25 @@ public class RandomObjectTest {
         one.seed = 1234;
         ClassWithUri object = one.please();
 
-        assertThat(object.imageUri).isEqualTo("http://lorempixel.com/300/200/?rand=-1517918040");
-        assertThat(object.text).isNotEqualTo("http://lorempixel.com/300/200/?rand=-1517918040");
-        assertThat(object.name).isNotEqualTo("http://lorempixel.com/300/200/?rand=-1517918040");
+        assertThat(object.imageUri).isEqualTo("http://lorempixel.com/300/200/?rand=1489956094");
+        assertThat(object.text).isNotEqualTo("http://lorempixel.com/300/200/?rand=1489956094");
+        assertThat(object.name).isNotEqualTo("http://lorempixel.com/300/200/?rand=1489956094");
+    }
+
+    @Test
+    public void withRandomImageLink_different() throws Exception {
+        ClassWithUri object = one(ClassWithUri.class).withFieldImageLink(".*[uU]ri.*", 300, 200).please();
+        ClassWithUri object2 = one(ClassWithUri.class).withFieldImageLink(".*[uU]ri.*", 300, 200).please();
+
+        assertThat(object.imageUri).isNotEqualTo(object2.imageUri);
+    }
+
+    @Test
+    public void withRandomImageLink_list_different() throws Exception {
+        List<ClassWithUri> list = aListOf(3, ClassWithUri.class).withFieldImageLink(".*[uU]ri.*", 300, 200).please();
+
+        assertThat(list.get(0).imageUri).isNotEqualTo(list.get(1).imageUri);
+        assertThat(list.get(1).imageUri).isNotEqualTo(list.get(2).imageUri);
     }
 
     @Test
@@ -399,6 +415,26 @@ public class RandomObjectTest {
         String text;
         String name;
         String imageUri;
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            ClassWithUri that = (ClassWithUri) o;
+
+            if (text != null ? !text.equals(that.text) : that.text != null) return false;
+            if (name != null ? !name.equals(that.name) : that.name != null) return false;
+            return imageUri != null ? imageUri.equals(that.imageUri) : that.imageUri == null;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = text != null ? text.hashCode() : 0;
+            result = 31 * result + (name != null ? name.hashCode() : 0);
+            result = 31 * result + (imageUri != null ? imageUri.hashCode() : 0);
+            return result;
+        }
     }
 
     static class ClassWithCollections {

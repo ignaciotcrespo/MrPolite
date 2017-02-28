@@ -20,9 +20,9 @@ class RandoImageConstraint extends Constraint {
     }
 
     @Override
-    public Object apply(Field field, Object oldValue, int seed) {
+    public Object apply(Field field, Object oldValue, Randomizer randomizer) {
         if (field.getName().matches(fieldNameRegex) && field.getType().isAssignableFrom(String.class)) {
-            return "http://lorempixel.com/" + width + "/" + height + "/?rand=" + new Randomizer(seed).nextInt();
+            return "http://lorempixel.com/" + width + "/" + height + "/?rand=" + randomizer.nextInt();
         }
         return oldValue;
     }

@@ -1,5 +1,7 @@
 package com.github.ignaciotcrespo.randomobject.constraints;
 
+import com.github.ignaciotcrespo.randomobject.utils.Randomizer;
+
 import java.lang.reflect.Field;
 
 /**
@@ -16,7 +18,7 @@ class TypeValueConstraint<K> extends Constraint {
     }
 
     @Override
-    public Object apply(Field field, Object oldValue, int seed) {
+    public Object apply(Field field, Object oldValue, Randomizer randomizer) {
         return value;
     }
 

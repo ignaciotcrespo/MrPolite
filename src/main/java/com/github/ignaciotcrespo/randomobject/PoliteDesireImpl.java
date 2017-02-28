@@ -12,13 +12,13 @@ import java.util.List;
 abstract class PoliteDesireImpl<C, V> implements PoliteDesire<C, V> {
     final Class<C> clazz;
     @VisibleForTesting
-    final RandomObject mRandom;
+    private final RandomObject mRandom;
     private int levelsTree = 1;
     @VisibleForTesting
     int seed;
     private RandomObject.Range collectionSizeRange = RandomObject.DEFAULT_COLLECTION_RANGE;
-    private final List<String> excludeRegex = new ArrayList<String>();
-    private final List<Class<?>> excludeClasses = new ArrayList<Class<?>>();
+    private final List<String> excludeRegex = new ArrayList<>();
+    private final List<Class<?>> excludeClasses = new ArrayList<>();
 
     PoliteDesireImpl(Class<C> clazz) {
         this.clazz = clazz;

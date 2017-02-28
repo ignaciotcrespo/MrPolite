@@ -11,7 +11,7 @@ import java.util.Map;
  */
 public class ClassUtils {
 
-    private static final Map<String, Class<?>> namePrimitiveMap = new HashMap<String, Class<?>>();
+    private static final Map<String, Class<?>> namePrimitiveMap = new HashMap<>();
 
     static {
         namePrimitiveMap.put("boolean", Boolean.TYPE);
@@ -25,7 +25,7 @@ public class ClassUtils {
         namePrimitiveMap.put("void", Void.TYPE);
     }
 
-    private static final Map<Class<?>, Class<?>> primitiveWrapperMap = new HashMap<Class<?>, Class<?>>();
+    private static final Map<Class<?>, Class<?>> primitiveWrapperMap = new HashMap<>();
 
     static {
         primitiveWrapperMap.put(Boolean.TYPE, Boolean.class);
@@ -39,7 +39,7 @@ public class ClassUtils {
         primitiveWrapperMap.put(Void.TYPE, Void.TYPE);
     }
 
-    private static final Map<Class<?>, Object> primitiveDefaultMap = new HashMap<Class<?>, Object>();
+    private static final Map<Class<?>, Object> primitiveDefaultMap = new HashMap<>();
 
     static {
         primitiveDefaultMap.put(Boolean.TYPE, false);

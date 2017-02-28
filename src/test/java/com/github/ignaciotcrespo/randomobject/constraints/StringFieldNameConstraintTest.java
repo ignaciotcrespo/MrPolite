@@ -1,5 +1,6 @@
 package com.github.ignaciotcrespo.randomobject.constraints;
 
+import com.github.ignaciotcrespo.randomobject.utils.Randomizer;
 import org.assertj.core.api.Assertions;
 import org.junit.Before;
 import org.junit.Test;
@@ -12,7 +13,7 @@ import java.lang.reflect.Field;
 public class StringFieldNameConstraintTest {
 
     private Field[] mFields;
-    private int seed = 1234;
+    private Randomizer randomizer = new Randomizer();
 
     @Before
     public void setUp() throws Exception {
@@ -23,7 +24,7 @@ public class StringFieldNameConstraintTest {
     public void withStringAsFieldName1() throws Exception {
         StringFieldNameConstraint constraint = new StringFieldNameConstraint();
 
-        String value = constraint.apply(mFields[0], "whatever", seed);
+        String value = constraint.apply(mFields[0], "whatever", randomizer);
 
         Assertions.assertThat(value).isEqualTo("text1");
     }
@@ -32,7 +33,7 @@ public class StringFieldNameConstraintTest {
     public void withStringAsFieldName2() throws Exception {
         StringFieldNameConstraint constraint = new StringFieldNameConstraint();
 
-        String value = constraint.apply(mFields[1], "whatever", seed);
+        String value = constraint.apply(mFields[1], "whatever", randomizer);
 
         Assertions.assertThat(value).isEqualTo("text2");
     }

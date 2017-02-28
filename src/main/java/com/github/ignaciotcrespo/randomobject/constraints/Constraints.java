@@ -21,7 +21,7 @@ public class Constraints {
     }
 
     public static <K> Constraint typeValueConstraint(Class<K> clazz, K value) {
-        return new TypeValueConstraint<K>(clazz, value);
+        return new TypeValueConstraint<>(clazz, value);
     }
 
     public static Constraint randoImageConstraint(String fieldNameRegex, int width, int height) {

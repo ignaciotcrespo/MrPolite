@@ -1,5 +1,7 @@
 package com.github.ignaciotcrespo.randomobject.generators;
 
+import com.github.ignaciotcrespo.randomobject.utils.Randomizer;
+
 import java.lang.reflect.Field;
 
 /**
@@ -7,8 +9,8 @@ import java.lang.reflect.Field;
  */
 class BooleanDataGenerator extends RandomGenerator {
 
-    BooleanDataGenerator(int seed) {
-        super(seed);
+    BooleanDataGenerator(Randomizer randomizer) {
+        super(randomizer);
     }
 
     @Override

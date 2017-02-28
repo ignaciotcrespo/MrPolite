@@ -1,5 +1,7 @@
 package com.github.ignaciotcrespo.randomobject.constraints;
 
+import com.github.ignaciotcrespo.randomobject.utils.Randomizer;
+
 import java.lang.reflect.Field;
 
 /**
@@ -7,7 +9,7 @@ import java.lang.reflect.Field;
  */
 public abstract class Constraint {
 
-    public abstract Object apply(Field field, Object value, int seed);
+    public abstract Object apply(Field field, Object value, Randomizer randomizer);
 
     public abstract boolean canApply(Object value);
 }

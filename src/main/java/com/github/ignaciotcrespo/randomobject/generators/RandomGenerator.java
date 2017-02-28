@@ -7,13 +7,9 @@ import com.github.ignaciotcrespo.randomobject.utils.Randomizer;
  */
 abstract class RandomGenerator extends DataGenerator {
 
-    Randomizer mRandomizer;
+    final Randomizer mRandomizer;
 
-    RandomGenerator(int seed) {
-        if (seed > 0) {
-            mRandomizer = new Randomizer(seed);
-        } else {
-            mRandomizer = new Randomizer();
-        }
+    RandomGenerator(Randomizer randomizer) {
+        mRandomizer = randomizer;
     }
 }

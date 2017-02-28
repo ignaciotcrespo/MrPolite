@@ -1,5 +1,7 @@
 package com.github.ignaciotcrespo.randomobject.generators;
 
+import com.github.ignaciotcrespo.randomobject.utils.Randomizer;
+
 import java.lang.reflect.Field;
 
 /**
@@ -7,8 +9,8 @@ import java.lang.reflect.Field;
  */
 class EnumDataGenerator extends RandomGenerator {
 
-    EnumDataGenerator(int seed) {
-        super(seed);
+    EnumDataGenerator(Randomizer randomizer) {
+        super(randomizer);
     }
 
     @Override

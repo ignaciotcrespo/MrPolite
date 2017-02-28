@@ -14,10 +14,12 @@ import static org.mockito.Mockito.when;
 public class BooleanDataGeneratorTest {
 
     private BooleanDataGenerator generator;
+    private Randomizer randomizer;
 
     @Before
     public void setUp() throws Exception {
-        generator = new BooleanDataGenerator(2345);
+        randomizer = mock(Randomizer.class);
+        generator = new BooleanDataGenerator(randomizer);
     }
 
     @Test
@@ -48,8 +50,7 @@ public class BooleanDataGeneratorTest {
     }
 
     private void setupRandomizer(boolean value) {
-        generator.mRandomizer = mock(Randomizer.class);
-        when(generator.mRandomizer.nextBoolean()).thenReturn(value);
+        when(randomizer.nextBoolean()).thenReturn(value);
     }
 
 }

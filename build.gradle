@@ -2,17 +2,47 @@ group 'com.github.ignaciotcrespo'
 version '1.0-SNAPSHOT'
 
 apply plugin: 'java'
+apply plugin: 'me.tatarka.retrolambda'
 
-sourceCompatibility = 1.6
-targetCompatibility = 1.6
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
+
+sourceSets {
+    main {
+        java.srcDirs = ['src/main/java']
+        output.classesDir = "out/main"
+    }
+    test {
+        java.srcDirs = ['src/test/java']
+        output.classesDir = "out/test"
+    }
+}
+
+buildscript {
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath 'me.tatarka:gradle-retrolambda:3.5.0'
+    }
+}
 
 repositories {
     mavenCentral()
 }
 
+retrolambda {
+    javaVersion JavaVersion.VERSION_1_6
+    jdk System.getenv("JAVA_HOME")
+    oldJdk System.getenv("JAVA6_HOME")
+    exclude 'test'
+}
+
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.11'
-    testCompile "org.mockito:mockito-core:2.+"
+    testCompile "org.mockito:mockito-core:2.7.5"
     testCompile 'org.assertj:assertj-core:3.6.2'
 }
 

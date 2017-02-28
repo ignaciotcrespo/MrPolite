@@ -1,5 +1,7 @@
 package com.github.ignaciotcrespo.randomobject.generators;
 
+import com.github.ignaciotcrespo.randomobject.utils.Randomizer;
+
 import java.lang.reflect.Field;
 import java.util.UUID;
 
@@ -8,8 +10,8 @@ import java.util.UUID;
  */
 class StringDataGenerator extends RandomGenerator {
 
-    StringDataGenerator(int seed) {
-        super(seed);
+    StringDataGenerator(Randomizer randomizer) {
+        super(randomizer);
     }
 
     @Override

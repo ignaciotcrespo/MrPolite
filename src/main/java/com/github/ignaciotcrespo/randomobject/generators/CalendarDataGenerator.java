@@ -1,5 +1,7 @@
 package com.github.ignaciotcrespo.randomobject.generators;
 
+import com.github.ignaciotcrespo.randomobject.utils.Randomizer;
+
 import java.lang.reflect.Field;
 import java.util.Calendar;
 
@@ -8,8 +10,8 @@ import java.util.Calendar;
  */
 class CalendarDataGenerator extends RandomGenerator {
 
-    CalendarDataGenerator(int seed) {
-        super(seed);
+    CalendarDataGenerator(Randomizer randomizer) {
+        super(randomizer);
     }
 
     @Override
