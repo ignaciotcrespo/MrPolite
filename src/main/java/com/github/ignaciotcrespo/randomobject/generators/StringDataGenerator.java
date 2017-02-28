@@ -1,4 +1,4 @@
-package com.github.ignaciotcrespo.randomobject;
+package com.github.ignaciotcrespo.randomobject.generators;
 
 import java.lang.reflect.Field;
 import java.util.UUID;
@@ -13,7 +13,7 @@ class StringDataGenerator extends RandomGenerator {
     }
 
     @Override
-    protected boolean is(Class<?> type) {
+    public boolean is(Class<?> type) {
         return type.equals(String.class);
     }
 

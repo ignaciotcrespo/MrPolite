@@ -1,4 +1,6 @@
-package com.github.ignaciotcrespo.randomobject;
+package com.github.ignaciotcrespo.randomobject.constraints;
+
+import com.github.ignaciotcrespo.randomobject.utils.Randomizer;
 
 import java.lang.reflect.Field;
 

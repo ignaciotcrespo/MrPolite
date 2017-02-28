@@ -1,4 +1,4 @@
-package com.github.ignaciotcrespo.randomobject;
+package com.github.ignaciotcrespo.randomobject.constraints;
 
 import org.junit.Before;
 import org.junit.Test;

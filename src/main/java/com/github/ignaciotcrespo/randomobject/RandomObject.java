@@ -1,6 +1,10 @@
 package com.github.ignaciotcrespo.randomobject;
 
+import com.github.ignaciotcrespo.randomobject.constraints.Constraint;
+import com.github.ignaciotcrespo.randomobject.generators.DataGenerator;
+import com.github.ignaciotcrespo.randomobject.generators.Generators;
 import com.github.ignaciotcrespo.randomobject.utils.ClassUtils;
+import com.github.ignaciotcrespo.randomobject.utils.Randomizer;
 
 import java.lang.reflect.*;
 import java.util.ArrayList;
@@ -32,20 +36,7 @@ class RandomObject {
     }
 
     private void initGenerators() {
-        generators = new DataGenerator[]{
-                new EnumDataGenerator(seed),
-                new BooleanDataGenerator(seed),
-                new ByteDataGenerator(seed),
-                new ShortDataGenerator(seed),
-                new CharDataGenerator(seed),
-                new IntegerDataGenerator(seed),
-                new LongDataGenerator(seed),
-                new FloatDataGenerator(seed),
-                new DoubleDataGenerator(seed),
-                new StringDataGenerator(seed),
-                new DateDataGenerator(seed),
-                new CalendarDataGenerator(seed)
-        };
+        generators = Generators.create(seed);
     }
 
     private <T> T fillInnerClass(Object parent, Class<T> clazz, int levelTree) {
@@ -248,7 +239,7 @@ class RandomObject {
         }
         return new DataGenerator() {
             @Override
-            protected boolean is(Class<?> type) {
+            public boolean is(Class<?> type) {
                 return true;
             }
         };

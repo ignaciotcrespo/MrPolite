@@ -1,4 +1,4 @@
-package com.github.ignaciotcrespo.randomobject;
+package com.github.ignaciotcrespo.randomobject.generators;
 
 import java.lang.reflect.Field;
 
@@ -12,7 +12,7 @@ class DoubleDataGenerator extends RandomGenerator {
     }
 
     @Override
-    protected boolean is(Class<?> type) {
+    public boolean is(Class<?> type) {
         return type.equals(Double.TYPE) || type.equals(Double.class);
     }
 

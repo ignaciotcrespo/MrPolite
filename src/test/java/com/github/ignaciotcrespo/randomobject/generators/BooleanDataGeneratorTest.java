@@ -1,5 +1,6 @@
-package com.github.ignaciotcrespo.randomobject;
+package com.github.ignaciotcrespo.randomobject.generators;
 
+import com.github.ignaciotcrespo.randomobject.utils.Randomizer;
 import org.junit.Before;
 import org.junit.Test;
 

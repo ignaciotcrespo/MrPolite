@@ -206,15 +206,6 @@ public class RandomObjectTest {
     }
 
     @Test
-    public void withNumbers() throws Exception {
-        One<MockClassPrimitives> one = (One<MockClassPrimitives>) one(MockClassPrimitives.class).withNumberRange(-23, 42);
-
-        NumbersConstraint constraint = (NumbersConstraint) one.mRandom.constraints.get(0);
-        assertThat(constraint.getMin()).isEqualTo(-23);
-        assertThat(constraint.getMax()).isEqualTo(42);
-    }
-
-    @Test
     public void withStringMaxLength() throws Exception {
         MockClassPrimitives object = one(MockClassPrimitives.class)
                 .withStringsMaxLength(3)

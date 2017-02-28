@@ -1,43 +1,43 @@
-package com.github.ignaciotcrespo.randomobject;
+package com.github.ignaciotcrespo.randomobject.utils;
 
 import java.util.Random;
 
 /**
  * Created by crespo on 2/20/17.
  */
-class Randomizer {
+public class Randomizer {
 
     private final Random random;
 
-    Randomizer() {
+    public Randomizer() {
         random = new Random();
     }
 
-    Randomizer(int seed) {
+    public Randomizer(int seed) {
         random = new Random(seed);
     }
 
-    int nextInt(int length) {
+    public int nextInt(int length) {
         return random.nextInt(length);
     }
 
-    int nextInt() {
+    public int nextInt() {
         return random.nextInt();
     }
 
-    long nextLong() {
+    public long nextLong() {
         return random.nextLong();
     }
 
-    double nextDouble() {
+    public double nextDouble() {
         return random.nextDouble();
     }
 
-    float nextFloat() {
+    public float nextFloat() {
         return random.nextFloat();
     }
 
-    boolean nextBoolean() {
+    public boolean nextBoolean() {
         return random.nextBoolean();
     }
 }

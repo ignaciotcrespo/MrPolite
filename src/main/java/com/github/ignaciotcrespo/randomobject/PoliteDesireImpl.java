@@ -1,5 +1,8 @@
 package com.github.ignaciotcrespo.randomobject;
 
+import com.github.ignaciotcrespo.randomobject.annotations.VisibleForTesting;
+import com.github.ignaciotcrespo.randomobject.constraints.Constraints;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,37 +42,37 @@ abstract class PoliteDesireImpl<C, V> implements PoliteDesire<C, V> {
 
     @Override
     public PoliteDesire<C, V> withNumberRange(Number min, Number max) {
-        mRandom.addConstraint(NumbersConstraint.from(min, max));
+        mRandom.addConstraint(Constraints.numbersConstraint(min, max));
         return this;
     }
 
     @Override
     public PoliteDesire<C, V> withStringsMaxLength(int len) {
-        mRandom.addConstraint(new StringLengthConstraint(len));
+        mRandom.addConstraint(Constraints.stringLengthConstraint(len));
         return this;
     }
 
     @Override
     public PoliteDesire<C, V> withFieldNamesInStrings() {
-        mRandom.addConstraint(new StringFieldNameConstraint());
+        mRandom.addConstraint(Constraints.stringFieldNameConstraint());
         return this;
     }
 
     @Override
     public PoliteDesire<C, V> withFieldEqualTo(String fieldNameRegex, Object value) {
-        mRandom.addConstraint(new FieldNameRegexConstraint(fieldNameRegex, value));
+        mRandom.addConstraint(Constraints.fieldNameRegexConstraint(fieldNameRegex, value));
         return this;
     }
 
     @Override
     public <K> PoliteDesire<C, V> withClassEqualTo(Class<K> clazz, K value) {
-        mRandom.addConstraint(new TypeValueConstraint<K>(clazz, value));
+        mRandom.addConstraint(Constraints.typeValueConstraint(clazz, value));
         return this;
     }
 
     @Override
     public PoliteDesire<C, V> withFieldImageLink(String fieldNameRegex, int width, int height) {
-        mRandom.addConstraint(new RandoImageConstraint(fieldNameRegex, width, height));
+        mRandom.addConstraint(Constraints.randoImageConstraint(fieldNameRegex, width, height));
         return this;
     }
 

@@ -1,4 +1,4 @@
-package com.github.ignaciotcrespo.randomobject;
+package com.github.ignaciotcrespo.randomobject.constraints;
 
 import org.assertj.core.api.Assertions;
 import org.junit.Test;

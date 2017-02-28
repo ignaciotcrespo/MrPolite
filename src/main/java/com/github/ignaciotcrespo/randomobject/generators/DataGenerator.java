@@ -1,13 +1,13 @@
-package com.github.ignaciotcrespo.randomobject;
+package com.github.ignaciotcrespo.randomobject.generators;
 
 import java.lang.reflect.Field;
 
 /**
  * Created by crespo on 2/20/17.
  */
-abstract class DataGenerator {
+public abstract class DataGenerator {
 
-    protected abstract boolean is(Class<?> type);
+    public abstract boolean is(Class<?> type);
 
     public Object getValue(Field field) {
         return null;
