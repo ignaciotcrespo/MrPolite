@@ -6,8 +6,7 @@ import org.junit.Test;
 
 import java.util.List;
 
-import static com.github.ignaciotcrespo.randomobject.MrPolite.many;
-import static com.github.ignaciotcrespo.randomobject.MrPolite.one;
+import static com.github.ignaciotcrespo.randomobject.MrPolite.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.MockitoAnnotations.initMocks;
 
@@ -173,7 +172,7 @@ public class RandomObjectTest {
     @Test
     public void fill_list() throws Exception {
 
-        List<MockClassPublicSamePackage> list = many(MockClassPublicSamePackage.class).listOf(2).please();
+        List<MockClassPublicSamePackage> list = aListOf(2, MockClassPublicSamePackage.class).please();
 
         assertThat(list).hasSize(2);
         list.get(0).assertValidData(1);
@@ -181,16 +180,34 @@ public class RandomObjectTest {
     }
 
     @Test
+    public void fill_array() throws Exception {
+
+        MockClassPublicSamePackage[] list = anArrayOf(2, MockClassPublicSamePackage.class).please();
+
+        assertThat(list).hasSize(2);
+        list[0].assertValidData(1);
+        list[1].assertValidData(1);
+    }
+
+    @Test
     public void fill_listEmpty() throws Exception {
 
-        List<MockClassPublicSamePackage> list = many(MockClassPublicSamePackage.class).listOf(0).please();
+        List<MockClassPublicSamePackage> list = aListOf(0, MockClassPublicSamePackage.class).please();
+
+        assertThat(list).isEmpty();
+    }
+
+    @Test
+    public void fill_arrayEmpty() throws Exception {
+
+        MockClassPublicSamePackage[] list = anArrayOf(0, MockClassPublicSamePackage.class).please();
 
         assertThat(list).isEmpty();
     }
 
     @Test
     public void withNumbers() throws Exception {
-        MrPolite.One<MockClassPrimitives> one = one(MockClassPrimitives.class).withNumberRange(-23, 42);
+        One<MockClassPrimitives> one = (One<MockClassPrimitives>) one(MockClassPrimitives.class).withNumberRange(-23, 42);
 
         NumbersConstraint constraint = (NumbersConstraint) one.mRandom.constraints.get(0);
         assertThat(constraint.getMin()).isEqualTo(-23);
@@ -208,9 +225,19 @@ public class RandomObjectTest {
 
     @Test
     public void withStringMaxLength_many() throws Exception {
-        List<MockClassPrimitives> list = many(MockClassPrimitives.class)
+        List<MockClassPrimitives> list = aListOf(10, MockClassPrimitives.class)
                 .withStringsMaxLength(3)
-                .listOf(10)
+                .please();
+
+        for (MockClassPrimitives object : list) {
+            object.assertStringLen(3);
+        }
+    }
+
+    @Test
+    public void withStringMaxLength_array() throws Exception {
+        MockClassPrimitives[] list = anArrayOf(10, MockClassPrimitives.class)
+                .withStringsMaxLength(3)
                 .please();
 
         for (MockClassPrimitives object : list) {
@@ -227,7 +254,16 @@ public class RandomObjectTest {
 
     @Test
     public void withStringAsFieldName_many() throws Exception {
-        List<MockClassPrimitives> many = many(MockClassPrimitives.class).withFieldNamesInStrings().listOf(5).please();
+        List<MockClassPrimitives> many = aListOf(5, MockClassPrimitives.class).withFieldNamesInStrings().please();
+
+        for (MockClassPrimitives object : many) {
+            object.assertString("_string", "_string2");
+        }
+    }
+
+    @Test
+    public void withStringAsFieldName_array() throws Exception {
+        MockClassPrimitives[] many = anArrayOf(5, MockClassPrimitives.class).withFieldNamesInStrings().please();
 
         for (MockClassPrimitives object : many) {
             object.assertString("_string", "_string2");
@@ -272,7 +308,7 @@ public class RandomObjectTest {
 
     @Test
     public void withRandomImageLink() throws Exception {
-        MrPolite.One<ClassWithUri> one = one(ClassWithUri.class)
+        One<ClassWithUri> one = (One<ClassWithUri>) one(ClassWithUri.class)
                 .withFieldImageLink(".*[uU]ri.*", 300, 200);
         one.seed = 1234;
         ClassWithUri object = one.please();

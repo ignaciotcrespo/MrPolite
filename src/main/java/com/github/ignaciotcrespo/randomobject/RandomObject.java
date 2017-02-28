@@ -157,9 +157,9 @@ class RandomObject {
                 if (Modifier.isFinal(field.getModifiers())) {
                     continue;
                 }
+                field.setAccessible(true);
+                value = getRandomValueForField(parent, field, instance, levelTree);
                 try {
-                    field.setAccessible(true);
-                    value = getRandomValueForField(parent, field, instance, levelTree);
                     field.set(instance, value);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -198,7 +198,7 @@ class RandomObject {
         return instance;
     }
 
-    private Object getRandomValueForField(Object parentInnerClass, Field field, Object instance, int levelTree) throws Exception {
+    private Object getRandomValueForField(Object parentInnerClass, Field field, Object instance, int levelTree) {
         Class<?> type = field.getType();
         if (type.isArray()) {
             Class<?> componentType = type.getComponentType();
@@ -258,6 +258,14 @@ class RandomObject {
         List<T> list = new ArrayList<T>();
         for (int i = 0; i < size; i++) {
             list.add(fill(clazz));
+        }
+        return list;
+    }
+
+    public <T> T[] fillArray(int size, Class<T> clazz) {
+        T[] list = (T[]) Array.newInstance(clazz, size);
+        for (int i = 0; i < size; i++) {
+            list[i] = fill(clazz);
         }
         return list;
     }

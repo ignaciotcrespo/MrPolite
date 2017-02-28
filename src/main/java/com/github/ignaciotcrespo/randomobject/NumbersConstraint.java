@@ -12,7 +12,7 @@ class NumbersConstraint extends Constraint {
 
     private final Number min;
     private final Number max;
-    private Random random = new Random();
+    private final Random random = new Random();
 
     private NumbersConstraint(Number min, Number max) {
         this.min = min;

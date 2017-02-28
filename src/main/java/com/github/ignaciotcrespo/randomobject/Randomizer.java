@@ -7,7 +7,7 @@ import java.util.Random;
  */
 class Randomizer {
 
-    private Random random;
+    private final Random random;
 
     Randomizer() {
         random = new Random();
