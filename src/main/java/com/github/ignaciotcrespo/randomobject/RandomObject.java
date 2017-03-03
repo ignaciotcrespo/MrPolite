@@ -7,10 +7,7 @@ import com.github.ignaciotcrespo.randomobject.utils.ClassUtils;
 import com.github.ignaciotcrespo.randomobject.utils.Randomizer;
 
 import java.lang.reflect.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.github.ignaciotcrespo.randomobject.utils.ClassUtils.isAbstract;
 
@@ -129,11 +126,11 @@ class RandomObject {
         Class<?> superclazz = clazz.getSuperclass();
         Type[] genericTypesInSuperClass = new Type[0];
         Type genericSuperclass = clazz.getGenericSuperclass();
-        if(genericSuperclass instanceof ParameterizedType) {
-            genericTypesInSuperClass = ((ParameterizedType)genericSuperclass).getActualTypeArguments();
+        if (genericSuperclass instanceof ParameterizedType) {
+            genericTypesInSuperClass = ((ParameterizedType) genericSuperclass).getActualTypeArguments();
         }
         for (int i = 0; i < genericTypesInSuperClass.length; i++) {
-            if(genericTypesInSuperClass[i] instanceof TypeVariable) {
+            if (genericTypesInSuperClass[i] instanceof TypeVariable) {
                 // is T, replace it
                 genericTypesInSuperClass[i] = clazzGenericParametersMap.get(genericTypesInSuperClass[i]);
             }
@@ -163,20 +160,30 @@ class RandomObject {
                     continue;
                 }
                 Object value;
-                Class<?> type = getFieldType(field, genericTypesInClass);
-                if (!type.isPrimitive() && isAbstract(type)) {
-                    // dont change value in fields with abstract type
-                    continue;
+                Class<?> fieldType = getFieldType(field, genericTypesInClass);
+                if (!fieldType.isPrimitive() && isAbstract(fieldType)) {
+                    if (fieldType.getName().equals(List.class.getName())) {
+                        fieldType = ArrayList.class;
+                    } else if (fieldType.getName().equals(Set.class.getName())) {
+                        fieldType = HashSet.class;
+                    } else if (fieldType.getName().equals(Queue.class.getName())) {
+                        fieldType = LinkedList.class;
+                    } else if (fieldType.getName().equals(Map.class.getName())) {
+                        fieldType = HashMap.class;
+                    } else {
+                        // dont change value in fields with abstract type
+                        continue;
+                    }
                 }
                 if (Modifier.isFinal(field.getModifiers())) {
                     continue;
                 }
                 field.setAccessible(true);
                 Type[] genericTypesInField = new Type[0];
-                if(isGenericFieldWithParameters(field)){
+                if (isGenericFieldWithParameters(field)) {
                     genericTypesInField = ((ParameterizedType) field.getGenericType()).getActualTypeArguments();
                 }
-                value = getRandomValueForField(parent, field, instance, depth, genericTypesInField, genericTypesInClass);
+                value = getRandomValueForField(parent, field, instance, depth, genericTypesInField, genericTypesInClass, fieldType);
                 try {
                     field.set(instance, value);
                 } catch (Exception e) {
@@ -220,15 +227,41 @@ class RandomObject {
         return instance;
     }
 
-    private Object getRandomValueForField(Object parentInnerClass, Field field, Object instance, int depth, Type[] genericTypesInField, Type[] genericTypesInClass) {
-        Class<?> type = getFieldType(field, genericTypesInClass);
-        if (type.isArray()) {
-            Object newInstance = createArrayWithDefaultValues(type);
-            Class<?> arrayType = getArrayType(type);
+    private Object getRandomValueForField(Object parentInnerClass, Field field, Object instance, int depth, Type[] genericTypesInField, Type[] genericTypesInClass, Class<?> fieldType) {
+        if (fieldType.isArray()) {
+            Object newInstance = createArrayWithDefaultValues(fieldType);
+            Class<?> arrayType = getArrayType(fieldType);
             fillArrayWithValues(newInstance, arrayType, parentInnerClass, field, instance, depth);
             return newInstance;
         } else {
-            return getRandomValueForFieldType(parentInnerClass, field, instance, depth, type, genericTypesInField);
+            Object value = getRandomValueForFieldType(parentInnerClass, field, instance, depth, fieldType, genericTypesInField);
+            if (value instanceof Collection || value instanceof Map) {
+                List items = new ArrayList();
+                int randomCollectionSize = getRandomCollectionSize();
+                for (int i = 0; i < randomCollectionSize; i++) {
+                    Type type = genericTypesInField.length > 0 ? genericTypesInField[0] : Object.class;
+                    Object item = getRandomValueForField(parentInnerClass, field, instance, depth, ((Class) type).getTypeParameters(), genericTypesInClass, (Class<?>) type);
+                    items.add(item);
+                }
+                if (value instanceof List) {
+                    List list = (List) value;
+                    list.addAll(items);
+                }
+                if (value instanceof Set) {
+                    Set set = (Set) value;
+                    set.addAll(items);
+                }
+                if (value instanceof Map) {
+                    Map map = (Map) value;
+                    for (int i = 0; i < randomCollectionSize; i++) {
+                        Type type = genericTypesInField.length > 1 ? genericTypesInField[1] : Object.class;
+                        Object itemValue = getRandomValueForField(parentInnerClass, field, instance, depth, ((Class) type).getTypeParameters(), genericTypesInClass, (Class<?>) type);
+                        map.put(items.get(i), itemValue);
+                    }
+                }
+//                fillArrayWithValues(value, null, parentInnerClass, field, instance, depth);
+            }
+            return value;
         }
     }
 

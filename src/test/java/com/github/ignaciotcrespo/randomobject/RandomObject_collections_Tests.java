@@ -2,6 +2,7 @@ package com.github.ignaciotcrespo.randomobject;
 
 import com.github.ignaciotcrespo.randomobject.classesfortest.Class_WithArrays;
 import com.github.ignaciotcrespo.randomobject.classesfortest.Class_WithArrays_Multidimension;
+import com.github.ignaciotcrespo.randomobject.classesfortest.Class_WithCollections;
 import org.junit.Test;
 
 import static com.github.ignaciotcrespo.randomobject.MrPolite.one;
@@ -21,6 +22,13 @@ public class RandomObject_collections_Tests {
     }
 
     @Test
+    public void fieldList() throws Exception {
+        Class_WithCollections object = one(Class_WithCollections.class).please();
+
+        object.assertValidData(2, 5);
+    }
+
+    @Test
     public void fieldArray_defaultSize() throws Exception {
         Class_WithArrays object = one(Class_WithArrays.class).please();
 
@@ -37,6 +45,16 @@ public class RandomObject_collections_Tests {
         assertThat(object._arrayString.length).isBetween(10, 12);
         assertThat(object._arrayInt.length).isBetween(10, 12);
     }
+
+    @Test
+    public void fieldList_sizeRange() throws Exception {
+        Class_WithCollections object = one(Class_WithCollections.class)
+                .withCollectionSizeRange(4, 20)
+                .please();
+
+        object.assertValidData(4, 20);
+    }
+
 
     @Test
     public void fieldCollection_collectionSize() throws Exception {

@@ -5,6 +5,7 @@ package com.github.ignaciotcrespo.randomobject;
  */
 public class RandomObjectTest {
 
+    // TODO objects pool
     // TODO colecciones anidadas
     // TODO change(object).field("regex").please()
     // TODO detect android annotations StringDef, etc.
