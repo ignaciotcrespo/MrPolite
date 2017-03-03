@@ -8,7 +8,9 @@ import com.github.ignaciotcrespo.randomobject.utils.Randomizer;
 
 import java.lang.reflect.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.github.ignaciotcrespo.randomobject.utils.ClassUtils.isAbstract;
 
@@ -102,7 +104,7 @@ class RandomObject {
     private <T> void processFieldsAndParents(Object parent, Class<T> clazz, T instance, int depth, Type[] genericTypesInClass) {
         if (instance != null && depth < this.depth) {
             processFields(parent, clazz, instance, depth, genericTypesInClass);
-            processSuperClasses(parent, clazz, instance, depth);
+            processSuperClasses(parent, clazz, instance, depth, genericTypesInClass);
         }
     }
 
@@ -118,22 +120,28 @@ class RandomObject {
         return valid;
     }
 
-    private <T> void processSuperClasses(Object parent, Class<T> clazz, T instance, int depth) {
+    private <T> void processSuperClasses(Object parent, Class<?> clazz, T instance, int depth, Type[] genericTypesInClass) {
+        TypeVariable<?>[] clazzGenericParameters = clazz.getTypeParameters();
+        Map<TypeVariable<?>, Type> clazzGenericParametersMap = new HashMap<>();
+        for (int i = 0; i < genericTypesInClass.length; i++) {
+            clazzGenericParametersMap.put(clazzGenericParameters[i], genericTypesInClass[i]);
+        }
         Class<?> superclazz = clazz.getSuperclass();
-        depth++;
         Type[] genericTypesInSuperClass = new Type[0];
         Type genericSuperclass = clazz.getGenericSuperclass();
         if(genericSuperclass instanceof ParameterizedType) {
             genericTypesInSuperClass = ((ParameterizedType)genericSuperclass).getActualTypeArguments();
         }
-        while (superclazz != null && isValidClass(superclazz) && depth < this.depth) {
-            processFields(parent, superclazz, instance, depth, genericTypesInSuperClass);
-            superclazz = superclazz.getSuperclass();
-            genericSuperclass = superclazz.getGenericSuperclass();
-            if(genericSuperclass instanceof ParameterizedType) {
-                genericTypesInSuperClass = ((ParameterizedType)genericSuperclass).getActualTypeArguments();
+        for (int i = 0; i < genericTypesInSuperClass.length; i++) {
+            if(genericTypesInSuperClass[i] instanceof TypeVariable) {
+                // is T, replace it
+                genericTypesInSuperClass[i] = clazzGenericParametersMap.get(genericTypesInSuperClass[i]);
             }
-            depth++;
+        }
+        depth++;
+        if (superclazz != null && isValidClass(superclazz) && depth < this.depth) {
+            processFields(parent, superclazz, instance, depth, genericTypesInSuperClass);
+            processSuperClasses(parent, superclazz, instance, depth, genericTypesInSuperClass);
         }
     }
 
@@ -267,38 +275,6 @@ class RandomObject {
         }
         return field.getType();
     }
-
-//    private Class<?> getFieldType(Field field, Type[] genericParameters) {
-//        Type fieldGenericType = field.getGenericType();
-//        boolean hasGenericSet = genericParameters != null && genericParameters.length > 0;
-//        boolean isInvalidGeneric = isGenericField(field) && !hasGenericSet;
-//        if (isInvalidGeneric) {
-//            return null;
-//        }
-//        if (hasGenericSet && isGenericField(field)) {
-//            Type[] genericTypes = field.getDeclaringClass().getTypeParameters();
-//            if (genericTypes != null && genericTypes.length == genericParameters.length) {
-//                for (int i = 0; i < genericTypes.length; i++) {
-//                    Type genericType = genericTypes[i];
-//                    if (genericType.getTypeName().equals(fieldGenericType.getTypeName())) {
-//                        return (Class<?>) genericParameters[i];
-//                    }
-//                }
-//            }
-//            if(genericTypes == null || genericTypes.length == 0 && field.getGenericType() instanceof ParameterizedType) {
-//                genericTypes = ((ParameterizedType)field.getGenericType()).getActualTypeArguments();
-//            }
-//            if (genericTypes != null && genericTypes.length == genericParameters.length) {
-//                for (int i = 0; i < genericTypes.length; i++) {
-//                    Type genericType = genericTypes[i];
-//                    if (genericType.getTypeName().equals(fieldGenericType.getTypeName())) {
-//                        return (Class<?>) genericParameters[i];
-//                    }
-//                }
-//            }
-//        }
-//        return field.getType();
-//    }
 
     private void fillArrayWithValues(Object array, Class<?> arrayType, Object parentInnerClass, Field field, Object instance, int depth) {
         if (array.getClass().isArray()) {

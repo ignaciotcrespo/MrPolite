@@ -11,8 +11,6 @@ public class TextUtils {
     }
 
     public static void has(String text) {
-        assertThat(text)
-                .isNotNull()
-                .isNotEmpty();
+        assertThat(text).isNotEmpty();
     }
 }
