@@ -75,4 +75,11 @@ public class MockClassDefaultSamePackage extends MockParentClassDefaultSamePacka
         assertThat(textProtectedStaticFinal).isSameAs("protected_static_final");
         assertThat(textPrivateStaticFinal).isSameAs("private_static_final");
     }
+
+    public static void resetStaticFields() {
+        textDefaultStatic = null;
+        textPrivateStatic = null;
+        textProtectedStatic = null;
+        textPublicStatic = null;
+    }
 }

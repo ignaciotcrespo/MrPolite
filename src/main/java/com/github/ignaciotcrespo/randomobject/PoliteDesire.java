@@ -29,4 +29,5 @@ public interface PoliteDesire<C, V> {
 
     PoliteDesire<C, V> exclude(Class<?> clazz);
 
+    PoliteDesire<C, V> withGenerics(Class<?>... clazz);
 }

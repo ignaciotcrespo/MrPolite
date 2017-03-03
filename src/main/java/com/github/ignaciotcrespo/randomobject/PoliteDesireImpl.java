@@ -13,12 +13,13 @@ abstract class PoliteDesireImpl<C, V> implements PoliteDesire<C, V> {
     final Class<C> clazz;
     @VisibleForTesting
     private final RandomObject mRandom;
-    private int levelsTree = 1;
+    private int depth = RandomObject.DEFAULT_DEPTH;
     @VisibleForTesting
     int seed;
     private RandomObject.Range collectionSizeRange = RandomObject.DEFAULT_COLLECTION_RANGE;
     private final List<String> excludeRegex = new ArrayList<>();
     private final List<Class<?>> excludeClasses = new ArrayList<>();
+    private Class<?>[] generics;
 
     PoliteDesireImpl(Class<C> clazz) {
         this.clazz = clazz;
@@ -28,15 +29,16 @@ abstract class PoliteDesireImpl<C, V> implements PoliteDesire<C, V> {
     RandomObject randomObject() {
         return mRandom
                 .seed(seed)
-                .levelsTree(this.levelsTree)
+                .depth(this.depth)
                 .excludeRegex(excludeRegex)
                 .excludeClasses(excludeClasses)
-                .collectionSizeRange(collectionSizeRange);
+                .collectionSizeRange(collectionSizeRange)
+                .generics(generics);
     }
 
     @Override
-    public PoliteDesire<C, V> withDepth(int levelsTree) {
-        this.levelsTree = levelsTree;
+    public PoliteDesire<C, V> withDepth(int depth) {
+        this.depth = depth;
         return this;
     }
 
@@ -97,6 +99,12 @@ abstract class PoliteDesireImpl<C, V> implements PoliteDesire<C, V> {
     @Override
     public PoliteDesire<C, V> exclude(Class<?> clazz) {
         excludeClasses.add(clazz);
+        return this;
+    }
+
+    @Override
+    public PoliteDesire<C, V> withGenerics(Class<?>... clazz) {
+        generics = clazz;
         return this;
     }
 }

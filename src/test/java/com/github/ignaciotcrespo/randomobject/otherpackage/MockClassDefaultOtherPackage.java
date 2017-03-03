@@ -9,70 +9,77 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 public class MockClassDefaultOtherPackage extends MockParentClassDefaultOtherPackage {
 
-    public String textPublic;
-    String textDefault;
-    protected String textProtected;
-    private String textPrivate;
+    public String textOtherPackagePublic;
+    String textOtherPackageDefault;
+    protected String textOtherPackageProtected;
+    private String textOtherPackagePrivate;
 
-    public final String textPublicFinal = "public_final";
-    final String textDefaultFinal = "default_final";
-    protected final String textProtectedFinal = "protected_final";
-    private final String textPrivateFinal = "private_final";
+    public final String textOtherPackagePublicFinal = "public_final";
+    final String textOtherPackageDefaultFinal = "default_final";
+    protected final String textOtherPackageProtectedFinal = "protected_final";
+    private final String textOtherPackagePrivateFinal = "private_final";
 
-    public static String textPublicStatic;
-    static String textDefaultStatic;
-    protected static String textProtectedStatic;
-    private static String textPrivateStatic;
+    public static String textOtherPackagePublicStatic;
+    static String textOtherPackageDefaultStatic;
+    protected static String textOtherPackageProtectedStatic;
+    private static String textOtherPackagePrivateStatic;
 
-    public static final String textPublicStaticFinal = "public_static_final";
-    static final String textDefaultStaticFinal = "default_static_final";
-    protected static final String textProtectedStaticFinal = "protected_static_final";
-    private static final String textPrivateStaticFinal = "private_static_final";
+    public static final String textOtherPackagePublicStaticFinal = "public_static_final";
+    static final String textOtherPackageDefaultStaticFinal = "default_static_final";
+    protected static final String textOtherPackageProtectedStaticFinal = "protected_static_final";
+    private static final String textOtherPackagePrivateStaticFinal = "private_static_final";
 
     public void assertValidData() {
-        has(textDefault);
-        has(textProtected);
-        has(textPublic);
-        has(textPrivate);
+        has(textOtherPackageDefault);
+        has(textOtherPackageProtected);
+        has(textOtherPackagePublic);
+        has(textOtherPackagePrivate);
 
-        has(textDefaultStatic);
-        has(textProtectedStatic);
-        has(textPublicStatic);
-        has(textPrivateStatic);
+        has(textOtherPackageDefaultStatic);
+        has(textOtherPackageProtectedStatic);
+        has(textOtherPackagePublicStatic);
+        has(textOtherPackagePrivateStatic);
 
         // final fields should not be set
-        assertThat(textPublicFinal).isSameAs("public_final");
-        assertThat(textDefaultFinal).isSameAs("default_final");
-        assertThat(textProtectedFinal).isSameAs("protected_final");
-        assertThat(textPrivateFinal).isSameAs("private_final");
+        assertThat(textOtherPackagePublicFinal).isSameAs("public_final");
+        assertThat(textOtherPackageDefaultFinal).isSameAs("default_final");
+        assertThat(textOtherPackageProtectedFinal).isSameAs("protected_final");
+        assertThat(textOtherPackagePrivateFinal).isSameAs("private_final");
 
-        assertThat(textPublicStaticFinal).isSameAs("public_static_final");
-        assertThat(textDefaultStaticFinal).isSameAs("default_static_final");
-        assertThat(textProtectedStaticFinal).isSameAs("protected_static_final");
-        assertThat(textPrivateStaticFinal).isSameAs("private_static_final");
+        assertThat(textOtherPackagePublicStaticFinal).isSameAs("public_static_final");
+        assertThat(textOtherPackageDefaultStaticFinal).isSameAs("default_static_final");
+        assertThat(textOtherPackageProtectedStaticFinal).isSameAs("protected_static_final");
+        assertThat(textOtherPackagePrivateStaticFinal).isSameAs("private_static_final");
 
     }
 
     public void assertEmptyData() {
-        hasNot(textDefault);
-        hasNot(textProtected);
-        hasNot(textPublic);
-        hasNot(textPrivate);
+        hasNot(textOtherPackageDefault);
+        hasNot(textOtherPackageProtected);
+        hasNot(textOtherPackagePublic);
+        hasNot(textOtherPackagePrivate);
 
-        hasNot(textDefaultStatic);
-        hasNot(textProtectedStatic);
-        hasNot(textPublicStatic);
-        hasNot(textPrivateStatic);
+        hasNot(textOtherPackageDefaultStatic);
+        hasNot(textOtherPackageProtectedStatic);
+        hasNot(textOtherPackagePublicStatic);
+        hasNot(textOtherPackagePrivateStatic);
 
         // final fields should not be set
-        assertThat(textPublicFinal).isSameAs("public_final");
-        assertThat(textDefaultFinal).isSameAs("default_final");
-        assertThat(textProtectedFinal).isSameAs("protected_final");
-        assertThat(textPrivateFinal).isSameAs("private_final");
+        assertThat(textOtherPackagePublicFinal).isSameAs("public_final");
+        assertThat(textOtherPackageDefaultFinal).isSameAs("default_final");
+        assertThat(textOtherPackageProtectedFinal).isSameAs("protected_final");
+        assertThat(textOtherPackagePrivateFinal).isSameAs("private_final");
 
-        assertThat(textPublicStaticFinal).isSameAs("public_static_final");
-        assertThat(textDefaultStaticFinal).isSameAs("default_static_final");
-        assertThat(textProtectedStaticFinal).isSameAs("protected_static_final");
-        assertThat(textPrivateStaticFinal).isSameAs("private_static_final");
+        assertThat(textOtherPackagePublicStaticFinal).isSameAs("public_static_final");
+        assertThat(textOtherPackageDefaultStaticFinal).isSameAs("default_static_final");
+        assertThat(textOtherPackageProtectedStaticFinal).isSameAs("protected_static_final");
+        assertThat(textOtherPackagePrivateStaticFinal).isSameAs("private_static_final");
+    }
+
+    public static void resetStaticFields() {
+        textOtherPackageDefaultStatic = null;
+        textOtherPackagePrivateStatic = null;
+        textOtherPackageProtectedStatic = null;
+        textOtherPackagePublicStatic = null;
     }
 }

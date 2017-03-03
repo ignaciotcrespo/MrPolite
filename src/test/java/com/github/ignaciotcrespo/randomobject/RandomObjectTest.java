@@ -1,13 +1,17 @@
 package com.github.ignaciotcrespo.randomobject;
 
 import com.github.ignaciotcrespo.randomobject.otherpackage.*;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.Serializable;
 import java.util.List;
 
 import static com.github.ignaciotcrespo.randomobject.MrPolite.*;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 /**
@@ -18,14 +22,30 @@ public class RandomObjectTest {
     @Before
     public void setUp() throws Exception {
         initMocks(this);
+        MockClassPublicOtherPackage.resetStaticFields();
+        MockClassDefaultOtherPackage.resetStaticFields();
+        MockParentClassPublicOtherPackage.resetStaticFields();
+        MockClassDefaultSamePackage.resetStaticFields();
+        MockClassPublicSamePackage.resetStaticFields();
+        MockGrandParentClassPublicOtherPackage.resetStaticFields();
     }
 
     @Test
     public void fill_normalClass_public_anotherPackage() throws Exception {
-        MockClassPublicOtherPackage object = one(MockClassPublicOtherPackage.class).please();
+        MockClassPublicOtherPackage object = one(MockClassPublicOtherPackage.class)
+                .withDepth(1)
+                .please();
 
         assertThat(object).isNotNull();
         object.assertValidData(1);
+    }
+
+    @Test
+    public void fill_normalClass_public_anotherPackage_defaultDepth() throws Exception {
+        MockClassPublicOtherPackage object = one(MockClassPublicOtherPackage.class).please();
+
+        assertThat(object).isNotNull();
+        object.assertValidData(3);
     }
 
     @Test
@@ -60,10 +80,20 @@ public class RandomObjectTest {
 
     @Test
     public void fill_normalClass_public_samePackage() throws Exception {
-        MockClassPublicSamePackage object = one(MockClassPublicSamePackage.class).please();
+        MockClassPublicSamePackage object = one(MockClassPublicSamePackage.class)
+                .withDepth(1)
+                .please();
 
         assertThat(object).isNotNull();
         object.assertValidData(1);
+    }
+
+    @Test
+    public void fill_normalClass_public_samePackage_defaultLevels() throws Exception {
+        MockClassPublicSamePackage object = one(MockClassPublicSamePackage.class).please();
+
+        assertThat(object).isNotNull();
+        object.assertValidData(3);
     }
 
     @Test
@@ -145,10 +175,20 @@ public class RandomObjectTest {
 
     @Test
     public void fill_innerClasses() throws Exception {
-        MockClassInnerAll object = one(MockClassInnerAll.class).please();
+        MockClassInnerAll object = one(MockClassInnerAll.class)
+                .withDepth(1)
+                .please();
 
         assertThat(object).isNotNull();
         object.assertValidData(1);
+    }
+
+    @Test
+    public void fill_innerClasses_defaultDepth() throws Exception {
+        MockClassInnerAll object = one(MockClassInnerAll.class).please();
+
+        assertThat(object).isNotNull();
+        object.assertValidData(3);
     }
 
     @Test
@@ -172,7 +212,9 @@ public class RandomObjectTest {
     @Test
     public void fill_list() throws Exception {
 
-        List<MockClassPublicSamePackage> list = aListOf(2, MockClassPublicSamePackage.class).please();
+        List<MockClassPublicSamePackage> list = aListOf(2, MockClassPublicSamePackage.class)
+                .withDepth(1)
+                .please();
 
         assertThat(list).hasSize(2);
         list.get(0).assertValidData(1);
@@ -180,13 +222,35 @@ public class RandomObjectTest {
     }
 
     @Test
+    public void fill_list_defaultDepth() throws Exception {
+
+        List<MockClassPublicSamePackage> list = aListOf(2, MockClassPublicSamePackage.class).please();
+
+        assertThat(list).hasSize(2);
+        list.get(0).assertValidData(3);
+        list.get(1).assertValidData(3);
+    }
+
+    @Test
     public void fill_array() throws Exception {
+
+        MockClassPublicSamePackage[] array = anArrayOf(2, MockClassPublicSamePackage.class)
+                .withDepth(1)
+                .please();
+
+        assertThat(array).hasSize(2);
+        array[0].assertValidData(1);
+        array[1].assertValidData(1);
+    }
+
+    @Test
+    public void fill_array_defaultDepth() throws Exception {
 
         MockClassPublicSamePackage[] list = anArrayOf(2, MockClassPublicSamePackage.class).please();
 
         assertThat(list).hasSize(2);
-        list[0].assertValidData(1);
-        list[1].assertValidData(1);
+        list[0].assertValidData(3);
+        list[1].assertValidData(3);
     }
 
     @Test
@@ -372,6 +436,14 @@ public class RandomObjectTest {
     }
 
     @Test
+    public void fieldArray_defaultSize() throws Exception {
+        ClassWithCollections object = one(ClassWithCollections.class).please();
+
+        assertThat(object._arrayString.length).isBetween(2, 5);
+        assertThat(object._arrayInt.length).isBetween(2, 5);
+    }
+
+    @Test
     public void fieldArray_collectionSize() throws Exception {
         ClassWithCollections object = one(ClassWithCollections.class)
                 .withCollectionSizeRange(10, 12)
@@ -411,6 +483,117 @@ public class RandomObjectTest {
         object.assertNumbersRandom();
     }
 
+    @Test
+    public void fieldNestedArray() throws Exception {
+        ClassWithNestedCollections object = one(ClassWithNestedCollections.class).please();
+
+        assertThat(object._arrayString).doesNotContainNull();
+        assertThat(object._arrayInt).doesNotContainNull();
+        assertThat(object._arrayByte).doesNotContainNull();
+    }
+
+    @Test
+    public void genericEnumTest() {
+        GenericClassWithEnumExtend dto = one(GenericClassWithEnumExtend.class).please();
+
+        assertThat(dto).isNotNull();
+        assertThat(dto.getStatus()).isEqualTo(FooEnum.DEFAULT);
+    }
+
+    @Test
+    public void generics() throws Exception {
+        ClassWithGenerics<String> object = one(ClassWithGenerics.class)
+                .withGenerics(String.class)
+                .please();
+
+        assertThat(object.genericObject).isNotEmpty();
+
+    }
+
+   @Test
+    public void genericsMulti() throws Exception {
+        ClassWithMultiGenerics<Integer, String> object = one(ClassWithMultiGenerics.class)
+                .withGenerics(Integer.class, String.class)
+                .please();
+
+        assertThat(object.genericObjectKey).isNotNull();
+        assertThat(object.genericObjectValue).isNotEmpty();
+    }
+
+   @Test
+    public void genericsMulti_withoutGenerics() throws Exception {
+        ClassWithMultiGenerics<Integer, String> object = one(ClassWithMultiGenerics.class)
+                .please();
+
+        assertNull(object.genericObjectKey);
+        assertNull(object.genericObjectValue);
+    }
+
+    @Test
+    public void genericsMulti_withWrongNumberOfGenerics() throws Exception {
+        ClassWithMultiGenerics<Integer, String> object = one(ClassWithMultiGenerics.class)
+                .withGenerics(String.class)
+                .please();
+
+        assertNull(object.genericObjectKey);
+        assertNull(object.genericObjectValue);
+    }
+    @Test
+    public void genericsMulti_wrongTypesInGenerics() throws Exception {
+        ClassWithMultiGenerics<Integer, String> object = one(ClassWithMultiGenerics.class)
+                .withSeed(1234) // using seed to compare values later
+                .withGenerics(String.class, Integer.class)
+                .please();
+
+        // THIS IS CRAZY! The int field is a string, the string field is an int! Can't figure out how to fix it
+        assertEquals(object.genericObjectKey, "a58668a8-4281-97d2-f38c-2dda3cc8eb78");
+        assertEquals(object.genericObjectValue, -611652875);
+    }
+
+    @Test
+    public void genericsNested() throws Exception {
+        ClassWithGenerics<AnotherClassWithGenerics<String>> object = one(ClassWithGenerics.class)
+                .withGenerics(AnotherClassWithGenerics.class)
+                .please();
+
+        assertThat(object.genericObject).isInstanceOf(AnotherClassWithGenerics.class);
+        assertThat(object.genericObject.anotherGenericObject).isNull();
+
+    }
+
+
+    static class ClassWithGenerics<T>{
+        T genericObject;
+    }
+
+    static class AnotherClassWithGenerics<T>{
+        T anotherGenericObject;
+    }
+
+    static class ClassWithMultiGenerics<K, V>{
+        K genericObjectKey;
+        V genericObjectValue;
+    }
+
+    public class GenericClassWithEnum<T extends Enum<T>> implements Serializable {
+        private T status;
+
+        public T getStatus() {
+            return status;
+        }
+
+        public void setStatus(T status) {
+            this.status = status;
+        }
+    }
+
+    public class GenericClassWithEnumExtend extends GenericClassWithEnum<FooEnum> {
+    }
+
+    public enum FooEnum {
+        DEFAULT
+    }
+
     static class ClassWithUri {
         String text;
         String name;
@@ -442,10 +625,16 @@ public class RandomObjectTest {
         int[] _arrayInt;
     }
 
+    static class ClassWithNestedCollections {
+        String[][] _arrayString;
+        int[][][] _arrayInt;
+        byte[][][][] _arrayByte;
+    }
+
+    // TODO generics! ((ParameterizedType)clazz.getGenericSuperclass()).getActualTypeArguments()[0]
+    // TODO colecciones anidadas
     // TODO change(object).field("regex").please()
     // TODO detect android annotations StringDef, etc.
-    // TODO MrPolite.listOf(5, Person.class).please();
-    // TODO MrPolite.arrayOf(5, Person.class).please();
     // TODO fields with collections
     // TODO random color
     // TODO random bitmap as byte array

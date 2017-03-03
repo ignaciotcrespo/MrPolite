@@ -94,6 +94,14 @@ public class MockParentClassPublicOtherPackage extends MockGrandParentClassPubli
         assertThat(parent_mParentInnerClassStatic).isNull();
     }
 
+    public static void resetStaticFields() {
+        parent_textDefaultStatic = null;
+        parent_textPrivateStatic = null;
+        parent_textProtectedStatic = null;
+        parent_textPublicStatic = null;
+        ParentInnerClassStatic.resetStaticFields();
+    }
+
     // ----- BEGIN: INNER CLASS ------ //
 
     public class ParentInnerClass {
@@ -219,6 +227,13 @@ public class MockParentClassPublicOtherPackage extends MockGrandParentClassPubli
             assertThat(parentInnerStatic_textDefaultStaticFinal).isSameAs("default_static_final");
             assertThat(parentInnerStatic_textProtectedStaticFinal).isSameAs("protected_static_final");
             assertThat(parentInnerStatic_textPrivateStaticFinal).isSameAs("private_static_final");
+        }
+
+        public static void resetStaticFields() {
+            parentInnerStatic_textDefaultStatic = null;
+            parentInnerStatic_textPrivateStatic = null;
+            parentInnerStatic_textProtectedStatic = null;
+            parentInnerStatic_textPublicStatic = null;
         }
     }
     // ----- END: STATIC INNER CLASS ------ //
