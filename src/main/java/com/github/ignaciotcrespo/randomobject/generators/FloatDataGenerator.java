@@ -3,6 +3,7 @@ package com.github.ignaciotcrespo.randomobject.generators;
 import com.github.ignaciotcrespo.randomobject.utils.Randomizer;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Type;
 
 /**
  * Created by crespo on 2/20/17.
@@ -19,7 +20,7 @@ class FloatDataGenerator extends RandomGenerator {
     }
 
     @Override
-    public Object getValue(Field field) {
+    public Object getValue(Field field, Type fieldType) {
         return mRandomizer.nextFloat();
     }
 

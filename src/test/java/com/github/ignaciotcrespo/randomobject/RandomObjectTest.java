@@ -1,7 +1,6 @@
 package com.github.ignaciotcrespo.randomobject;
 
 import com.github.ignaciotcrespo.randomobject.otherpackage.*;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -559,6 +558,18 @@ public class RandomObjectTest {
         assertThat(object.genericObject).isInstanceOf(AnotherClassWithGenerics.class);
         assertThat(object.genericObject.anotherGenericObject).isNull();
 
+    }
+
+    @Test
+    public void genericClassInside() throws Exception {
+        ClassWithGenericClassInside object = one(ClassWithGenericClassInside.class).please();
+
+        assertThat(object.clazzGeneric.genericObject).isInstanceOf(String.class);
+
+    }
+
+    static class ClassWithGenericClassInside {
+        ClassWithGenerics<String> clazzGeneric;
     }
 
 

@@ -19,7 +19,7 @@ abstract class PoliteDesireImpl<C, V> implements PoliteDesire<C, V> {
     private RandomObject.Range collectionSizeRange = RandomObject.DEFAULT_COLLECTION_RANGE;
     private final List<String> excludeRegex = new ArrayList<>();
     private final List<Class<?>> excludeClasses = new ArrayList<>();
-    private Class<?>[] generics;
+    private Class<?>[] generics = new Class[0];
 
     PoliteDesireImpl(Class<C> clazz) {
         this.clazz = clazz;

@@ -8,7 +8,6 @@ import com.github.ignaciotcrespo.randomobject.utils.Randomizer;
 
 import java.lang.reflect.*;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 import static com.github.ignaciotcrespo.randomobject.utils.ClassUtils.isAbstract;
@@ -31,7 +30,7 @@ class RandomObject {
     private List<String> excludeFields = new ArrayList<>();
     private List<Class<?>> excludeClasses = new ArrayList<>();
     private Randomizer randomizer = new Randomizer();
-    private Class<?>[] generics;
+    private Class<?>[] genericTypesInClass = new Class[0];
 
     private RandomObject() {
         // hide constructor
@@ -42,13 +41,13 @@ class RandomObject {
         generators = Generators.createDefault(randomizer);
     }
 
-    private <T> T fillInnerClass(Object parent, Class<T> clazz, int depth) {
+    private <T> T fillInnerClass(Object parent, Class<T> clazz, int depth, Type[] genericTypesInClass) {
         T instance = null;
         try {
             for (Class<?> cls : parent.getClass().getDeclaredClasses()) {
                 if (clazz.equals(cls)) {
                     if (Modifier.isStatic(cls.getModifiers())) {
-                        return fill((Class<T>) cls, depth);
+                        return fill((Class<T>) cls, depth, genericTypesInClass);
                     } else {
                         try {
                             Constructor<?> constructor = cls.getDeclaredConstructor(parent.getClass());
@@ -62,7 +61,7 @@ class RandomObject {
                 }
             }
             if (instance != null) {
-                processFieldsAndParents(parent, clazz, instance, depth);
+                processFieldsAndParents(parent, clazz, instance, depth, genericTypesInClass);
             } else {
                 Class superClazz = parent.getClass().getSuperclass();
                 while (superClazz != null) {
@@ -83,7 +82,7 @@ class RandomObject {
                         }
                     }
                     if (instance != null) {
-                        processFieldsAndParents(parent, clazz, instance, depth);
+                        processFieldsAndParents(parent, clazz, instance, depth, genericTypesInClass);
                     }
                     superClazz = superClazz.getSuperclass();
                 }
@@ -100,9 +99,9 @@ class RandomObject {
         return instance;
     }
 
-    private <T> void processFieldsAndParents(Object parent, Class<T> clazz, T instance, int depth) {
+    private <T> void processFieldsAndParents(Object parent, Class<T> clazz, T instance, int depth, Type[] genericTypesInClass) {
         if (instance != null && depth < this.depth) {
-            processFields(parent, clazz, instance, depth);
+            processFields(parent, clazz, instance, depth, genericTypesInClass);
             processSuperClasses(parent, clazz, instance, depth);
         }
     }
@@ -122,14 +121,23 @@ class RandomObject {
     private <T> void processSuperClasses(Object parent, Class<T> clazz, T instance, int depth) {
         Class<?> superclazz = clazz.getSuperclass();
         depth++;
+        Type[] genericTypesInSuperClass = new Type[0];
+        Type genericSuperclass = clazz.getGenericSuperclass();
+        if(genericSuperclass instanceof ParameterizedType) {
+            genericTypesInSuperClass = ((ParameterizedType)genericSuperclass).getActualTypeArguments();
+        }
         while (superclazz != null && isValidClass(superclazz) && depth < this.depth) {
-            processFields(parent, superclazz, instance, depth);
+            processFields(parent, superclazz, instance, depth, genericTypesInSuperClass);
             superclazz = superclazz.getSuperclass();
+            genericSuperclass = superclazz.getGenericSuperclass();
+            if(genericSuperclass instanceof ParameterizedType) {
+                genericTypesInSuperClass = ((ParameterizedType)genericSuperclass).getActualTypeArguments();
+            }
             depth++;
         }
     }
 
-    private void processFields(Object parent, Class<?> clazz, Object instance, int depth) {
+    private void processFields(Object parent, Class<?> clazz, Object instance, int depth, Type[] genericTypesInClass) {
         if (isValidClass(clazz)) {
             for (Field field : clazz.getDeclaredFields()) {
                 if (isExcludedField(field)) {
@@ -143,11 +151,11 @@ class RandomObject {
                     // ignore same nested class
                     continue;
                 }
-                if (isInvalidGeneric(field) || isInvalidNumberOfGenerics(field)) {
+                if (isInvalidGeneric(field, genericTypesInClass) || isInvalidNumberOfGenerics(field, genericTypesInClass)) {
                     continue;
                 }
                 Object value;
-                Class<?> type = getFieldType(field);
+                Class<?> type = getFieldType(field, genericTypesInClass);
                 if (!type.isPrimitive() && isAbstract(type)) {
                     // dont change value in fields with abstract type
                     continue;
@@ -156,7 +164,11 @@ class RandomObject {
                     continue;
                 }
                 field.setAccessible(true);
-                value = getRandomValueForField(parent, field, instance, depth);
+                Type[] genericTypesInField = new Type[0];
+                if(isGenericFieldWithParameters(field)){
+                    genericTypesInField = ((ParameterizedType) field.getGenericType()).getActualTypeArguments();
+                }
+                value = getRandomValueForField(parent, field, instance, depth, genericTypesInField, genericTypesInClass);
                 try {
                     field.set(instance, value);
                 } catch (Exception e) {
@@ -173,7 +185,7 @@ class RandomObject {
             }
         }
         for (Class clazz : excludeClasses) {
-            if (getFieldType(field).equals(clazz)) {
+            if (getFieldType(field, null).equals(clazz)) {
                 return true;
             }
         }
@@ -185,63 +197,70 @@ class RandomObject {
     }
 
     private <T> T fill(Class<T> clazz, int depth) {
+        return fill(clazz, depth, genericTypesInClass);
+    }
+
+    private <T> T fill(Class<T> clazz, int depth, Type[] genericTypesInClass) {
         if (Modifier.isPrivate(clazz.getModifiers())) {
             return null;
         }
         T instance = ClassUtils.newInstance(clazz);
 
         if (instance != null) {
-            processFieldsAndParents(null, clazz, instance, depth);
+            processFieldsAndParents(null, clazz, instance, depth, genericTypesInClass);
         }
         return instance;
     }
 
-    private Object getRandomValueForField(Object parentInnerClass, Field field, Object instance, int depth) {
-        Class<?> type = getFieldType(field);
+    private Object getRandomValueForField(Object parentInnerClass, Field field, Object instance, int depth, Type[] genericTypesInField, Type[] genericTypesInClass) {
+        Class<?> type = getFieldType(field, genericTypesInClass);
         if (type.isArray()) {
             Object newInstance = createArrayWithDefaultValues(type);
             Class<?> arrayType = getArrayType(type);
             fillArrayWithValues(newInstance, arrayType, parentInnerClass, field, instance, depth);
             return newInstance;
         } else {
-            return getRandomValueForFieldType(parentInnerClass, field, instance, depth, type);
+            return getRandomValueForFieldType(parentInnerClass, field, instance, depth, type, genericTypesInField);
         }
     }
 
-    private boolean isInvalidGeneric(Field field) {
-        Type fieldGenericType = field.getGenericType();
-        boolean isGenericField = fieldGenericType != null && fieldGenericType instanceof TypeVariable;
-        boolean hasGenericSet = generics != null && generics.length > 0;
-        return isGenericField && !hasGenericSet;
+    private boolean isInvalidGeneric(Field field, Type[] genericTypesInClass) {
+        boolean hasGenericSet = genericTypesInClass.length > 0;
+        return isGenericField(field) && !hasGenericSet;
     }
 
-    private boolean isInvalidNumberOfGenerics(Field field) {
+    private boolean isInvalidNumberOfGenerics(Field field, Type[] genericTypesInClass) {
         if (isGenericField(field)) {
             TypeVariable<? extends Class<?>>[] genericTypes = field.getDeclaringClass().getTypeParameters();
-            return genericTypes != null && genericTypes.length != generics.length;
+            return genericTypes != null && genericTypes.length != genericTypesInClass.length;
         }
         return false;
     }
 
     private boolean isGenericField(Field field) {
         Type fieldGenericType = field.getGenericType();
-        return fieldGenericType != null && fieldGenericType instanceof TypeVariable;
+        return fieldGenericType != null && (fieldGenericType instanceof TypeVariable);
     }
 
-    private Class<?> getFieldType(Field field) {
+    private boolean isGenericFieldWithParameters(Field field) {
         Type fieldGenericType = field.getGenericType();
-        boolean hasGenericSet = generics != null && generics.length > 0;
+        return fieldGenericType != null && fieldGenericType instanceof ParameterizedType;
+    }
+
+    private Class<?> getFieldType(Field field, Type[] genericTypesInClass) {
+        Type fieldGenericType = field.getGenericType();
+        boolean hasGenericSet = genericTypesInClass != null && genericTypesInClass.length > 0;
         boolean isInvalidGeneric = isGenericField(field) && !hasGenericSet;
         if (isInvalidGeneric) {
             return null;
         }
         if (hasGenericSet && isGenericField(field)) {
-            TypeVariable<? extends Class<?>>[] genericTypes = field.getDeclaringClass().getTypeParameters();
-            if (genericTypes != null && genericTypes.length == generics.length) {
+            Type[] genericTypes = field.getDeclaringClass().getTypeParameters();
+            if (genericTypes != null && genericTypes.length == genericTypesInClass.length) {
                 for (int i = 0; i < genericTypes.length; i++) {
-                    TypeVariable<? extends Class<?>> genericType = genericTypes[i];
-                    if (genericType.getName().equals(((TypeVariable) fieldGenericType).getName())) {
-                        return generics[i];
+                    Type genericType = genericTypes[i];
+                    if (genericType.getTypeName().equals(fieldGenericType.getTypeName())) {
+                        return (Class<?>) genericTypesInClass[i];
                     }
                 }
             }
@@ -249,13 +268,45 @@ class RandomObject {
         return field.getType();
     }
 
+//    private Class<?> getFieldType(Field field, Type[] genericParameters) {
+//        Type fieldGenericType = field.getGenericType();
+//        boolean hasGenericSet = genericParameters != null && genericParameters.length > 0;
+//        boolean isInvalidGeneric = isGenericField(field) && !hasGenericSet;
+//        if (isInvalidGeneric) {
+//            return null;
+//        }
+//        if (hasGenericSet && isGenericField(field)) {
+//            Type[] genericTypes = field.getDeclaringClass().getTypeParameters();
+//            if (genericTypes != null && genericTypes.length == genericParameters.length) {
+//                for (int i = 0; i < genericTypes.length; i++) {
+//                    Type genericType = genericTypes[i];
+//                    if (genericType.getTypeName().equals(fieldGenericType.getTypeName())) {
+//                        return (Class<?>) genericParameters[i];
+//                    }
+//                }
+//            }
+//            if(genericTypes == null || genericTypes.length == 0 && field.getGenericType() instanceof ParameterizedType) {
+//                genericTypes = ((ParameterizedType)field.getGenericType()).getActualTypeArguments();
+//            }
+//            if (genericTypes != null && genericTypes.length == genericParameters.length) {
+//                for (int i = 0; i < genericTypes.length; i++) {
+//                    Type genericType = genericTypes[i];
+//                    if (genericType.getTypeName().equals(fieldGenericType.getTypeName())) {
+//                        return (Class<?>) genericParameters[i];
+//                    }
+//                }
+//            }
+//        }
+//        return field.getType();
+//    }
+
     private void fillArrayWithValues(Object array, Class<?> arrayType, Object parentInnerClass, Field field, Object instance, int depth) {
         if (array.getClass().isArray()) {
             int len = Array.getLength(array);
             for (int i = 0; i < len; i++) {
                 Object value = Array.get(array, i);
                 if (value == null || value.getClass().isPrimitive() || value instanceof Number) {
-                    value = getRandomValueForFieldType(parentInnerClass, field, instance, depth, arrayType);
+                    value = getRandomValueForFieldType(parentInnerClass, field, instance, depth, arrayType, null);
                     Array.set(array, i, value);
                 } else {
                     fillArrayWithValues(value, arrayType, parentInnerClass, field, instance, depth);
@@ -290,9 +341,9 @@ class RandomObject {
         return randomizer.nextInt(collectionSizeRange.max - collectionSizeRange.min) + collectionSizeRange.min;
     }
 
-    private Object getRandomValueForFieldType(Object parentInnerClass, Field field, Object instance, int depth, Class<?> type) {
-        DataGenerator generator = getGenerator(type);
-        Object value = generator.getValue(field);
+    private Object getRandomValueForFieldType(Object parentInnerClass, Field field, Object instance, int depth, Class<?> fieldType, Type[] genericTypesInField) {
+        DataGenerator generator = getGenerator(fieldType);
+        Object value = generator.getValue(field, fieldType);
         if (value != null) {
             for (Constraint constraint : constraints) {
                 if (constraint.canApply(value)) {
@@ -302,11 +353,11 @@ class RandomObject {
         }
         if (value == null) {
             if (parentInnerClass != null) {
-                value = fillInnerClass(parentInnerClass, type, depth + 1);
+                value = fillInnerClass(parentInnerClass, fieldType, depth + 1, genericTypesInField);
             } else {
-                value = fill(type, depth + 1);
+                value = fill(fieldType, depth + 1, genericTypesInField);
                 if (value == null) {
-                    value = fillInnerClass(instance, type, depth + 1);
+                    value = fillInnerClass(instance, fieldType, depth + 1, genericTypesInField);
                 }
             }
         }
@@ -386,7 +437,7 @@ class RandomObject {
     }
 
     public RandomObject generics(Class<?>... generics) {
-        this.generics = generics;
+        this.genericTypesInClass = generics;
         return this;
     }
 
