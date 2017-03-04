@@ -21,10 +21,9 @@ public class Class_WithCollections_Nested {
     }
 
     private void assertCol(Collection col, Class<?> type, Class<?> clazz, int minSize, int maxSize) {
-        assertThat(col).doesNotContainNull().isNotEmpty();
+        assertThat(col).doesNotContainNull().isNotEmpty().hasOnlyElementsOfType(type);
         assertThat(col.size()).isBetween(minSize, maxSize);
         for (Object value : col) {
-            assertThat(value).isInstanceOf(type);
             if (clazz != null) {
                 assertCol((Collection) value, clazz, null, minSize, maxSize);
             }

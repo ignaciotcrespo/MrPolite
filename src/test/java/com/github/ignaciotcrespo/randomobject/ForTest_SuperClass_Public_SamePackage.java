@@ -6,7 +6,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * Created by crespo on 2/20/17.
  */
-public class ForTest_SuperClass_Public_SamePackageForTest extends ForTest_SuperSuperClass_Public_SamePackage {
+public class ForTest_SuperClass_Public_SamePackage extends ForTest_SuperSuperClass_Public_SamePackage {
 
     public String parent_textPublic;
     String parent_textDefault;

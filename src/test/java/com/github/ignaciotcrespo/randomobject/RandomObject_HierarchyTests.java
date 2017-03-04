@@ -24,8 +24,8 @@ public class RandomObject_HierarchyTests {
         Class_Public.resetStaticFields();
         Class_Default.resetStaticFields();
         SuperClass_Public.resetStaticFields();
-        ForTest_Class_Default_SamePackageForTestForTest.resetStaticFields();
-        ForTest_Class_Public_SamePackageForTestForTest.resetStaticFields();
+        ForTest_Class_Default_SamePackage.resetStaticFields();
+        ForTest_Class_Public_SamePackage.resetStaticFields();
         SuperSuperClass_Public.resetStaticFields();
     }
 
@@ -79,7 +79,7 @@ public class RandomObject_HierarchyTests {
 
     @Test
     public void fill_normalClass_public_samePackage() throws Exception {
-        ForTest_Class_Public_SamePackageForTestForTest object = one(ForTest_Class_Public_SamePackageForTestForTest.class)
+        ForTest_Class_Public_SamePackage object = one(ForTest_Class_Public_SamePackage.class)
                 .withDepth(1)
                 .please();
 
@@ -89,7 +89,7 @@ public class RandomObject_HierarchyTests {
 
     @Test
     public void fill_normalClass_public_samePackage_defaultLevels() throws Exception {
-        ForTest_Class_Public_SamePackageForTestForTest object = one(ForTest_Class_Public_SamePackageForTestForTest.class).please();
+        ForTest_Class_Public_SamePackage object = one(ForTest_Class_Public_SamePackage.class).please();
 
         assertThat(object).isNotNull();
         object.assertValidData(3);
@@ -97,7 +97,7 @@ public class RandomObject_HierarchyTests {
 
     @Test
     public void fill_normalClass_public_samePackage_levelsTree2() throws Exception {
-        ForTest_Class_Public_SamePackageForTestForTest object = one(ForTest_Class_Public_SamePackageForTestForTest.class)
+        ForTest_Class_Public_SamePackage object = one(ForTest_Class_Public_SamePackage.class)
                 .withDepth(2)
                 .please();
 
@@ -107,7 +107,7 @@ public class RandomObject_HierarchyTests {
 
     @Test
     public void fill_normalClass_public_samePackage_levelsTree3() throws Exception {
-        ForTest_Class_Public_SamePackageForTestForTest object = one(ForTest_Class_Public_SamePackageForTestForTest.class)
+        ForTest_Class_Public_SamePackage object = one(ForTest_Class_Public_SamePackage.class)
                 .withDepth(3)
                 .please();
 
@@ -117,7 +117,7 @@ public class RandomObject_HierarchyTests {
 
     @Test
     public void fill_normalClass_public_samePackage_levelsTree4() throws Exception {
-        ForTest_Class_Public_SamePackageForTestForTest object = one(ForTest_Class_Public_SamePackageForTestForTest.class)
+        ForTest_Class_Public_SamePackage object = one(ForTest_Class_Public_SamePackage.class)
                 .withDepth(4)
                 .please();
 
@@ -127,7 +127,7 @@ public class RandomObject_HierarchyTests {
 
     @Test
     public void fill_normalClass_default_samePackage() throws Exception {
-        ForTest_Class_Default_SamePackageForTestForTest object = one(ForTest_Class_Default_SamePackageForTestForTest.class).please();
+        ForTest_Class_Default_SamePackage object = one(ForTest_Class_Default_SamePackage.class).please();
 
         assertThat(object).isNotNull();
         object.assertValidData();
@@ -136,7 +136,7 @@ public class RandomObject_HierarchyTests {
     @Test
     public void fill_list() throws Exception {
 
-        List<ForTest_Class_Public_SamePackageForTestForTest> list = aListOf(2, ForTest_Class_Public_SamePackageForTestForTest.class)
+        List<ForTest_Class_Public_SamePackage> list = aListOf(2, ForTest_Class_Public_SamePackage.class)
                 .withDepth(1)
                 .please();
 
@@ -148,7 +148,7 @@ public class RandomObject_HierarchyTests {
     @Test
     public void fill_list_defaultDepth() throws Exception {
 
-        List<ForTest_Class_Public_SamePackageForTestForTest> list = aListOf(2, ForTest_Class_Public_SamePackageForTestForTest.class).please();
+        List<ForTest_Class_Public_SamePackage> list = aListOf(2, ForTest_Class_Public_SamePackage.class).please();
 
         assertThat(list).hasSize(2);
         list.get(0).assertValidData(3);
@@ -158,7 +158,7 @@ public class RandomObject_HierarchyTests {
     @Test
     public void fill_array() throws Exception {
 
-        ForTest_Class_Public_SamePackageForTestForTest[] array = anArrayOf(2, ForTest_Class_Public_SamePackageForTestForTest.class)
+        ForTest_Class_Public_SamePackage[] array = anArrayOf(2, ForTest_Class_Public_SamePackage.class)
                 .withDepth(1)
                 .please();
 
@@ -170,7 +170,7 @@ public class RandomObject_HierarchyTests {
     @Test
     public void fill_array_defaultDepth() throws Exception {
 
-        ForTest_Class_Public_SamePackageForTestForTest[] list = anArrayOf(2, ForTest_Class_Public_SamePackageForTestForTest.class).please();
+        ForTest_Class_Public_SamePackage[] list = anArrayOf(2, ForTest_Class_Public_SamePackage.class).please();
 
         assertThat(list).hasSize(2);
         list[0].assertValidData(3);
@@ -180,7 +180,7 @@ public class RandomObject_HierarchyTests {
     @Test
     public void fill_listEmpty() throws Exception {
 
-        List<ForTest_Class_Public_SamePackageForTestForTest> list = aListOf(0, ForTest_Class_Public_SamePackageForTestForTest.class).please();
+        List<ForTest_Class_Public_SamePackage> list = aListOf(0, ForTest_Class_Public_SamePackage.class).please();
 
         assertThat(list).isEmpty();
     }
@@ -188,7 +188,7 @@ public class RandomObject_HierarchyTests {
     @Test
     public void fill_arrayEmpty() throws Exception {
 
-        ForTest_Class_Public_SamePackageForTestForTest[] list = anArrayOf(0, ForTest_Class_Public_SamePackageForTestForTest.class).please();
+        ForTest_Class_Public_SamePackage[] list = anArrayOf(0, ForTest_Class_Public_SamePackage.class).please();
 
         assertThat(list).isEmpty();
     }

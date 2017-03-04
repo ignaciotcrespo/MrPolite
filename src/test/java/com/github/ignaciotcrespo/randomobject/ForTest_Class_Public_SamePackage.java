@@ -7,7 +7,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * Created by crespo on 2/20/17.
  */
-public class ForTest_Class_Public_SamePackageForTestForTest extends ForTest_SuperClass_Public_SamePackageForTest {
+public class ForTest_Class_Public_SamePackage extends ForTest_SuperClass_Public_SamePackage {
 
     public String textPublic;
     String textDefault;
@@ -29,7 +29,7 @@ public class ForTest_Class_Public_SamePackageForTestForTest extends ForTest_Supe
     protected static final String textProtectedStaticFinal = "protected_static_final";
     private static final String textPrivateStaticFinal = "private_static_final";
 
-    ForTest_Class_Default_SamePackageForTestForTest mClassDefaultSamePackage;
+    ForTest_Class_Default_SamePackage mClassDefaultSamePackage;
     InnerClass mInnerClass;
     InnerClassStatic mInnerClassStatic;
 
