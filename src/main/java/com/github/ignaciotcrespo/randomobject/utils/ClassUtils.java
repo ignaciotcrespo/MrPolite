@@ -106,6 +106,8 @@ public class ClassUtils {
 //                    e.printStackTrace();
                 } catch (InvocationTargetException e) {
 //                    e.printStackTrace();
+                } catch (Exception exc) {
+
                 }
             }
         }

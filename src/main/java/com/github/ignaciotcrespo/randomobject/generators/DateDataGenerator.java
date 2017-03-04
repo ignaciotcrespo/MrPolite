@@ -21,7 +21,7 @@ class DateDataGenerator extends RandomGenerator {
     }
 
     @Override
-    public Object getValue(Field field, Type fieldType) {
+    public Object getValue(Field field, Type fieldType, Type[] genericTypes) {
         return new Date(Math.abs(mRandomizer.nextLong()));
     }
 }

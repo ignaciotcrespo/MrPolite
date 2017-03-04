@@ -21,7 +21,7 @@ class CalendarDataGenerator extends RandomGenerator {
     }
 
     @Override
-    public Object getValue(Field field, Type fieldType) {
+    public Object getValue(Field field, Type fieldType, Type[] genericTypes) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(Math.abs(mRandomizer.nextLong()));
         return calendar;

@@ -20,7 +20,7 @@ class ByteDataGenerator extends RandomGenerator {
     }
 
     @Override
-    public Object getValue(Field field, Type fieldType) {
+    public Object getValue(Field field, Type fieldType, Type[] genericTypes) {
         return (byte) mRandomizer.nextInt();
     }
 

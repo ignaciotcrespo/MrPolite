@@ -20,7 +20,8 @@ public class Generators {
                 new DoubleDataGenerator(randomizer),
                 new StringDataGenerator(randomizer),
                 new DateDataGenerator(randomizer),
-                new CalendarDataGenerator(randomizer)
+                new CalendarDataGenerator(randomizer),
+                new EnumMapDataGenerator(randomizer),
         };
     }
 

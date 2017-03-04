@@ -176,8 +176,12 @@ class RandomObject {
                 }
                 field.setAccessible(true);
                 Type[] genericTypesInField = new Type[0];
-                if (isGenericFieldWithParameters(field)) {
-                    genericTypesInField = ((ParameterizedType) field.getGenericType()).getActualTypeArguments();
+                if (isGenericFieldWithParameters(field, genericTypesInClass)) {
+                    if(field.getGenericType() instanceof TypeVariable){
+                        genericTypesInField = ((ParameterizedType) genericTypesInClass[0]).getActualTypeArguments();
+                    }else {
+                        genericTypesInField = ((ParameterizedType) field.getGenericType()).getActualTypeArguments();
+                    }
                 }
                 value = getRandomValueForField(parent, field, instance, depth, genericTypesInField, genericTypesInClass, fieldType);
                 try {
@@ -245,7 +249,9 @@ class RandomObject {
                 Type type = genericTypes.length > 0 ? genericTypes[0] : Object.class;
                 Object item = null;
                 if (type instanceof ParameterizedType) {
-                    item = fill((Class) ((ParameterizedType) type).getRawType(), depth, ((ParameterizedType) type).getActualTypeArguments());
+                    Class rawType = (Class) ((ParameterizedType) type).getRawType();
+                    Type[] actualTypeArguments = ((ParameterizedType) type).getActualTypeArguments();
+                    item = fill(rawType, depth, actualTypeArguments);
                 } else {
                     item = fill((Class) type, depth, ((Class) type).getTypeParameters());
                 }
@@ -294,9 +300,12 @@ class RandomObject {
         return fieldGenericType != null && (fieldGenericType instanceof TypeVariable);
     }
 
-    private boolean isGenericFieldWithParameters(Field field) {
+    private boolean isGenericFieldWithParameters(Field field, Type[] genericTypesInClass) {
         Type fieldGenericType = field.getGenericType();
-        return fieldGenericType != null && fieldGenericType instanceof ParameterizedType;
+        if(fieldGenericType instanceof TypeVariable){
+            return genericTypesInClass[0] instanceof ParameterizedType;
+        }
+        return fieldGenericType instanceof ParameterizedType;
     }
 
     private Class<?> getFieldType(Field field, Type[] genericTypesInClass) {
@@ -312,12 +321,30 @@ class RandomObject {
                 for (int i = 0; i < genericTypes.length; i++) {
                     Type genericType = genericTypes[i];
                     if (genericType.getTypeName().equals(fieldGenericType.getTypeName())) {
-                        return (Class<?>) genericTypesInClass[i];
+                        Type type = genericTypesInClass[i];
+                        return getClassFromType(type);
                     }
                 }
             }
         }
         return field.getType();
+    }
+
+    private Class<?> getClassFromType(Type type) {
+        if (type instanceof WildcardType) {
+            Type[] upper = ((WildcardType) type).getUpperBounds();
+            if (upper != null && upper.length > 0) {
+                return (Class<?>) upper[0];
+            }
+            Type[] lower = ((WildcardType) type).getLowerBounds();
+            if (lower != null && lower.length > 0) {
+                return (Class<?>) lower[0];
+            }
+        }
+        if (type instanceof ParameterizedType) {
+            return (Class<?>) ((ParameterizedType) type).getRawType();
+        }
+        return (Class) type;
     }
 
     private void fillArrayWithValues(Object array, Class<?> arrayType, Object parentInnerClass, Field field, Object instance, int depth) {
@@ -363,7 +390,7 @@ class RandomObject {
 
     private Object getRandomValueForFieldType(Object parentInnerClass, Field field, Object instance, int depth, Class<?> fieldType, Type[] genericTypesInField) {
         DataGenerator generator = getGenerator(fieldType);
-        Object value = generator.getValue(field, fieldType);
+        Object value = generator.getValue(field, fieldType, genericTypesInField);
         if (value != null) {
             for (Constraint constraint : constraints) {
                 if (constraint.canApply(value)) {
@@ -380,13 +407,15 @@ class RandomObject {
                     value = fillInnerClass(instance, fieldType, depth + 1, genericTypesInField);
                 }
             }
+        } else {
+            tryToFillCollection(value, depth, genericTypesInField);
         }
         return value;
     }
 
     private Object getRandomValueForType(int depth, Class<?> type, Type[] genericTypes) {
         DataGenerator generator = getGenerator(type);
-        Object value = generator.getValue(null, type);
+        Object value = generator.getValue(null, type, genericTypes);
         if (value != null) {
             for (Constraint constraint : constraints) {
                 if (constraint.canApply(value)) {

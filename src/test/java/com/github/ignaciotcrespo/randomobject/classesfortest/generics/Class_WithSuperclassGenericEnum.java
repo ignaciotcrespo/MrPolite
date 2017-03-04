@@ -1,6 +1,6 @@
 package com.github.ignaciotcrespo.randomobject.classesfortest.generics;
 
-import com.github.ignaciotcrespo.randomobject.classesfortest.EnumOneValue;
+import com.github.ignaciotcrespo.randomobject.classesfortest.enums.EnumOneValue;
 
 /**
  * Created by crespo on 3/3/17.

@@ -10,7 +10,7 @@ public abstract class DataGenerator {
 
     public abstract boolean canProcess(Class<?> type);
 
-    public Object getValue(Field field, Type fieldType) {
+    public Object getValue(Field field, Type fieldType, Type[] genericTypes) {
         return null;
     }
 }

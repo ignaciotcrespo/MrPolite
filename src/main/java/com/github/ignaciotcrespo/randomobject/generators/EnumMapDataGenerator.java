@@ -4,24 +4,24 @@ import com.github.ignaciotcrespo.randomobject.utils.Randomizer;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
+import java.util.EnumMap;
 
 /**
  * Created by crespo on 2/20/17.
  */
-class ShortDataGenerator extends RandomGenerator {
+class EnumMapDataGenerator extends RandomGenerator {
 
-    ShortDataGenerator(Randomizer randomizer) {
+    EnumMapDataGenerator(Randomizer randomizer) {
         super(randomizer);
     }
 
     @Override
     public boolean canProcess(Class<?> type) {
-        return type.equals(Short.TYPE) || type.equals(Short.class);
+        return type.equals(EnumMap.class);
     }
 
     @Override
     public Object getValue(Field field, Type fieldType, Type[] genericTypes) {
-        return (short) mRandomizer.nextInt();
+        return new EnumMap((Class) genericTypes[0]);
     }
-
 }

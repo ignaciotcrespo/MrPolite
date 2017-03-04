@@ -20,7 +20,7 @@ class CharDataGenerator extends RandomGenerator {
     }
 
     @Override
-    public Object getValue(Field field, Type fieldType) {
+    public Object getValue(Field field, Type fieldType, Type[] genericTypes) {
         return (char) (mRandomizer.nextInt(26) + 'a');
     }
 

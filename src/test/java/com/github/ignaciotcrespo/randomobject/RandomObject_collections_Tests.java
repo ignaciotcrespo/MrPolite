@@ -1,9 +1,6 @@
 package com.github.ignaciotcrespo.randomobject;
 
-import com.github.ignaciotcrespo.randomobject.classesfortest.Class_WithArrays;
-import com.github.ignaciotcrespo.randomobject.classesfortest.Class_WithArrays_Multidimension;
-import com.github.ignaciotcrespo.randomobject.classesfortest.Class_WithCollections;
-import com.github.ignaciotcrespo.randomobject.classesfortest.Class_WithCollections_Nested;
+import com.github.ignaciotcrespo.randomobject.classesfortest.*;
 import org.junit.Test;
 
 import static com.github.ignaciotcrespo.randomobject.MrPolite.one;
@@ -83,4 +80,11 @@ public class RandomObject_collections_Tests {
         object.assertValidData(2, 5);
     }
 
+    @Test
+    public void collectionWithInnerClass() throws Exception {
+        Class_WithCollectionWithInnerClass object = one(Class_WithCollectionWithInnerClass.class).please();
+
+        object.assertValidData();
+
+    }
 }
