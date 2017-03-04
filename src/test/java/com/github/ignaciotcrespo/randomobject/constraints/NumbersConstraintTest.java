@@ -1,10 +1,10 @@
 package com.github.ignaciotcrespo.randomobject.constraints;
 
+import com.github.ignaciotcrespo.randomobject.PowerClass;
+import com.github.ignaciotcrespo.randomobject.PowerField;
 import com.github.ignaciotcrespo.randomobject.utils.Randomizer;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.lang.reflect.Field;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -13,12 +13,12 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 public class NumbersConstraintTest {
 
-    private Field field;
+    private PowerField field;
     private Randomizer randomizer = new Randomizer();
 
     @Before
     public void setUp() throws Exception {
-        field = String.class.getDeclaredFields()[0];
+        field = PowerClass.getDeclaredFields(String.class)[0];
     }
 
     @Test
@@ -55,8 +55,8 @@ public class NumbersConstraintTest {
     public void withNumbers_range2() throws Exception {
         NumbersConstraint constraint = NumbersConstraint.from(1, 1);
 
-        assertThat(constraint.apply(ForTest.class.getDeclaredField("number"), -500, randomizer)).isIn(1, 1);
-        assertThat(constraint.apply(ForTest.class.getDeclaredField("number"), 560, randomizer)).isIn(1, 1);
+        assertThat(constraint.apply(PowerClass.getDeclaredField(ForTest.class,"number"), -500, randomizer)).isIn(1, 1);
+        assertThat(constraint.apply(PowerClass.getDeclaredField(ForTest.class, "number"), 560, randomizer)).isIn(1, 1);
     }
 
     static class ForTest {

@@ -1,9 +1,9 @@
 package com.github.ignaciotcrespo.randomobject.constraints;
 
+import com.github.ignaciotcrespo.randomobject.PowerField;
 import com.github.ignaciotcrespo.randomobject.utils.NumberUtils;
 import com.github.ignaciotcrespo.randomobject.utils.Randomizer;
 
-import java.lang.reflect.Field;
 import java.util.Random;
 
 /**
@@ -21,7 +21,7 @@ class NumbersConstraint extends Constraint {
     }
 
     @Override
-    public Object apply(Field field, Object value, Randomizer randomizer) {
+    public Object apply(PowerField field, Object value, Randomizer randomizer) {
         double newValue = ((Number) value).doubleValue();
         if (newValue < min.doubleValue() || newValue > max.doubleValue()) {
             double div = max.doubleValue() - min.doubleValue();

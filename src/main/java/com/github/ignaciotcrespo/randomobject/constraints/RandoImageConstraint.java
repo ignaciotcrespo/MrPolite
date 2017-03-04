@@ -1,8 +1,7 @@
 package com.github.ignaciotcrespo.randomobject.constraints;
 
+import com.github.ignaciotcrespo.randomobject.PowerField;
 import com.github.ignaciotcrespo.randomobject.utils.Randomizer;
-
-import java.lang.reflect.Field;
 
 /**
  * Created by crespo on 2/27/17.
@@ -20,8 +19,8 @@ class RandoImageConstraint extends Constraint {
     }
 
     @Override
-    public Object apply(Field field, Object oldValue, Randomizer randomizer) {
-        if (field.getName().matches(fieldNameRegex) && field.getType().isAssignableFrom(String.class)) {
+    public Object apply(PowerField field, Object oldValue, Randomizer randomizer) {
+        if (field.nameMatches(fieldNameRegex) && field.isAssignableFrom(String.class)) {
             return "http://lorempixel.com/" + width + "/" + height + "/?rand=" + randomizer.nextInt();
         }
         return oldValue;

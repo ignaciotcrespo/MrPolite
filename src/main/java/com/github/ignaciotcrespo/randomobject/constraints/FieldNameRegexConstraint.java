@@ -1,9 +1,8 @@
 package com.github.ignaciotcrespo.randomobject.constraints;
 
+import com.github.ignaciotcrespo.randomobject.PowerField;
 import com.github.ignaciotcrespo.randomobject.utils.NumberUtils;
 import com.github.ignaciotcrespo.randomobject.utils.Randomizer;
-
-import java.lang.reflect.Field;
 
 import static com.github.ignaciotcrespo.randomobject.utils.NumberUtils.isNumeric;
 
@@ -21,15 +20,15 @@ class FieldNameRegexConstraint extends Constraint {
     }
 
     @Override
-    public Object apply(Field field, Object oldValue, Randomizer randomizer) {
+    public Object apply(PowerField field, Object oldValue, Randomizer randomizer) {
         if (this.value == null) {
-            if (field.getType().isPrimitive()) {
+            if (field.isPrimitive()) {
                 return 0;
             } else {
                 return oldValue;
             }
         }
-        if (field.getName().matches(fieldNameRegex) && isAssignableFrom(field, oldValue)) {
+        if (field.getName().matches(fieldNameRegex) &&  isAssignableFrom(field, oldValue)) {
             if (NumberUtils.isNumeric(this.value)) {
                 return NumberUtils.castedValue(this.value, oldValue);
             }
@@ -39,10 +38,9 @@ class FieldNameRegexConstraint extends Constraint {
         return oldValue;
     }
 
-    private boolean isAssignableFrom(Field field, Object oldValue) {
-        Class<?> type = field.getType();
-        return type.isPrimitive() && isNumeric(oldValue)
-                || type.isAssignableFrom(this.value.getClass());
+    private boolean isAssignableFrom(PowerField field, Object oldValue) {
+        return field.isPrimitive() && isNumeric(oldValue)
+                || field.isAssignableFrom(this.value.getClass());
     }
 
     @Override

@@ -1,23 +1,23 @@
 package com.github.ignaciotcrespo.randomobject.constraints;
 
+import com.github.ignaciotcrespo.randomobject.PowerClass;
+import com.github.ignaciotcrespo.randomobject.PowerField;
 import com.github.ignaciotcrespo.randomobject.utils.Randomizer;
 import org.assertj.core.api.Assertions;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.lang.reflect.Field;
 
 /**
  * Created by crespo on 2/22/17.
  */
 public class StringFieldNameConstraintTest {
 
-    private Field[] mFields;
+    private PowerField[] mFields;
     private Randomizer randomizer = new Randomizer();
 
     @Before
     public void setUp() throws Exception {
-        mFields = StringFields.class.getDeclaredFields();
+        mFields = PowerClass.getDeclaredFields(StringFields.class);
     }
 
     @Test

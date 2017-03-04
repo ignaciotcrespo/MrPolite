@@ -1,9 +1,8 @@
 package com.github.ignaciotcrespo.randomobject.generators;
 
+import com.github.ignaciotcrespo.randomobject.PowerClass;
+import com.github.ignaciotcrespo.randomobject.PowerField;
 import com.github.ignaciotcrespo.randomobject.utils.Randomizer;
-
-import java.lang.reflect.Field;
-import java.lang.reflect.Type;
 
 /**
  * Created by crespo on 2/20/17.
@@ -20,11 +19,8 @@ class EnumDataGenerator extends RandomGenerator {
     }
 
     @Override
-    public Object getValue(Field field, Type fieldType, Type[] genericTypes) {
-        if (fieldType instanceof Class) {
-            Object[] enumValues = ((Class) fieldType).getEnumConstants();
-            return enumValues[mRandomizer.nextInt(enumValues.length)];
-        }
-        return null;
+    public Object getValue(PowerField field, PowerClass fieldType) {
+        Object[] enumValues = fieldType.getEnumConstants();
+        return enumValues[mRandomizer.nextInt(enumValues.length)];
     }
 }

@@ -1,8 +1,7 @@
 package com.github.ignaciotcrespo.randomobject.constraints;
 
+import com.github.ignaciotcrespo.randomobject.PowerField;
 import com.github.ignaciotcrespo.randomobject.utils.Randomizer;
-
-import java.lang.reflect.Field;
 
 /**
  * Created by crespo on 2/23/17.
@@ -18,7 +17,7 @@ class TypeValueConstraint<K> extends Constraint {
     }
 
     @Override
-    public Object apply(Field field, Object oldValue, Randomizer randomizer) {
+    public Object apply(PowerField field, Object oldValue, Randomizer randomizer) {
         return value;
     }
 

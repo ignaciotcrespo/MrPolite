@@ -14,8 +14,8 @@ class Processor {
         this.deepNestedSameClasses = deepNestedSameClasses;
     }
 
-    boolean shouldStopNestedSameClasses(Field field, Class<?> clazz) {
-        boolean equals = field.getType().equals(clazz);
+    boolean shouldStopNestedSameClasses(Field field, PowerClass clazz) {
+        boolean equals = clazz.isFor(field);
         return equals && deepNestedSameClasses <= deepNestedSameClassesProcessed++;
     }
 

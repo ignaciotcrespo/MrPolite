@@ -1,8 +1,7 @@
 package com.github.ignaciotcrespo.randomobject.constraints;
 
+import com.github.ignaciotcrespo.randomobject.PowerField;
 import com.github.ignaciotcrespo.randomobject.utils.Randomizer;
-
-import java.lang.reflect.Field;
 
 /**
  * Created by crespo on 2/21/17.
@@ -16,7 +15,7 @@ class StringLengthConstraint extends Constraint {
     }
 
     @Override
-    public String apply(Field field, Object value, Randomizer randomizer) {
+    public String apply(PowerField field, Object value, Randomizer randomizer) {
         String newValue = (String) value;
         if (newValue.length() > len) {
             newValue = newValue.substring(0, len);
