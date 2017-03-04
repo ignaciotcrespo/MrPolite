@@ -98,7 +98,7 @@ class RandomObject {
         return instance;
     }
 
-    private <T> void processFieldsAndParents(Object parent, Class<T> clazz, T instance, int depth, Type[] genericTypesInClass) {
+    private <T> void processFieldsAndParents(Object parent, Class<?> clazz, T instance, int depth, Type[] genericTypesInClass) {
         if (instance != null && depth < this.depth) {
             processFields(parent, clazz, instance, depth, genericTypesInClass);
             processSuperClasses(parent, clazz, instance, depth, genericTypesInClass);
@@ -106,15 +106,11 @@ class RandomObject {
     }
 
     private boolean isValidClass(Class<?> clazz) {
-        boolean valid = !clazz.getName().startsWith("java.")
+        return !clazz.getName().startsWith("java.")
                 && !clazz.getName().startsWith("javax.")
                 && !clazz.getName().startsWith("android.")
                 && !clazz.getName().startsWith("com.android.")
                 && !clazz.getName().startsWith("dalvik.");
-        if (!valid) {
-            System.out.println("Ignored class " + clazz.getName());
-        }
-        return valid;
     }
 
     private <T> void processSuperClasses(Object parent, Class<?> clazz, T instance, int depth, Type[] genericTypesInClass) {
@@ -219,12 +215,15 @@ class RandomObject {
         if (Modifier.isPrivate(clazz.getModifiers())) {
             return null;
         }
-        T instance = ClassUtils.newInstance(clazz);
+        Object instance = getRandomValueForType(depth, clazz, genericTypesInClass);
 
         if (instance != null) {
             processFieldsAndParents(null, clazz, instance, depth, genericTypesInClass);
         }
-        return instance;
+
+        tryToFillCollection(instance, depth, genericTypesInClass);
+
+        return (T) instance;
     }
 
     private Object getRandomValueForField(Object parentInnerClass, Field field, Object instance, int depth, Type[] genericTypesInField, Type[] genericTypesInClass, Class<?> fieldType) {
@@ -234,34 +233,46 @@ class RandomObject {
             fillArrayWithValues(newInstance, arrayType, parentInnerClass, field, instance, depth);
             return newInstance;
         } else {
-            Object value = getRandomValueForFieldType(parentInnerClass, field, instance, depth, fieldType, genericTypesInField);
-            if (value instanceof Collection || value instanceof Map) {
-                List items = new ArrayList();
-                int randomCollectionSize = getRandomCollectionSize();
-                for (int i = 0; i < randomCollectionSize; i++) {
-                    Type type = genericTypesInField.length > 0 ? genericTypesInField[0] : Object.class;
-                    Object item = getRandomValueForField(parentInnerClass, field, instance, depth, ((Class) type).getTypeParameters(), genericTypesInClass, (Class<?>) type);
-                    items.add(item);
+            return getRandomValueForFieldType(parentInnerClass, field, instance, depth, fieldType, genericTypesInField);
+        }
+    }
+
+    private void tryToFillCollection(Object value, int depth, Type[] genericTypes) {
+        if (value instanceof Collection || value instanceof Map) {
+            List items = new ArrayList();
+            int randomCollectionSize = getRandomCollectionSize();
+            for (int i = 0; i < randomCollectionSize; i++) {
+                Type type = genericTypes.length > 0 ? genericTypes[0] : Object.class;
+                Object item = null;
+                if (type instanceof ParameterizedType) {
+                    item = fill((Class) ((ParameterizedType) type).getRawType(), depth, ((ParameterizedType) type).getActualTypeArguments());
+                } else {
+                    item = fill((Class) type, depth, ((Class) type).getTypeParameters());
                 }
-                if (value instanceof List) {
-                    List list = (List) value;
-                    list.addAll(items);
-                }
-                if (value instanceof Set) {
-                    Set set = (Set) value;
-                    set.addAll(items);
-                }
-                if (value instanceof Map) {
-                    Map map = (Map) value;
-                    for (int i = 0; i < randomCollectionSize; i++) {
-                        Type type = genericTypesInField.length > 1 ? genericTypesInField[1] : Object.class;
-                        Object itemValue = getRandomValueForField(parentInnerClass, field, instance, depth, ((Class) type).getTypeParameters(), genericTypesInClass, (Class<?>) type);
-                        map.put(items.get(i), itemValue);
-                    }
-                }
-//                fillArrayWithValues(value, null, parentInnerClass, field, instance, depth);
+                items.add(item);
             }
-            return value;
+            if (value instanceof List) {
+                List list = (List) value;
+                list.addAll(items);
+            }
+            if (value instanceof Set) {
+                Set set = (Set) value;
+                set.addAll(items);
+            }
+            if (value instanceof Map) {
+                Map map = (Map) value;
+                for (int i = 0; i < randomCollectionSize; i++) {
+                    Type type = genericTypes.length > 1 ? genericTypes[1] : Object.class;
+                    Object item = null;
+                    if (type instanceof ParameterizedType) {
+                        item = fill((Class) ((ParameterizedType) type).getRawType(), depth, ((ParameterizedType) type).getActualTypeArguments());
+                    } else {
+                        item = fill((Class) type, depth, ((Class) type).getTypeParameters());
+                    }
+                    map.put(items.get(i), item);
+                }
+            }
+//                fillArrayWithValues(value, null, parentInnerClass, field, instance, depth);
         }
     }
 
@@ -346,7 +357,7 @@ class RandomObject {
         return instance;
     }
 
-    private int getRandomCollectionSize() {
+    int getRandomCollectionSize() {
         return randomizer.nextInt(collectionSizeRange.max - collectionSizeRange.min) + collectionSizeRange.min;
     }
 
@@ -369,6 +380,22 @@ class RandomObject {
                     value = fillInnerClass(instance, fieldType, depth + 1, genericTypesInField);
                 }
             }
+        }
+        return value;
+    }
+
+    private Object getRandomValueForType(int depth, Class<?> type, Type[] genericTypes) {
+        DataGenerator generator = getGenerator(type);
+        Object value = generator.getValue(null, type);
+        if (value != null) {
+            for (Constraint constraint : constraints) {
+                if (constraint.canApply(value)) {
+                    value = constraint.apply(null, value, randomizer);
+                }
+            }
+        }
+        if (value == null) {
+            value = ClassUtils.newInstance(type);
         }
         return value;
     }

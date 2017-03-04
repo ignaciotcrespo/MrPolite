@@ -3,8 +3,7 @@ package com.github.ignaciotcrespo.randomobject.utils;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by crespo on 2/20/17.
@@ -60,8 +59,17 @@ public class ClassUtils {
         return null;
     }
 
-    public static <T> T newInstance(Class<T> clazz) {
+    public static <T> Object newInstance(Class<T> clazz) {
         if (Modifier.isAbstract(clazz.getModifiers())) {
+            if (clazz.getName().equals(List.class.getName())) {
+                return new ArrayList();
+            } else if (clazz.getName().equals(Set.class.getName())) {
+                return new HashSet<>();
+            } else if (clazz.getName().equals(Queue.class.getName())) {
+                return new LinkedList<>();
+            } else if (clazz.getName().equals(Map.class.getName())) {
+                return new HashMap<>();
+            }
             return null;
         }
         T instance = null;

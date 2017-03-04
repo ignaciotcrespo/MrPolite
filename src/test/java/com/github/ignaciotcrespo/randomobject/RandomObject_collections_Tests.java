@@ -3,6 +3,7 @@ package com.github.ignaciotcrespo.randomobject;
 import com.github.ignaciotcrespo.randomobject.classesfortest.Class_WithArrays;
 import com.github.ignaciotcrespo.randomobject.classesfortest.Class_WithArrays_Multidimension;
 import com.github.ignaciotcrespo.randomobject.classesfortest.Class_WithCollections;
+import com.github.ignaciotcrespo.randomobject.classesfortest.Class_WithCollections_Nested;
 import org.junit.Test;
 
 import static com.github.ignaciotcrespo.randomobject.MrPolite.one;
@@ -73,6 +74,13 @@ public class RandomObject_collections_Tests {
         assertThat(object._arrayString).doesNotContainNull();
         assertThat(object._arrayInt).doesNotContainNull();
         assertThat(object._arrayByte).doesNotContainNull();
+    }
+
+    @Test
+    public void fieldNestedCollections() throws Exception {
+        Class_WithCollections_Nested object = one(Class_WithCollections_Nested.class).please();
+
+        object.assertValidData(2, 5);
     }
 
 }

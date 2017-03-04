@@ -22,10 +22,10 @@ public class RandomObject_withField_Tests {
     @Test
     public void withField2() throws Exception {
         Class_WithPrimitives object = one(Class_WithPrimitives.class)
-                .withFieldEqualTo(".*", 1)
+                .withFieldEqualTo(".*", 56)
                 .please();
 
-        System.out.println(object);
+        object.assertNumbers(56);
     }
 
     @Test
