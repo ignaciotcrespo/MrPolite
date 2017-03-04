@@ -5,7 +5,10 @@ import com.github.ignaciotcrespo.randomobject.generators.DataGenerator;
 import com.github.ignaciotcrespo.randomobject.generators.Generators;
 import com.github.ignaciotcrespo.randomobject.utils.Randomizer;
 
-import java.lang.reflect.*;
+import java.lang.reflect.Array;
+import java.lang.reflect.Modifier;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.*;
 
 /**
@@ -59,14 +62,7 @@ class RandomObject {
                             if (Modifier.isStatic(cls.getModifiers())) {
                                 return fill((Class<T>) cls, depth);
                             } else {
-                                try {
-                                    Constructor<?> constructor = cls.getDeclaredConstructor(superClazz);
-                                    constructor.setAccessible(true);
-                                    instance = (T) constructor.newInstance(parent);
-                                    break;
-                                } catch (ClassCastException exc) {
-                                    instance = null;
-                                }
+                                instance = (T) cls.newInstance();
                             }
                         }
                     }
@@ -79,10 +75,6 @@ class RandomObject {
         } catch (InstantiationException e) {
             e.printStackTrace();
         } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
             e.printStackTrace();
         }
         return instance;
@@ -212,7 +204,7 @@ class RandomObject {
         }
     }
 
-    int getRandomCollectionSize() {
+    private int getRandomCollectionSize() {
         return randomizer.nextInt(collectionSizeRange.max - collectionSizeRange.min) + collectionSizeRange.min;
     }
 

@@ -27,14 +27,6 @@ public class PowerClass {
         return generator.canProcess(clazz);
     }
 
-    public boolean isAbstract() {
-        return Modifier.isAbstract(clazz.getModifiers());
-    }
-
-    public boolean is(Class<?> clazz) {
-        return this.clazz.getName().equals(clazz.getName());
-    }
-
     public Object newInstance() {
         return ClassUtils.newInstance(clazz);
     }

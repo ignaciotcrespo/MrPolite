@@ -122,14 +122,6 @@ public class PowerField {
         return new PowerClass(getType().getArrayType(), null);
     }
 
-    public boolean is(Class<Class> clazz) {
-        return getFieldType().equals(clazz);
-    }
-
-    public Object[] getEnumConstants() {
-        return getFieldType().getEnumConstants();
-    }
-
     public String getName() {
         return field.getName();
     }
