@@ -137,7 +137,7 @@ public class PowerClass {
         return new PowerField(clazz.getDeclaredField(fieldName), new PowerClass(clazz, null));
     }
 
-    public static Object createArrayWithDefaultValues(PowerClass type, int size) {
+    public static Object newArray(PowerClass type, int size) {
         if (!type.isArray()) {
             return null;
         }
@@ -145,7 +145,7 @@ public class PowerClass {
         Object instance = Array.newInstance(componentType, size);
         if (componentType.isArray()) {
             for (int i = 0; i < size; i++) {
-                Array.set(instance, i, createArrayWithDefaultValues(new PowerClass(componentType, null), size));
+                Array.set(instance, i, newArray(new PowerClass(componentType, null), size));
             }
         }
         return instance;

@@ -12,7 +12,7 @@ class ListOf<T> extends CollectionOf<T, List<T>> {
     }
 
     public List<T> please() {
-        return randomObject().fill(size, clazz);
+        return randomObject().populate(size, clazz);
     }
 
 }

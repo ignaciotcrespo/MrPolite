@@ -16,7 +16,7 @@ abstract class PoliteDesireImpl<C, V> implements PoliteDesire<C, V> {
     private int depth = RandomObject.DEFAULT_DEPTH;
     @VisibleForTesting
     int seed;
-    private RandomObject.Range collectionSizeRange = RandomObject.DEFAULT_COLLECTION_RANGE;
+    private Range collectionSizeRange = RandomObject.DEFAULT_COLLECTION_RANGE;
     private final List<String> excludeRegex = new ArrayList<>();
     private final List<Class<?>> excludeClasses = new ArrayList<>();
     private Class<?>[] generics = new Class[0];
@@ -86,7 +86,7 @@ abstract class PoliteDesireImpl<C, V> implements PoliteDesire<C, V> {
 
     @Override
     public PoliteDesire<C, V> withCollectionSizeRange(int min, int max) {
-        collectionSizeRange = new RandomObject.Range(min, max);
+        collectionSizeRange = new Range(min, max);
         return this;
     }
 

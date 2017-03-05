@@ -10,7 +10,7 @@ class One<T> extends PoliteDesireImpl<T, T> {
     }
 
     public T please() {
-        return randomObject().fill(clazz);
+        return randomObject().populate(clazz);
     }
 
 

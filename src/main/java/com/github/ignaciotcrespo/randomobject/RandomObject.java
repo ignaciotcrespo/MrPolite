@@ -6,7 +6,6 @@ import com.github.ignaciotcrespo.randomobject.generators.Generators;
 import com.github.ignaciotcrespo.randomobject.utils.Randomizer;
 
 import java.lang.reflect.Array;
-import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.*;
@@ -33,121 +32,97 @@ class RandomObject {
 
     private RandomObject() {
         // hide constructor
-        initGenerators();
+        initDataGenerators();
     }
 
-    private void initGenerators() {
+    private void initDataGenerators() {
         generators = Generators.createDefault(randomizer);
     }
 
-    private <T> T fillInnerClass(Object parent, PowerClass clazz, int depth) {
+    private <T> T populateInnerClass(Object parent, PowerClass clazz, int depth) {
         T instance = null;
         try {
             for (PowerClass cls : PowerClass.getDeclaredClasses(parent)) {
                 if (clazz.equals(cls)) {
                     if (cls.isStatic()) {
-                        return fill(cls, depth);
+                        return populate(cls, depth);
                     } else {
                         instance = (T) cls.newInstance();
                     }
                 }
             }
             if (instance != null) {
-                processFieldsAndParents(parent, clazz, instance, depth);
-            } else {
-                Class superClazz = parent.getClass().getSuperclass();
-                while (superClazz != null) {
-                    for (Class<?> cls : superClazz.getDeclaredClasses()) {
-                        if (clazz.equals(cls)) {
-                            if (Modifier.isStatic(cls.getModifiers())) {
-                                return fill((Class<T>) cls, depth);
-                            } else {
-                                instance = (T) cls.newInstance();
-                            }
-                        }
-                    }
-                    if (instance != null) {
-                        processFieldsAndParents(parent, clazz, instance, depth);
-                    }
-                    superClazz = superClazz.getSuperclass();
-                }
+                processFieldsAndParents(clazz, instance, depth);
             }
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return instance;
     }
 
-    private <T> void processFieldsAndParents(Object parent, PowerClass clazz, T instance, int depth) {
+    private <T> void processFieldsAndParents(PowerClass clazz, T instance, int depth) {
         if (instance != null && depth < this.depth) {
-            processFields(parent, clazz, instance, depth);
-            processSuperClasses(parent, clazz, instance, depth);
+            processFields(clazz, instance, depth);
+            processSuperClasses(clazz, instance, depth);
         }
     }
 
-    private <T> void processSuperClasses(Object parent, PowerClass clazz, T instance, int depth) {
+    private <T> void processSuperClasses(PowerClass clazz, T instance, int depth) {
         PowerClass superclazz = clazz.getSuperclass();
         depth++;
         if (superclazz.isValidPackage() && depth < this.depth) {
-            processFields(parent, superclazz, instance, depth);
-            processSuperClasses(parent, superclazz, instance, depth);
+            processFields(superclazz, instance, depth);
+            processSuperClasses(superclazz, instance, depth);
         }
     }
 
-    private void processFields(Object parent, PowerClass clazz, Object instance, int depth) {
+    private void processFields(PowerClass clazz, Object instance, int depth) {
         if (clazz.isValidPackage()) {
             for (PowerField field : clazz.getDeclaredFields()) {
-                if(field.isNameIn(excludeFields)){
+                if (field.isNameIn(excludeFields)) {
                     continue;
                 }
-                if(field.isClassIn(excludeClasses)){
+                if (field.isClassIn(excludeClasses)) {
                     continue;
                 }
                 if (field.isInvalid()) {
                     continue;
                 }
-                Object value = getRandomValueForField(parent, field, instance, depth);
+                Object value = getRandomValueForField(field, instance, depth);
                 field.setValueToField(instance, value);
             }
         }
     }
 
-    <T> T fill(Class<T> clazz) {
-        return fill(clazz, 0);
+    <T> T populate(Class<T> clazz) {
+        return populate(clazz, 0);
     }
 
-    private <T> T fill(Class<T> clazz, int depth) {
-        return fill(new PowerClass(clazz, genericTypesInClass), depth);
+    private <T> T populate(Class<T> clazz, int depth) {
+        return populate(new PowerClass(clazz, genericTypesInClass), depth);
     }
 
-    private <T> T fill(PowerClass clazz, int depth) {
+    private <T> T populate(PowerClass clazz, int depth) {
         if (clazz.isPrivate()) {
             return null;
         }
         Object instance = getRandomValueForType(depth, clazz);
-
-        if (instance != null) {
-            processFieldsAndParents(null, clazz, instance, depth);
-        }
-
-        tryToFillCollection(instance, depth, clazz.generics);
-
+        processFieldsAndParents(clazz, instance, depth);
+        populateCollection(instance, depth, clazz.generics);
         return (T) instance;
     }
 
-    private Object getRandomValueForField(Object parentInnerClass, PowerField field, Object instance, int depth) {
+    private Object getRandomValueForField(PowerField field, Object instance, int depth) {
         if (field.isArray()) {
-            Object newInstance = PowerClass.createArrayWithDefaultValues(field.getType(), getRandomCollectionSize());
-            fillArrayWithValues(newInstance, parentInnerClass, field, instance, depth);
+            Object newInstance = PowerClass.newArray(field.getType(), getRandomCollectionSize());
+            populateArray(newInstance, field, instance, depth);
             return newInstance;
         } else {
-            return getRandomValueForFieldType(parentInnerClass, field, instance, depth);
+            return getRandomValueForFieldType(field, instance, depth);
         }
     }
 
-    private void tryToFillCollection(Object value, int depth, Type[] genericTypes) {
+    private void populateCollection(Object value, int depth, Type[] genericTypes) {
         if (value instanceof Collection || value instanceof Map) {
             List items = new ArrayList();
             int randomCollectionSize = getRandomCollectionSize();
@@ -157,9 +132,9 @@ class RandomObject {
                 if (type instanceof ParameterizedType) {
                     Class rawType = (Class) ((ParameterizedType) type).getRawType();
                     Type[] actualTypeArguments = ((ParameterizedType) type).getActualTypeArguments();
-                    item = fill(new PowerClass(rawType, actualTypeArguments), depth);
+                    item = populate(new PowerClass(rawType, actualTypeArguments), depth);
                 } else {
-                    item = fill(new PowerClass((Class) type, ((Class) type).getTypeParameters()), depth);
+                    item = populate(new PowerClass((Class) type, ((Class) type).getTypeParameters()), depth);
                 }
                 items.add(item);
             }
@@ -178,9 +153,9 @@ class RandomObject {
                     Object item = null;
                     if (type instanceof ParameterizedType) {
                         PowerClass clazz = new PowerClass((Class) ((ParameterizedType) type).getRawType(), ((ParameterizedType) type).getActualTypeArguments());
-                        item = fill(clazz, depth);
+                        item = populate(clazz, depth);
                     } else {
-                        item = fill(new PowerClass((Class) type, ((Class) type).getTypeParameters()), depth);
+                        item = populate(new PowerClass((Class) type, ((Class) type).getTypeParameters()), depth);
                     }
                     map.put(items.get(i), item);
                 }
@@ -189,16 +164,16 @@ class RandomObject {
     }
 
 
-    private void fillArrayWithValues(Object array, Object parentInnerClass, PowerField field, Object instance, int depth) {
+    private void populateArray(Object array, PowerField field, Object instance, int depth) {
         if (array.getClass().isArray()) {
             int len = Array.getLength(array);
             for (int i = 0; i < len; i++) {
                 Object value = Array.get(array, i);
                 if (value == null || value.getClass().isPrimitive() || value instanceof Number) {
-                    value = getRandomValueForFieldType(parentInnerClass, field, instance, depth);
+                    value = getRandomValueForFieldType(field, instance, depth);
                     Array.set(array, i, value);
                 } else {
-                    fillArrayWithValues(value, parentInnerClass, field, instance, depth);
+                    populateArray(value, field, instance, depth);
                 }
             }
         }
@@ -208,7 +183,7 @@ class RandomObject {
         return randomizer.nextInt(collectionSizeRange.max - collectionSizeRange.min) + collectionSizeRange.min;
     }
 
-    private Object getRandomValueForFieldType(Object parentInnerClass, PowerField field, Object instance, int depth) {
+    private Object getRandomValueForFieldType(PowerField field, Object instance, int depth) {
         DataGenerator generator = getGenerator(field.getRawType());
         Object value = generator.getValue(field, field.getType());
         if (value != null) {
@@ -219,16 +194,12 @@ class RandomObject {
             }
         }
         if (value == null) {
-            if (parentInnerClass != null) {
-                value = fillInnerClass(parentInnerClass, field.getType(), depth + 1);
-            } else {
-                value = fill(field.getType(), depth + 1);
-                if (value == null) {
-                    value = fillInnerClass(instance, field.getType(), depth + 1);
-                }
+            value = populate(field.getType(), depth + 1);
+            if (value == null) {
+                value = populateInnerClass(instance, field.getType(), depth + 1);
             }
         } else {
-            tryToFillCollection(value, depth, field.getGenericTypesInField());
+            populateCollection(value, depth, field.getGenericTypesInField());
         }
         return value;
     }
@@ -263,18 +234,18 @@ class RandomObject {
         };
     }
 
-    <T> List<T> fill(int size, Class<T> clazz) {
+    <T> List<T> populate(int size, Class<T> clazz) {
         List<T> list = new ArrayList<>();
         for (int i = 0; i < size; i++) {
-            list.add(fill(clazz));
+            list.add(populate(clazz));
         }
         return list;
     }
 
-    <T> T[] fillArray(int size, Class<T> clazz) {
+    <T> T[] populateArray(int size, Class<T> clazz) {
         T[] list = (T[]) Array.newInstance(clazz, size);
         for (int i = 0; i < size; i++) {
-            list[i] = fill(clazz);
+            list[i] = populate(clazz);
         }
         return list;
     }
@@ -302,7 +273,7 @@ class RandomObject {
     RandomObject seed(int seed) {
         if (seed > 0) {
             this.randomizer = new Randomizer(seed);
-            initGenerators();
+            initDataGenerators();
         }
         return this;
     }
@@ -324,16 +295,6 @@ class RandomObject {
     public RandomObject generics(Class<?>... generics) {
         this.genericTypesInClass = generics;
         return this;
-    }
-
-    static class Range {
-        final int min;
-        final int max;
-
-        Range(int min, int max) {
-            this.min = min;
-            this.max = max;
-        }
     }
 
 }

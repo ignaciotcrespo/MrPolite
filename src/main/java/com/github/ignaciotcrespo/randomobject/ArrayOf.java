@@ -10,7 +10,7 @@ class ArrayOf<T> extends CollectionOf<T, T[]> {
     }
 
     public T[] please() {
-        return randomObject().fillArray(size, clazz);
+        return randomObject().populateArray(size, clazz);
     }
 
 }
