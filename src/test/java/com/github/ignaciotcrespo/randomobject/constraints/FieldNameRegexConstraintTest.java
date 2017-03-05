@@ -1,6 +1,6 @@
 package com.github.ignaciotcrespo.randomobject.constraints;
 
-import com.github.ignaciotcrespo.randomobject.PowerClass;
+import com.github.ignaciotcrespo.randomobject.utils.PowerClass;
 import com.github.ignaciotcrespo.randomobject.utils.Randomizer;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;

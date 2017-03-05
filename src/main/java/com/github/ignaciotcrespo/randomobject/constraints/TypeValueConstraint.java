@@ -1,6 +1,6 @@
 package com.github.ignaciotcrespo.randomobject.constraints;
 
-import com.github.ignaciotcrespo.randomobject.PowerField;
+import com.github.ignaciotcrespo.randomobject.utils.PowerField;
 import com.github.ignaciotcrespo.randomobject.utils.Randomizer;
 
 /**

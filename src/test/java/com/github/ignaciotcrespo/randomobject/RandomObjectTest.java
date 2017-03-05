@@ -10,7 +10,7 @@ public class RandomObjectTest {
     // TODO change(object).field("regex").please()
     // TODO detect android annotations StringDef, etc.
     // TODO fields with collections
-    // TODO random color
-    // TODO random bitmap as byte array
+    // TODO newInstance color
+    // TODO newInstance bitmap as byte array
 
 }

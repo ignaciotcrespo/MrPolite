@@ -1,9 +1,9 @@
 package com.github.ignaciotcrespo.randomobject.generators;
 
-import com.github.ignaciotcrespo.randomobject.PowerClass;
-import com.github.ignaciotcrespo.randomobject.PowerField;
+import com.github.ignaciotcrespo.randomobject.utils.PowerClass;
 import com.github.ignaciotcrespo.randomobject.utils.Randomizer;
 
+import java.lang.reflect.Type;
 import java.util.UUID;
 
 /**
@@ -21,7 +21,7 @@ class StringDataGenerator extends RandomGenerator {
     }
 
     @Override
-    public Object getValue(PowerField field, PowerClass fieldType) {
+    public Object getValue(PowerClass clazz, Type[] generics) {
         return new UUID(mRandomizer.nextLong(), mRandomizer.nextLong()).toString();
     }
 

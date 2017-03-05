@@ -1,4 +1,4 @@
-package com.github.ignaciotcrespo.randomobject;
+package com.github.ignaciotcrespo.randomobject.utils;
 
 import java.lang.reflect.*;
 import java.util.List;
@@ -9,6 +9,8 @@ import java.util.List;
 public class PowerField {
     private final Field field;
     private final PowerClass parentClass;
+
+    private Object parentInstance;
 
     public PowerField(Field field, PowerClass parentClass) {
         this.field = field;
@@ -25,7 +27,7 @@ public class PowerField {
         return //processor.shouldStopNestedSameClasses(field, parentClass)
                 //||
                 isInvalidGeneric()
-                        || isInvalidNumberOfGenerics()
+                        || hasInvalidNumberOfGenerics()
                         || Modifier.isFinal(field.getModifiers());
     }
 
@@ -33,7 +35,7 @@ public class PowerField {
         return isGeneric() && !parentClass.hasGenerics();
     }
 
-    private boolean isInvalidNumberOfGenerics() {
+    private boolean hasInvalidNumberOfGenerics() {
         return isGeneric() && parentClass.hasValidGenericTypes();
     }
 
@@ -50,11 +52,11 @@ public class PowerField {
         }
         if (parentClass.hasGenerics() && isGeneric()) {
             Type[] genericTypes = field.getDeclaringClass().getTypeParameters();
-            if (genericTypes != null && genericTypes.length == parentClass.generics.length) {
+            if (genericTypes != null && genericTypes.length == parentClass.getGenerics().length) {
                 for (int i = 0; i < genericTypes.length; i++) {
                     Type genericType = genericTypes[i];
                     if (genericType.getTypeName().equals(fieldGenericType.getTypeName())) {
-                        Type type = parentClass.generics[i];
+                        Type type = parentClass.getGenerics()[i];
                         return getClassFromType(type);
                     }
                 }
@@ -80,11 +82,11 @@ public class PowerField {
         return (Class) type;
     }
 
-    Type[] getGenericTypesInField() {
+    public Type[] getGenerics() {
         Type[] genericTypesInField = new Type[0];
         if (isGenericFieldWithParameters()) {
             if (field.getGenericType() instanceof TypeVariable) {
-                genericTypesInField = ((ParameterizedType) parentClass.generics[0]).getActualTypeArguments();
+                genericTypesInField = ((ParameterizedType) parentClass.getGenerics()[0]).getActualTypeArguments();
             } else {
                 genericTypesInField = ((ParameterizedType) field.getGenericType()).getActualTypeArguments();
             }
@@ -95,7 +97,7 @@ public class PowerField {
     private boolean isGenericFieldWithParameters() {
         Type fieldGenericType = field.getGenericType();
         if (fieldGenericType instanceof TypeVariable) {
-            return parentClass.generics[0] instanceof ParameterizedType;
+            return parentClass.getGenerics()[0] instanceof ParameterizedType;
         }
         return fieldGenericType instanceof ParameterizedType;
     }
@@ -105,13 +107,15 @@ public class PowerField {
     }
 
     public PowerClass getType() {
-        return new PowerClass(getFieldType(), getGenericTypesInField());
+        PowerClass powerClass = new PowerClass(getFieldType(), getGenerics());
+        powerClass.depth = parentClass.depth + 1;
+        return powerClass;
     }
 
-    public void setValueToField(Object instance, Object value) {
+    public void setValue(Object value) {
         if (value != null) {
             try {
-                field.set(instance, value);
+                field.set(parentInstance, value);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -119,15 +123,13 @@ public class PowerField {
     }
 
     public PowerClass getArrayType() {
-        return new PowerClass(getType().getArrayType(), null);
+        PowerClass powerClass = new PowerClass(getType().getArrayType(), null);
+        powerClass.depth = parentClass.depth + 1;
+        return powerClass;
     }
 
     public String getName() {
         return field.getName();
-    }
-
-    public Class getGeneric(int i) {
-        return (Class) getGenericTypesInField()[i];
     }
 
     public boolean nameMatches(String regex) {
@@ -165,5 +167,13 @@ public class PowerField {
             }
         }
         return false;
+    }
+
+    public void setParentInstance(Object instance) {
+        this.parentInstance = instance;
+    }
+
+    public void setDepth(int depth) {
+        parentClass.depth = depth;
     }
 }

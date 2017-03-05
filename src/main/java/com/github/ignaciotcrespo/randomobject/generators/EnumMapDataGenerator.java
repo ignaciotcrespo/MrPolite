@@ -1,9 +1,9 @@
 package com.github.ignaciotcrespo.randomobject.generators;
 
-import com.github.ignaciotcrespo.randomobject.PowerClass;
-import com.github.ignaciotcrespo.randomobject.PowerField;
+import com.github.ignaciotcrespo.randomobject.utils.PowerClass;
 import com.github.ignaciotcrespo.randomobject.utils.Randomizer;
 
+import java.lang.reflect.Type;
 import java.util.EnumMap;
 
 /**
@@ -21,7 +21,7 @@ class EnumMapDataGenerator extends RandomGenerator {
     }
 
     @Override
-    public Object getValue(PowerField field, PowerClass fieldType) {
-        return new EnumMap(field.getGeneric(0));
+    public Object getValue(PowerClass clazz, Type[] generics) {
+        return new EnumMap((Class) generics[0]);
     }
 }

@@ -23,7 +23,7 @@ abstract class PoliteDesireImpl<C, V> implements PoliteDesire<C, V> {
 
     PoliteDesireImpl(Class<C> clazz) {
         this.clazz = clazz;
-        mRandom = RandomObject.random();
+        mRandom = RandomObject.newInstance();
     }
 
     RandomObject randomObject() {

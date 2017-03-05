@@ -1,7 +1,6 @@
-package com.github.ignaciotcrespo.randomobject;
+package com.github.ignaciotcrespo.randomobject.utils;
 
 import com.github.ignaciotcrespo.randomobject.generators.DataGenerator;
-import com.github.ignaciotcrespo.randomobject.utils.ClassUtils;
 
 import java.lang.reflect.*;
 import java.util.HashMap;
@@ -11,12 +10,16 @@ import java.util.Map;
  * Created by crespo on 3/4/17.
  */
 public class PowerClass {
+    public int depth;
     Class clazz;
     Type[] generics;
+
+    private Object currentInstance;
 
     public <T> PowerClass(Class<?> clazz, Type[] genericTypesInClass) {
         this.clazz = clazz;
         this.generics = genericTypesInClass;
+        this.depth = 0;
     }
 
     public boolean isPrivate() {
@@ -28,7 +31,9 @@ public class PowerClass {
     }
 
     public Object newInstance() {
-        return ClassUtils.newInstance(clazz);
+        Object instance = ClassUtils.newInstance(clazz);
+        currentInstance = instance;
+        return instance;
     }
 
     public boolean isValidPackage() {
@@ -40,7 +45,12 @@ public class PowerClass {
     }
 
     public PowerField[] getDeclaredFields() {
-        return getDeclaredFields(clazz, generics);
+        PowerField[] declaredFields = getDeclaredFields(clazz, getGenerics());
+        for (PowerField field: declaredFields) {
+            field.setParentInstance(currentInstance);
+            field.setDepth(depth);
+        }
+        return declaredFields;
     }
 
     public static PowerField[] getDeclaredFields(Class clazz) {
@@ -62,18 +72,18 @@ public class PowerClass {
 
     public boolean hasValidGenericTypes() {
         TypeVariable<? extends Class<?>>[] genericTypes = clazz.getTypeParameters();
-        return genericTypes != null && genericTypes.length != generics.length;
+        return genericTypes != null && genericTypes.length != getGenerics().length;
     }
 
     public boolean hasGenerics() {
-        return generics != null && generics.length > 0;
+        return getGenerics() != null && getGenerics().length > 0;
     }
 
     public PowerClass getSuperclass() {
         TypeVariable<?>[] clazzGenericParameters = clazz.getTypeParameters();
         Map<TypeVariable<?>, Type> clazzGenericParametersMap = new HashMap<>();
-        for (int i = 0; i < generics.length; i++) {
-            clazzGenericParametersMap.put(clazzGenericParameters[i], generics[i]);
+        for (int i = 0; i < getGenerics().length; i++) {
+            clazzGenericParametersMap.put(clazzGenericParameters[i], getGenerics()[i]);
         }
         Class<?> superclazz = clazz.getSuperclass();
         Type[] genericTypesInSuperClass = new Type[0];
@@ -87,16 +97,10 @@ public class PowerClass {
                 genericTypesInSuperClass[i] = clazzGenericParametersMap.get(genericTypesInSuperClass[i]);
             }
         }
-        return new PowerClass(superclazz, genericTypesInSuperClass);
-    }
-
-    public static PowerClass[] getDeclaredClasses(Object parent) {
-        Class<?>[] declaredClasses = parent.getClass().getDeclaredClasses();
-        PowerClass[] classes = new PowerClass[declaredClasses.length];
-        for (int i = 0; i < declaredClasses.length; i++) {
-            classes[i] = new PowerClass(declaredClasses[i], null);
-        }
-        return classes;
+        PowerClass powerClass = new PowerClass(superclazz, genericTypesInSuperClass);
+        powerClass.currentInstance = currentInstance;
+        powerClass.depth = depth + 1;
+        return powerClass;
     }
 
     @Override
@@ -153,5 +157,17 @@ public class PowerClass {
 
     public Object[] getEnumConstants() {
         return clazz.getEnumConstants();
+    }
+
+    public boolean hasCurrentInstance() {
+        return currentInstance != null;
+    }
+
+    public Type[] getGenerics() {
+        return generics;
+    }
+
+    public boolean isValidDepth(int depth) {
+        return this.depth < depth;
     }
 }

@@ -1,5 +1,7 @@
 package com.github.ignaciotcrespo.randomobject;
 
+import com.github.ignaciotcrespo.randomobject.utils.PowerClass;
+
 import java.lang.reflect.Field;
 
 /**

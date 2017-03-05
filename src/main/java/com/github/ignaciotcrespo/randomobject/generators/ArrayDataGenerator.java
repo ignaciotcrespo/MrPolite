@@ -6,22 +6,21 @@ import com.github.ignaciotcrespo.randomobject.utils.Randomizer;
 import java.lang.reflect.Type;
 
 /**
- * Created by crespo on 2/20/17.
+ * Created by crespo on 3/5/17.
  */
-class ShortDataGenerator extends RandomGenerator {
+public class ArrayDataGenerator extends RandomGenerator {
 
-    ShortDataGenerator(Randomizer randomizer) {
+    ArrayDataGenerator(Randomizer randomizer) {
         super(randomizer);
     }
 
     @Override
     public boolean canProcess(Class<?> type) {
-        return type.equals(Short.TYPE) || type.equals(Short.class);
+        return type.isArray();
     }
 
     @Override
     public Object getValue(PowerClass clazz, Type[] generics) {
-        return (short) mRandomizer.nextInt();
+        return PowerClass.newArray(clazz, 3);
     }
-
 }
