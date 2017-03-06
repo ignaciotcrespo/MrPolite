@@ -31,6 +31,7 @@ class RandomObject {
     private List<Class<?>> excludeClasses = new ArrayList<>();
     private Randomizer randomizer = new Randomizer();
     private Class<?>[] genericTypesInClass = new Class[0];
+    private boolean override = true;
 
     private RandomObject() {
         // hide constructor
@@ -62,20 +63,20 @@ class RandomObject {
                 if (isExcludedField(field)) {
                     continue;
                 }
-                Object value = getRandomObjectOrArray(field);
-                field.setValue(value);
+                GeneratedValue generatedValue = getRandomObjectOrArray(field);
+                field.setValue(generatedValue, override);
             }
         }
     }
 
-    private Object getRandomObjectOrArray(PowerField field) {
-        Object value;
+    private GeneratedValue getRandomObjectOrArray(PowerField field) {
+        GeneratedValue generatedValue;
         if (field.isArray()) {
-            value = getRandomArray(field);
+            generatedValue = getRandomArray(field);
         } else {
-            value = getRandomObject(field);
+            generatedValue = getRandomObject(field);
         }
-        return value;
+        return generatedValue;
     }
 
     private boolean isExcludedField(PowerField field) {
@@ -84,31 +85,38 @@ class RandomObject {
                 || field.isInvalid();
     }
 
-    private Object getRandomArray(PowerField field) {
+    private GeneratedValue getRandomArray(PowerField field) {
+        GeneratedValue generatedValue = new GeneratedValue();
         Object array = PowerClass.newArray(field.getType(), getRandomCollectionSize());
         randomizeArray(array, field);
-        return array;
+        generatedValue.setValue(array);
+        return generatedValue;
     }
 
-    private Object getRandomObject(PowerField field) {
-        Object value = generateValue(field, field.getRawType(), field.getType(), field.getGenerics());
-        if (value == null) {
-            value = randomizeClass(field.getType());
+    private GeneratedValue getRandomObject(PowerField field) {
+        GeneratedValue generatedValue = generateValue(field, field.getRawType(), field.getType(), field.getGenerics());
+        if (generatedValue.getValue() == null) {
+            generatedValue = randomizeClass(field.getType());
         } else {
-            randomizeCollection(value, field.getGenerics());
+            randomizeCollection(generatedValue.getValue(), field.getGenerics());
         }
-        return value;
+        return generatedValue;
     }
 
-    <T> T randomCollection(Class<T> clazz) {
-        return (T) randomizeClass(new PowerClass(clazz, genericTypesInClass));
+    <T> T randomObject(Class<T> clazz) {
+        GeneratedValue generatedValue = randomizeClass(new PowerClass(clazz, genericTypesInClass));
+        return (T) generatedValue.getValue();
     }
 
-    private Object randomizeClass(PowerClass clazz) {
-        Object instance = getRandomObject(clazz);
+    private GeneratedValue randomizeClass(PowerClass clazz) {
+        GeneratedValue generatedValue = getRandomObject(clazz);
+        randomizeObject(clazz, generatedValue);
+        return generatedValue;
+    }
+
+    private void randomizeObject(PowerClass clazz, GeneratedValue generatedValue) {
         processFieldsAndParents(clazz);
-        randomizeCollection(instance, clazz.getGenerics());
-        return instance;
+        randomizeCollection(generatedValue.getValue(), clazz.getGenerics());
     }
 
     private void randomizeCollection(Object value, Type[] genericTypes) {
@@ -117,8 +125,8 @@ class RandomObject {
             int randomCollectionSize = getRandomCollectionSize();
             for (int i = 0; i < randomCollectionSize; i++) {
                 Type type = genericTypes.length > 0 ? genericTypes[0] : Object.class;
-                Object item = randomizeType(type);
-                items.add(item);
+                GeneratedValue generatedValue = randomizeType(type);
+                items.add(generatedValue.getValue());
             }
             if (value instanceof List) {
                 List list = (List) value;
@@ -132,14 +140,14 @@ class RandomObject {
                 Map map = (Map) value;
                 for (int i = 0; i < randomCollectionSize; i++) {
                     Type type = genericTypes.length > 1 ? genericTypes[1] : Object.class;
-                    Object item = randomizeType(type);
-                    map.put(items.get(i), item);
+                    GeneratedValue generatedValue = randomizeType(type);
+                    map.put(items.get(i), generatedValue.getValue());
                 }
             }
         }
     }
 
-    private Object randomizeType(Type type) {
+    private GeneratedValue randomizeType(Type type) {
         if (type instanceof ParameterizedType) {
             return randomizeParameterizedType((ParameterizedType) type);
         } else {
@@ -147,7 +155,7 @@ class RandomObject {
         }
     }
 
-    private Object randomizeParameterizedType(ParameterizedType type) {
+    private GeneratedValue randomizeParameterizedType(ParameterizedType type) {
         Type rawType = type.getRawType();
         Type[] actualTypeArguments = type.getActualTypeArguments();
         PowerClass clazz = new PowerClass((Class<?>) rawType, actualTypeArguments);
@@ -162,7 +170,7 @@ class RandomObject {
                 if (value != null && value.getClass().isArray()) {
                     randomizeArray(value, field);
                 } else {
-                    Array.set(array, i, getRandomObject(field));
+                    Array.set(array, i, getRandomObject(field).getValue());
                 }
             }
         }
@@ -172,26 +180,29 @@ class RandomObject {
         return randomizer.nextInt(collectionSizeRange.max - collectionSizeRange.min) + collectionSizeRange.min;
     }
 
-    private Object generateValue(PowerField field, PowerClass rawType, PowerClass type, Type[] generics) {
+    private GeneratedValue generateValue(PowerField field, PowerClass rawType, PowerClass type, Type[] generics) {
+        GeneratedValue generatedValue = new GeneratedValue();
         DataGenerator generator = getDataGenerator(rawType);
-        Object value = generator.getValue(type, generics);
-        if (value != null) {
+        generatedValue.setValue(generator.getValue(type, generics));
+        if (generatedValue.getValue() != null) {
             for (Constraint constraint : constraints) {
-                if (constraint.canApply(value)) {
-                    value = constraint.apply(field, value, randomizer);
+                if (constraint.canApply(generatedValue.getValue())) {
+                    Object apply = constraint.apply(field, generatedValue.getValue(), randomizer);
+                    generatedValue.setFromConstraint(apply != null && !apply.equals(generatedValue.getValue()));
+                    generatedValue.setValue(apply);
                 }
             }
         }
-        return value;
+        return generatedValue;
     }
 
-    private Object getRandomObject(PowerClass type) {
+    private GeneratedValue getRandomObject(PowerClass type) {
         Type[] generics = type.getGenerics();
-        Object value = generateValue(null, type, type, generics);
-        if (value == null) {
-            value = type.newInstance();
+        GeneratedValue generatedValue = generateValue(null, type, type, generics);
+        if (generatedValue.getValue() == null) {
+            generatedValue.setValue(type.newInstance());
         }
-        return value;
+        return generatedValue;
     }
 
     private DataGenerator getDataGenerator(PowerClass type) {
@@ -211,7 +222,7 @@ class RandomObject {
     <T> List<T> randomCollection(int size, Class<T> clazz) {
         List<T> list = new ArrayList<>();
         for (int i = 0; i < size; i++) {
-            list.add(randomCollection(clazz));
+            list.add(randomObject(clazz));
         }
         return list;
     }
@@ -219,7 +230,7 @@ class RandomObject {
     <T> T[] randomArray(int size, Class<T> clazz) {
         T[] list = (T[]) Array.newInstance(clazz, size);
         for (int i = 0; i < size; i++) {
-            list[i] = randomCollection(clazz);
+            list[i] = randomObject(clazz);
         }
         return list;
     }
@@ -271,5 +282,17 @@ class RandomObject {
         return this;
     }
 
+    public <T> T randomObject(T objectToChange) {
+        PowerClass clazz = new PowerClass(objectToChange, genericTypesInClass);
+        GeneratedValue generatedValue = new GeneratedValue();
+        generatedValue.setValue(objectToChange);
+        randomizeObject(clazz, generatedValue);
+        return objectToChange;
+    }
+
+    public RandomObject overrideValues(boolean override) {
+        this.override = override;
+        return this;
+    }
 }
 

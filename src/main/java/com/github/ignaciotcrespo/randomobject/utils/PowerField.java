@@ -1,5 +1,7 @@
 package com.github.ignaciotcrespo.randomobject.utils;
 
+import com.github.ignaciotcrespo.randomobject.GeneratedValue;
+
 import java.lang.reflect.*;
 import java.util.List;
 
@@ -10,7 +12,7 @@ public class PowerField {
     private final Field field;
     private final PowerClass parentClass;
 
-    private Object parentInstance;
+    private GeneratedValue parentInstance;
 
     public PowerField(Field field, PowerClass parentClass) {
         this.field = field;
@@ -112,14 +114,29 @@ public class PowerField {
         return powerClass;
     }
 
-    public void setValue(Object value) {
-        if (value != null) {
+    public void setValue(GeneratedValue generatedValue, boolean override) {
+        if (generatedValue.getValue() != null && parentInstance.getValue() != null) {
             try {
-                field.set(parentInstance, value);
+                if (override) {
+                    field.set(parentInstance.getValue(), generatedValue.getValue());
+                } else {
+                    if (generatedValue.isFromConstraint()) {
+                        field.set(parentInstance.getValue(), generatedValue.getValue());
+                    } else if (hasDefaultValue()) {
+                        field.set(parentInstance.getValue(), generatedValue.getValue());
+                    }
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
+    }
+
+    private boolean hasDefaultValue() throws IllegalAccessException {
+        Object value = field.get(parentInstance.getValue());
+        return (value != null
+                && (value instanceof Number && ((Number) value).doubleValue() == 0D))
+                || value == null;
     }
 
     public PowerClass getArrayType() {
@@ -169,7 +186,7 @@ public class PowerField {
         return false;
     }
 
-    public void setParentInstance(Object instance) {
+    public void setParentInstance(GeneratedValue instance) {
         this.parentInstance = instance;
     }
 

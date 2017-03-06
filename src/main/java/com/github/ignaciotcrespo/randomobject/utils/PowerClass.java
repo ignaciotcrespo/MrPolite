@@ -1,5 +1,6 @@
 package com.github.ignaciotcrespo.randomobject.utils;
 
+import com.github.ignaciotcrespo.randomobject.GeneratedValue;
 import com.github.ignaciotcrespo.randomobject.generators.DataGenerator;
 
 import java.lang.reflect.*;
@@ -14,7 +15,7 @@ public class PowerClass {
     Class clazz;
     Type[] generics;
 
-    private Object currentInstance;
+    private GeneratedValue currentInstance;
 
     public <T> PowerClass(Class<?> clazz, Type[] genericTypesInClass) {
         this.clazz = clazz;
@@ -22,8 +23,10 @@ public class PowerClass {
         this.depth = 0;
     }
 
-    public boolean isPrivate() {
-        return Modifier.isPrivate(clazz.getModifiers());
+    public <T> PowerClass(T object, Type[] genericTypesInClass) {
+        this(object.getClass(), genericTypesInClass);
+        currentInstance = new GeneratedValue();
+        currentInstance.setValue(object);
     }
 
     public boolean canGenerateData(DataGenerator generator) {
@@ -32,7 +35,8 @@ public class PowerClass {
 
     public Object newInstance() {
         Object instance = ClassUtils.newInstance(clazz);
-        currentInstance = instance;
+        currentInstance = new GeneratedValue();
+        currentInstance.setValue(instance);
         return instance;
     }
 
@@ -116,10 +120,6 @@ public class PowerClass {
     @Override
     public int hashCode() {
         return clazz.hashCode();
-    }
-
-    public boolean isStatic() {
-        return Modifier.isStatic(clazz.getModifiers());
     }
 
     public boolean isArray() {
