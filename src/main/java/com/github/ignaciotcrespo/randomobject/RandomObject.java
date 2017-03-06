@@ -25,10 +25,10 @@ class RandomObject {
 
     private DataGenerator[] generators;
 
-    private final List<Constraint> constraints = new ArrayList<>();
+    private final List<Constraint> constraints = new ArrayList<Constraint>();
     private Range collectionSizeRange = DEFAULT_COLLECTION_RANGE;
-    private List<String> excludeFields = new ArrayList<>();
-    private List<Class<?>> excludeClasses = new ArrayList<>();
+    private List<String> excludeFields = new ArrayList<String>();
+    private List<Class<?>> excludeClasses = new ArrayList<Class<?>>();
     private Randomizer randomizer = new Randomizer();
     private Class<?>[] genericTypesInClass = new Class[0];
     private boolean override = true;
@@ -220,7 +220,7 @@ class RandomObject {
     }
 
     <T> List<T> randomCollection(int size, Class<T> clazz) {
-        List<T> list = new ArrayList<>();
+        List<T> list = new ArrayList<T>();
         for (int i = 0; i < size; i++) {
             list.add(randomObject(clazz));
         }

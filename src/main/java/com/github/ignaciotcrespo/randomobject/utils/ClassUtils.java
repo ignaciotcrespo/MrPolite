@@ -10,7 +10,7 @@ import java.util.*;
  */
 public class ClassUtils {
 
-    private static final Map<String, Class<?>> namePrimitiveMap = new HashMap<>();
+    private static final Map<String, Class<?>> namePrimitiveMap = new HashMap<String, Class<?>>();
 
     static {
         namePrimitiveMap.put("boolean", Boolean.TYPE);
@@ -24,7 +24,7 @@ public class ClassUtils {
         namePrimitiveMap.put("void", Void.TYPE);
     }
 
-    private static final Map<Class<?>, Class<?>> primitiveWrapperMap = new HashMap<>();
+    private static final Map<Class<?>, Class<?>> primitiveWrapperMap = new HashMap<Class<?>, Class<?>>();
 
     static {
         primitiveWrapperMap.put(Boolean.TYPE, Boolean.class);
@@ -38,7 +38,7 @@ public class ClassUtils {
         primitiveWrapperMap.put(Void.TYPE, Void.TYPE);
     }
 
-    private static final Map<Class<?>, Object> primitiveDefaultMap = new HashMap<>();
+    private static final Map<Class<?>, Object> primitiveDefaultMap = new HashMap<Class<?>, Object>();
 
     static {
         primitiveDefaultMap.put(Boolean.TYPE, false);
@@ -64,11 +64,11 @@ public class ClassUtils {
             if (clazz.getName().equals(List.class.getName())) {
                 return new ArrayList();
             } else if (clazz.getName().equals(Set.class.getName())) {
-                return new HashSet<>();
+                return new HashSet<Object>();
             } else if (clazz.getName().equals(Queue.class.getName())) {
-                return new LinkedList<>();
+                return new LinkedList<Object>();
             } else if (clazz.getName().equals(Map.class.getName())) {
-                return new HashMap<>();
+                return new HashMap<Object, Object>();
             }
             return null;
         }

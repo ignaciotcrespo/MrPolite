@@ -16,8 +16,8 @@ abstract class PoliteDesireImpl<C, V> implements PoliteDesire<C, V> {
     @VisibleForTesting
     int seed;
     private Range collectionSizeRange = RandomObject.DEFAULT_COLLECTION_RANGE;
-    private final List<String> excludeRegex = new ArrayList<>();
-    private final List<Class<?>> excludeClasses = new ArrayList<>();
+    private final List<String> excludeRegex = new ArrayList<String>();
+    private final List<Class<?>> excludeClasses = new ArrayList<Class<?>>();
     private Class<?>[] generics = new Class[0];
     private boolean override = true;
 

@@ -8,18 +8,18 @@ import java.util.List;
 public class MrPolite {
 
     public static <T> PoliteDesire<T, T> one(Class<T> clazz) {
-        return new One<>(clazz);
+        return new One<T>(clazz);
     }
 
     public static <T> PoliteDesire<T, List<T>> aListOf(int size, Class<T> clazz) {
-        return new ListOf<>(size, clazz);
+        return new ListOf<T>(size, clazz);
     }
 
     public static <T> PoliteDesire<T, T[]> anArrayOf(int size, Class<T> clazz) {
-        return new ArrayOf<>(size, clazz);
+        return new ArrayOf<T>(size, clazz);
     }
 
     public static PoliteDesire<Object, Object> change(Object object) {
-        return new Change<>(object);
+        return new Change<Object>(object);
     }
 }

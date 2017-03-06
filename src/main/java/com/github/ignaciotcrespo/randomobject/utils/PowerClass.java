@@ -85,7 +85,7 @@ public class PowerClass {
 
     public PowerClass getSuperclass() {
         TypeVariable<?>[] clazzGenericParameters = clazz.getTypeParameters();
-        Map<TypeVariable<?>, Type> clazzGenericParametersMap = new HashMap<>();
+        Map<TypeVariable<?>, Type> clazzGenericParametersMap = new HashMap<TypeVariable<?>, Type>();
         for (int i = 0; i < getGenerics().length; i++) {
             clazzGenericParametersMap.put(clazzGenericParameters[i], getGenerics()[i]);
         }
