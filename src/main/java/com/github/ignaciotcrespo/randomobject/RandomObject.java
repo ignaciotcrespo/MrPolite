@@ -101,7 +101,7 @@ class RandomObject {
             randomizeCollection(generatedValue.getValue(), field.getGenerics());
         }
         return generatedValue;
-    }
+        }
 
     <T> T randomObject(Class<T> clazz) {
         GeneratedValue generatedValue = randomizeClass(new PowerClass(clazz, genericTypesInClass));
