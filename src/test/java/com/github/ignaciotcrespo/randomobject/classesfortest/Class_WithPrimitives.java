@@ -18,6 +18,9 @@ public class Class_WithPrimitives {
     float _float;
     double _double;
 
+    String _stringWithDefaultValue = "def value";
+    int _intWithDefaultValue = 999;
+
     public void assertNumbers(double num) {
         assertThat(_byte).isEqualTo(((Number) num).byteValue());
         assertThat(_short).isEqualTo(((Number) num).shortValue());
@@ -68,9 +71,10 @@ public class Class_WithPrimitives {
         if (_long != that._long) return false;
         if (Float.compare(that._float, _float) != 0) return false;
         if (Double.compare(that._double, _double) != 0) return false;
+        if (_intWithDefaultValue != that._intWithDefaultValue) return false;
         if (_string != null ? !_string.equals(that._string) : that._string != null) return false;
-        return _string2 != null ? _string2.equals(that._string2) : that._string2 == null;
-
+        if (_string2 != null ? !_string2.equals(that._string2) : that._string2 != null) return false;
+        return _stringWithDefaultValue != null ? _stringWithDefaultValue.equals(that._stringWithDefaultValue) : that._stringWithDefaultValue == null;
     }
 
     @Override
@@ -88,6 +92,8 @@ public class Class_WithPrimitives {
         result = 31 * result + (_float != +0.0f ? Float.floatToIntBits(_float) : 0);
         temp = Double.doubleToLongBits(_double);
         result = 31 * result + (int) (temp ^ (temp >>> 32));
+        result = 31 * result + (_stringWithDefaultValue != null ? _stringWithDefaultValue.hashCode() : 0);
+        result = 31 * result + _intWithDefaultValue;
         return result;
     }
 
@@ -104,6 +110,8 @@ public class Class_WithPrimitives {
                 ", _long=" + _long +
                 ", _float=" + _float +
                 ", _double=" + _double +
+                ", _stringWithDefaultValue='" + _stringWithDefaultValue + '\'' +
+                ", _intWithDefaultValue=" + _intWithDefaultValue +
                 '}';
     }
 
@@ -119,5 +127,15 @@ public class Class_WithPrimitives {
         assertThat(_long).isNotEqualTo(0L);
         assertThat(_float).isNotEqualTo(0F);
         assertThat(_double).isNotEqualTo(0D);
+    }
+
+    public void assertNotOverride() {
+        assertThat(_stringWithDefaultValue).isEqualTo("def value");
+        assertThat(_intWithDefaultValue).isEqualTo(999);
+    }
+
+    public void assertOverride() {
+        assertThat(_stringWithDefaultValue).isNotNull().isNotEqualTo("def value");
+        assertThat(_intWithDefaultValue).isNotNull().isNotEqualTo(0).isNotEqualTo(999);
     }
 }

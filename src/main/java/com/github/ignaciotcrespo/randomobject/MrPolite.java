@@ -19,4 +19,7 @@ public class MrPolite {
         return new ArrayOf<>(size, clazz);
     }
 
+    public static PoliteDesire<Object, Object> change(Object object) {
+        return new Change<>(object);
+    }
 }

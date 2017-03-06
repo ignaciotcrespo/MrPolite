@@ -10,7 +10,6 @@ import java.util.List;
  * Created by crespo on 2/27/17.
  */
 abstract class PoliteDesireImpl<C, V> implements PoliteDesire<C, V> {
-    final Class<C> clazz;
     @VisibleForTesting
     private final RandomObject mRandom;
     private int depth = RandomObject.DEFAULT_DEPTH;
@@ -20,9 +19,9 @@ abstract class PoliteDesireImpl<C, V> implements PoliteDesire<C, V> {
     private final List<String> excludeRegex = new ArrayList<>();
     private final List<Class<?>> excludeClasses = new ArrayList<>();
     private Class<?>[] generics = new Class[0];
+    private boolean override = true;
 
-    PoliteDesireImpl(Class<C> clazz) {
-        this.clazz = clazz;
+    public <T> PoliteDesireImpl() {
         mRandom = RandomObject.newInstance();
     }
 
@@ -33,7 +32,8 @@ abstract class PoliteDesireImpl<C, V> implements PoliteDesire<C, V> {
                 .excludeRegex(excludeRegex)
                 .excludeClasses(excludeClasses)
                 .collectionSizeRange(collectionSizeRange)
-                .generics(generics);
+                .generics(generics)
+                .overrideValues(override);
     }
 
     @Override
@@ -105,6 +105,12 @@ abstract class PoliteDesireImpl<C, V> implements PoliteDesire<C, V> {
     @Override
     public PoliteDesire<C, V> withGenerics(Class<?>... clazz) {
         generics = clazz;
+        return this;
+    }
+
+    @Override
+    public PoliteDesire<C, V> overrideValues(boolean override) {
+        this.override = override;
         return this;
     }
 }

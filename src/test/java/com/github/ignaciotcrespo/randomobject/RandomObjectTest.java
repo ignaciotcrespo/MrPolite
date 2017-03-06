@@ -5,11 +5,9 @@ package com.github.ignaciotcrespo.randomobject;
  */
 public class RandomObjectTest {
 
+    // TODO exclude package regex
     // TODO objects pool
-    // TODO colecciones anidadas
-    // TODO change(object).field("regex").please()
     // TODO detect android annotations StringDef, etc.
-    // TODO fields with collections
     // TODO newInstance color
     // TODO newInstance bitmap as byte array
 
