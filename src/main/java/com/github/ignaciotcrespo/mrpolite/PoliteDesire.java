@@ -156,10 +156,19 @@ public interface PoliteDesire<C, V> {
     PoliteDesire<C, V> withGenerics(Class<?>... clazz);
 
     /**
-     * By default all the values in all the fields are set to a new value. Here the default behavior can be changed.
+     * By default the values already initialized are also override with random values,
+     * the default behavior can be changed with this method.
      *
-     * @param override true to override all values, false otherwise.
+     * @param override true to override also the values already initialized, false otherwise.
      * @return the same {@link PoliteDesire}
      */
     PoliteDesire<C, V> overrideValues(boolean override);
+
+    /**
+     * Override also the values in final fields. Take into account that final fields for
+     * primitives and String are inlined in bytecode so it has no effect to change them.
+     *
+     * @return the same {@link PoliteDesire}
+     */
+    PoliteDesire<C, V> overrideFinals();
 }

@@ -1,5 +1,9 @@
 package com.github.ignaciotcrespo.mrpolite;
 
+import com.github.ignaciotcrespo.mrpolite.classesfortest.Constants;
+
+import java.util.Calendar;
+
 import static com.github.ignaciotcrespo.mrpolite.utils.TextUtils.has;
 import static com.github.ignaciotcrespo.mrpolite.utils.TextUtils.hasNot;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -14,7 +18,7 @@ public class ForTest_Class_Default_SamePackage extends ForTest_SuperClass_Defaul
     protected String textProtected;
     private String textPrivate;
 
-    public final String textPublicFinal = "public_final";
+    public final Calendar calPublicFinal = Constants.CALENDAR;
     final String textDefaultFinal = "default_final";
     protected final String textProtectedFinal = "protected_final";
     private final String textPrivateFinal = "private_final";
@@ -41,7 +45,7 @@ public class ForTest_Class_Default_SamePackage extends ForTest_SuperClass_Defaul
         has(textPrivateStatic);
 
         // final fields should not be set
-        assertThat(textPublicFinal).isSameAs("public_final");
+        assertThat(calPublicFinal).isSameAs(Constants.CALENDAR);
         assertThat(textDefaultFinal).isSameAs("default_final");
         assertThat(textProtectedFinal).isSameAs("protected_final");
         assertThat(textPrivateFinal).isSameAs("private_final");
@@ -65,7 +69,7 @@ public class ForTest_Class_Default_SamePackage extends ForTest_SuperClass_Defaul
         hasNot(textPrivateStatic);
 
         // final fields should not be set
-        assertThat(textPublicFinal).isSameAs("public_final");
+        assertThat(calPublicFinal).isSameAs(Constants.CALENDAR);
         assertThat(textDefaultFinal).isSameAs("default_final");
         assertThat(textProtectedFinal).isSameAs("protected_final");
         assertThat(textPrivateFinal).isSameAs("private_final");

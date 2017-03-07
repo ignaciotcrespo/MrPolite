@@ -43,17 +43,14 @@ public class PowerField {
         this.parentClass = parentClass;
     }
 
-    public boolean isInvalid() {
+    public boolean isInvalid(boolean overrideFinals) {
         if (field.getName().startsWith("this$")) {
             // avoid inner class reference to outer class
             return true;
         }
-        // ignore same nested class
-        return //processor.shouldStopNestedSameClasses(field, parentClass)
-                //||
-                isInvalidGeneric()
-                        || hasInvalidNumberOfGenerics()
-                        || Modifier.isFinal(field.getModifiers());
+        return isInvalidGeneric()
+                || hasInvalidNumberOfGenerics()
+                || (!overrideFinals &&  Modifier.isFinal(field.getModifiers()));
     }
 
     private boolean isInvalidGeneric() {

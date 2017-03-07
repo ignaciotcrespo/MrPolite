@@ -54,6 +54,7 @@ class RandomObject {
     private Randomizer randomizer = new Randomizer();
     private Class<?>[] genericTypesInClass = new Class[0];
     private boolean override = true;
+    private boolean overrideFinals;
 
     private RandomObject() {
         // hide constructor
@@ -104,7 +105,7 @@ class RandomObject {
     private boolean isExcludedField(PowerField field) {
         return field.isNameIn(excludeFields)
                 || field.isClassIn(excludeClasses)
-                || field.isInvalid();
+                || field.isInvalid(overrideFinals);
     }
 
     private GeneratedValue getRandomArray(PowerField field) {
@@ -309,6 +310,11 @@ class RandomObject {
 
     public RandomObject overrideValues(boolean override) {
         this.override = override;
+        return this;
+    }
+
+    public RandomObject overrideFinals(boolean overrideFinals) {
+        this.overrideFinals = overrideFinals;
         return this;
     }
 }

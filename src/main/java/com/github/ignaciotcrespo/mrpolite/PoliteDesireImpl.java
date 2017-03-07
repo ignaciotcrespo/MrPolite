@@ -43,6 +43,7 @@ abstract class PoliteDesireImpl<C, V> implements PoliteDesire<C, V> {
     private final List<Class<?>> excludeClasses = new ArrayList<Class<?>>();
     private Class<?>[] generics = new Class[0];
     private boolean override = true;
+    private boolean overrideFinals;
 
     public <T> PoliteDesireImpl() {
         mRandom = RandomObject.newInstance();
@@ -56,7 +57,8 @@ abstract class PoliteDesireImpl<C, V> implements PoliteDesire<C, V> {
                 .excludeClasses(excludeClasses)
                 .collectionSizeRange(collectionSizeRange)
                 .generics(generics)
-                .overrideValues(override);
+                .overrideValues(override)
+                .overrideFinals(overrideFinals);
     }
 
     @Override
@@ -134,6 +136,12 @@ abstract class PoliteDesireImpl<C, V> implements PoliteDesire<C, V> {
     @Override
     public PoliteDesire<C, V> overrideValues(boolean override) {
         this.override = override;
+        return this;
+    }
+
+    @Override
+    public PoliteDesire<C, V> overrideFinals() {
+        this.overrideFinals = true;
         return this;
     }
 }

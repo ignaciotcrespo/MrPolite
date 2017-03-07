@@ -40,13 +40,17 @@ MrPolite.one(Animal.class)
    .withFieldNamesInStrings()
    .withNumberRange(1000, 2000)
    .withStringsMaxLength(10)
+   .overrideValues(true)
+   .overrideFinals()
+   .exclude(".+Uri.+")
+   .exclude(String.class)
    .please();
 ```
 
 For more details about these parameters, please refer to the [javadocs](https://raw.githubusercontent.com/ignaciotcrespo/MrPolite/master/docs/javadocs/com/github/ignaciotcrespo/mrpolite/PoliteDesire.html) section.
 
 # Current Version
-* The current stable version is `1.0.3`
+* The current stable version is `1.0.4`
 
 # Android support
 MrPolite works fine in android, it is compiled with JDK 1.6 and tested on real projects.
@@ -54,7 +58,7 @@ MrPolite works fine in android, it is compiled with JDK 1.6 and tested on real p
 # Adding Mr Polite to your project
 Using gradle: 
 ```properties
-compile 'com.github.ignaciotcrespo:mrpolite:1.0.3'
+compile 'com.github.ignaciotcrespo:mrpolite:1.0.4'
 ```
 
 # Contribution
