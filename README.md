@@ -1,6 +1,9 @@
 ![Mr Polite Logo](https://raw.githubusercontent.com/ignaciotcrespo/MrPolite/master/designs/mrpolite.jpg)
 
-# MrPolite
+
+![build status](https://img.shields.io/badge/build-info =>-yellow.svg) [![Build Status](https://travis-ci.org/ignaciotcrespo/MrPolite.svg?branch=master)](https://travis-ci.org/ignaciotcrespo/MrPolite) [![codecov.io](http://codecov.io/github/ignaciotcrespo/MrPolite/coverage.svg?branch=master)](http://codecov.io/github/ignaciotcrespo/MrPolite?branch=master) [![MIT License](http://img.shields.io/badge/license-MIT-green.svg) ](https://github.com/ignaciotcrespo/MrPolite/blob/master/LICENSE)
+
+# Mr Polite
 Mr Polite will give you anything you need, if you ask him in a polite way.
 
 Let's say you have a class `Animal` and you want to generate an instance of it:
@@ -41,7 +44,7 @@ MrPolite.one(Animal.class)
 ```
 
 # Current Version
-* The current stable version is `1.0.0`
+* The current stable version is `1.0.1`
 
 # Android support
 MrPolite works fine in android, it is compiled with JDK 1.6 and tested on real projects.
@@ -49,7 +52,7 @@ MrPolite works fine in android, it is compiled with JDK 1.6 and tested on real p
 # Adding Mr Polite to your project
 Using gradle: 
 ```properties
-compile 'com.github.ignaciotcrespo:mrpolite:1.0.0'
+compile 'com.github.ignaciotcrespo:mrpolite:1.0.1'
 ```
 
 # Contribution
