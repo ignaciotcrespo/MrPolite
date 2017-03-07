@@ -7,7 +7,6 @@ import org.junit.Test;
 
 import java.util.Date;
 import java.util.Set;
-import java.util.function.Predicate;
 
 import static com.github.ignaciotcrespo.randomobject.MrPolite.one;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -165,18 +164,15 @@ public class RandomObject_generics_Tests {
         Class_genericWildcard object = one(Class_genericWildcard.class).please();
 
         assertThat(object).isNotNull();
-        assertThat(object.list).isNotEmpty().hasOnlyElementsOfType(Class_WithGenerics_T.class).allMatch(new Predicate<Class_WithGenerics_T<? extends Set>>() {
-            @Override
-            public boolean test(Class_WithGenerics_T<? extends Set> cgT_set) {
-                assertThat((Set) cgT_set.object_T).isNotEmpty();
-                return true;
-            }
-        });
+        assertThat(object.list).isNotEmpty().hasOnlyElementsOfType(Class_WithGenerics_T.class);
+        for (Class_WithGenerics_T<? extends Set> cgT_set : object.list) {
+            assertThat(cgT_set.object_T).isNotEmpty();
+        }
         assertThat(object.listNested).isNotEmpty().hasOnlyElementsOfType(Class_WithGenerics_T.class);
         for (Class_WithGenerics_T<Class_WithGenerics_T<? extends Set>> cgT_cgT_set : object.listNested) {
             Class_WithGenerics_T<? extends Set> cgT_set = cgT_cgT_set.object_T;
             assertThat(cgT_set).isInstanceOf(Class_WithGenerics_T.class);
-            assertThat((Set)cgT_set.object_T).isNotEmpty();
+            assertThat(cgT_set.object_T).isNotEmpty();
         }
 
     }
