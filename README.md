@@ -4,7 +4,7 @@
 ![build status](https://img.shields.io/badge/build-info =>-yellow.svg) [![Build Status](https://travis-ci.org/ignaciotcrespo/MrPolite.svg?branch=master)](https://travis-ci.org/ignaciotcrespo/MrPolite) [![codecov.io](http://codecov.io/github/ignaciotcrespo/MrPolite/coverage.svg?branch=master)](http://codecov.io/github/ignaciotcrespo/MrPolite?branch=master) [![MIT License](http://img.shields.io/badge/license-MIT-green.svg) ](https://github.com/ignaciotcrespo/MrPolite/blob/master/LICENSE)
 
 # Mr Polite
-Mr Polite will give you anything you need, if you ask him in a polite way.
+Mr Polite will give you anything you need, if you kindly ask for it.
 
 Let's say you have a class `Animal` and you want to generate an instance of it:
 ```java
