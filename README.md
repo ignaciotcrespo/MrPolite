@@ -44,7 +44,7 @@ MrPolite.one(Animal.class)
 ```
 
 # Current Version
-* The current stable version is `1.0.1`
+* The current stable version is `1.0.2`
 
 # Android support
 MrPolite works fine in android, it is compiled with JDK 1.6 and tested on real projects.
@@ -52,7 +52,7 @@ MrPolite works fine in android, it is compiled with JDK 1.6 and tested on real p
 # Adding Mr Polite to your project
 Using gradle: 
 ```properties
-compile 'com.github.ignaciotcrespo:mrpolite:1.0.1'
+compile 'com.github.ignaciotcrespo:mrpolite:1.0.2'
 ```
 
 # Contribution
