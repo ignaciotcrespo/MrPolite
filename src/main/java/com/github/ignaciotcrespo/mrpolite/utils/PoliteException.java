@@ -26,9 +26,9 @@ package com.github.ignaciotcrespo.mrpolite.utils;
 /**
  * Created by crespo on 3/6/17.
  */
-public class MrPoliteException extends RuntimeException {
+public class PoliteException extends RuntimeException {
 
-    public MrPoliteException(String message) {
+    public PoliteException(String message) {
         super("I'm so sorry! "+ message);
     }
 }

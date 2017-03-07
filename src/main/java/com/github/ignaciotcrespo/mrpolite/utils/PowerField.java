@@ -103,7 +103,7 @@ public class PowerField {
         } else if (type instanceof ParameterizedType) {
             return getTypeName(((ParameterizedType) type).getRawType());
         }
-        throw new MrPoliteException("Type not supported yet! " + type);
+        throw new PoliteException("Type not supported yet! " + type);
     }
 
     private Class<?> getClassFromType(Type type) {
