@@ -47,7 +47,7 @@ MrPolite.one(Animal.class)
    .please();
 ```
 
-For more details about these parameters, please refer to the [javadocs](https://raw.githubusercontent.com/ignaciotcrespo/MrPolite/master/docs/javadocs/com/github/ignaciotcrespo/mrpolite/PoliteDesire.html) section.
+For more details about these parameters, please refer to the [wiki](https://github.com/ignaciotcrespo/MrPolite/wiki) section.
 
 # Current Version
 * The current stable version is `1.0.4`
