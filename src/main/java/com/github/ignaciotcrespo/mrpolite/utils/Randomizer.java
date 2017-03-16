@@ -31,12 +31,20 @@ import java.util.Random;
 public class Randomizer {
 
     private final Random random;
+    private final long seed;
 
     public Randomizer() {
         random = new Random();
+        Object seedInternal = ClassUtils.getFieldValue(random, "seed");
+        if (seedInternal instanceof Number) {
+            seed = ((Number) seedInternal).longValue();
+        } else {
+            seed = (int) System.currentTimeMillis();
+        }
     }
 
-    public Randomizer(int seed) {
+    public Randomizer(long seed) {
+        this.seed = seed;
         random = new Random(seed);
     }
 
@@ -62,5 +70,9 @@ public class Randomizer {
 
     public boolean nextBoolean() {
         return random.nextBoolean();
+    }
+
+    public long getSeed() {
+        return seed;
     }
 }

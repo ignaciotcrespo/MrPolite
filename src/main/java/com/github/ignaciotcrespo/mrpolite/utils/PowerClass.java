@@ -56,8 +56,8 @@ public class PowerClass {
         return generator.canProcess(clazz);
     }
 
-    public Object newInstance() {
-        Object instance = ClassUtils.newInstance(clazz);
+    public Object newInstance(Randomizer randomizer) {
+        Object instance = ClassUtils.newInstance(clazz, randomizer);
         currentInstance = new GeneratedValue();
         currentInstance.setValue(instance);
         return instance;

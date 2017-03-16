@@ -223,7 +223,7 @@ class RandomObject {
         Type[] generics = type.getGenerics();
         GeneratedValue generatedValue = generateValue(null, type, type, generics);
         if (generatedValue.getValue() == null) {
-            generatedValue.setValue(type.newInstance());
+            generatedValue.setValue(type.newInstance(randomizer));
         }
         return generatedValue;
     }
@@ -273,7 +273,7 @@ class RandomObject {
         return this;
     }
 
-    RandomObject seed(int seed) {
+    RandomObject seed(long seed) {
         if (seed > 0) {
             this.randomizer = new Randomizer(seed);
             initDataGenerators();

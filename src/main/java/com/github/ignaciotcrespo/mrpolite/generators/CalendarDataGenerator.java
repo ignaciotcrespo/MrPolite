@@ -46,7 +46,12 @@ class CalendarDataGenerator extends RandomGenerator {
     @Override
     public Object getValue(PowerClass clazz, Type[] generics) {
         Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(Math.abs(mRandomizer.nextLong()));
+        calendar.set(Calendar.YEAR, mRandomizer.nextInt(2100));
+        calendar.set(Calendar.DAY_OF_YEAR, mRandomizer.nextInt(365) + 1);
+        calendar.set(Calendar.HOUR_OF_DAY, mRandomizer.nextInt(24));
+        calendar.set(Calendar.MINUTE, mRandomizer.nextInt(60));
+        calendar.set(Calendar.SECOND, mRandomizer.nextInt(60));
+        calendar.set(Calendar.MILLISECOND, 0);
         return calendar;
     }
 }

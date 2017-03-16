@@ -23,9 +23,9 @@
  */
 package com.github.ignaciotcrespo.mrpolite.utils;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Modifier;
+import com.github.ignaciotcrespo.mrpolite.MrPolite;
+
+import java.lang.reflect.*;
 import java.util.*;
 
 /**
@@ -34,6 +34,7 @@ import java.util.*;
 public class ClassUtils {
 
     private static final Map<String, Class<?>> namePrimitiveMap = new HashMap<String, Class<?>>();
+    private static final HashMap<String, Object> values = new HashMap<String, Object>();
 
     static {
         namePrimitiveMap.put("boolean", Boolean.TYPE);
@@ -82,7 +83,7 @@ public class ClassUtils {
         return null;
     }
 
-    public static <T> Object newInstance(Class<T> clazz) {
+    public static <T> Object newInstance(Class<T> clazz, final Randomizer randomizer) {
         if (Modifier.isAbstract(clazz.getModifiers())) {
             if (clazz.getName().equals(List.class.getName())) {
                 return new ArrayList();
@@ -93,7 +94,12 @@ public class ClassUtils {
             } else if (clazz.getName().equals(Map.class.getName())) {
                 return new HashMap<Object, Object>();
             }
-            return null;
+        }
+        if (Modifier.isInterface(clazz.getModifiers())) {
+            return Proxy.newProxyInstance(
+                    clazz.getClassLoader(),
+                    new Class[]{clazz},
+                    new InterfaceInvocationHandler(randomizer, clazz));
         }
         T instance = null;
         try {
@@ -118,7 +124,7 @@ public class ClassUtils {
                             if (paramTypes[i].isPrimitive()) {
                                 params[i] = primitiveToDefault(paramTypes[i]);
                             } else {
-                                params[i] = newInstance(paramTypes[i]);
+                                params[i] = newInstance(paramTypes[i], randomizer);
                             }
                         }
                         instance = (T) constructor.newInstance(params);
@@ -137,4 +143,67 @@ public class ClassUtils {
         return instance;
     }
 
+    public static Object getFieldValue(Object parent, String fieldName) {
+        Field field = null;
+        try {
+            field = parent.getClass().getDeclaredField(fieldName);
+            field.setAccessible(true);
+            return field.get(parent);
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return field;
+    }
+
+    private static class InterfaceInvocationHandler implements InvocationHandler {
+        private final Randomizer randomizer;
+        private final Class clazz;
+
+        public InterfaceInvocationHandler(Randomizer randomizer, Class clazz) {
+            this.randomizer = randomizer;
+            this.clazz = clazz;
+        }
+
+        @Override
+        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+            String key = getKey(method, args, randomizer.getSeed());
+            if (!values.containsKey(key)) {
+                Object value = MrPolite.one(method.getReturnType()).withSeed(Math.abs(randomizer.getSeed() * key.hashCode())).please();
+                values.put(key, value);
+            }
+            return values.get(key);
+        }
+
+        private String getKey(Method method, Object[] args, long seed) {
+            String key = method.toString();
+            if (args != null) {
+                for (Object object : args) {
+                    key += object.getClass().toString();
+                    key += object.toString();
+                }
+            }
+            key += seed;
+            return key;
+        }
+
+        private long seedForArgs(Object[] args) {
+            long seed = 31;
+            if (args != null) {
+                for (Object object : args) {
+                    seed *= object.getClass().hashCode();
+                    seed *= object.hashCode();
+                }
+            }
+            return seed;
+        }
+
+        @Override
+        public String toString() {
+            return "InterfaceProxy{" +
+                    "clazz=" + clazz +
+                    '}';
+        }
+    }
 }

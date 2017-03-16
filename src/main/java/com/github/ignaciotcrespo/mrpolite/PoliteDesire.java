@@ -109,7 +109,7 @@ public interface PoliteDesire<C, V> {
      * @param seed the seed value
      * @return the same {@link PoliteDesire}
      */
-    PoliteDesire<C, V> withSeed(int seed);
+    PoliteDesire<C, V> withSeed(long seed);
 
     /**
      * Mr Polite will try to create collections/arrays. Define here a range for the desired size.

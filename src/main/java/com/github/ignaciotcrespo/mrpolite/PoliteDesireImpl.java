@@ -37,7 +37,7 @@ abstract class PoliteDesireImpl<C, V> implements PoliteDesire<C, V> {
     private final RandomObject mRandom;
     private int depth = RandomObject.DEFAULT_DEPTH;
     @VisibleForTesting
-    int seed;
+    long seed;
     private Range collectionSizeRange = RandomObject.DEFAULT_COLLECTION_RANGE;
     private final List<String> excludeRegex = new ArrayList<String>();
     private final List<Class<?>> excludeClasses = new ArrayList<Class<?>>();
@@ -104,7 +104,7 @@ abstract class PoliteDesireImpl<C, V> implements PoliteDesire<C, V> {
     }
 
     @Override
-    public PoliteDesire<C, V> withSeed(int seed) {
+    public PoliteDesire<C, V> withSeed(long seed) {
         this.seed = seed;
         return this;
     }

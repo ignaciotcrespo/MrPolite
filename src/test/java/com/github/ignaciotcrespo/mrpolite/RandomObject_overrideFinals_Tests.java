@@ -1,9 +1,9 @@
 package com.github.ignaciotcrespo.mrpolite;
 
 import com.github.ignaciotcrespo.mrpolite.classesfortest.Constants;
+import com.github.ignaciotcrespo.mrpolite.utils.ClassUtils;
 import org.junit.Test;
 
-import java.lang.reflect.Field;
 import java.util.Calendar;
 import java.util.List;
 
@@ -44,9 +44,9 @@ public class RandomObject_overrideFinals_Tests {
 
         public void assertValid() {
             assertThat(text).isNotEmpty();
-            assertThat(getField(this, "textFinal").toString()).isEqualTo("final_text");
+            assertThat(ClassUtils.getFieldValue(this, "textFinal").toString()).isEqualTo("final_text");
             assertThat(_int).isNotEqualTo(0);
-            assertThat((Integer) getField(this, "_intFinal")).isEqualTo(99);
+            assertThat((Integer) ClassUtils.getFieldValue(this, "_intFinal")).isEqualTo(99);
             assertThat(calendar).isNotNull();
             assertThat(calendarFinal).isSameAs(Constants.CALENDAR);
             assertThat(list).isNotEmpty().hasOnlyElementsOfType(String.class);
@@ -55,9 +55,9 @@ public class RandomObject_overrideFinals_Tests {
 
         public void assertValidFinals() {
             assertThat(text).isNotEmpty();
-            assertThat(getField(this, "textFinal").toString()).isNotEmpty().isNotEqualTo("final_text");
+            assertThat(ClassUtils.getFieldValue(this, "textFinal").toString()).isNotEmpty().isNotEqualTo("final_text");
             assertThat(_int).isNotEqualTo(0);
-            assertThat((Integer) getField(this, "_intFinal")).isNotEqualTo(99);
+            assertThat((Integer) ClassUtils.getFieldValue(this, "_intFinal")).isNotEqualTo(99);
             assertThat(calendar).isNotNull();
             assertThat(calendarFinal).isNotEqualTo(Constants.CALENDAR);
             assertThat(list).isNotEmpty().hasOnlyElementsOfType(String.class);
@@ -65,19 +65,6 @@ public class RandomObject_overrideFinals_Tests {
         }
 
 
-        static Object getField(Object parent, String fieldName) {
-            Field field = null;
-            try {
-                field = parent.getClass().getDeclaredField(fieldName);
-                field.setAccessible(true);
-                return field.get(parent);
-            } catch (NoSuchFieldException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            }
-            return field;
-        }
     }
 
 }
