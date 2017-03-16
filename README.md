@@ -49,16 +49,30 @@ MrPolite.one(Animal.class)
 
 For more details about these parameters, please refer to the [wiki](https://github.com/ignaciotcrespo/MrPolite/wiki) section.
 
+# Interfaces
+Mr. Polite kindly checks for the most common interfaces like `List`, `Set`, `Map` and create `ArrayList`, `HashSet`, `HashMap`,
+for other interfaces a proxy is created returning random objects on each method.
+
 # Current Version
-* The current stable version is `1.0.4`
+* The current stable version is `1.0.5`
 
 # Android support
 MrPolite works fine in android, it is compiled with JDK 1.6 and tested on real projects.
 
+# Kotlin
+The variables declared with `val` are generated ok, for constants declared with `val` force to overwrite everything using
+```java
+        Animal animal = one(Animal.class)
+                .overrideValues(true)
+                .overrideFinals()
+                .please();
+
+```
+
 # Adding Mr Polite to your project
 Using gradle: 
 ```properties
-compile 'com.github.ignaciotcrespo:mrpolite:1.0.4'
+compile 'com.github.ignaciotcrespo:mrpolite:1.0.5'
 ```
 
 # Contribution
