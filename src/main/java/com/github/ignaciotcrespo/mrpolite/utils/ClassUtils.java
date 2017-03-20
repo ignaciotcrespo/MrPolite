@@ -26,7 +26,8 @@ package com.github.ignaciotcrespo.mrpolite.utils;
 import com.github.ignaciotcrespo.mrpolite.MrPolite;
 
 import java.lang.reflect.*;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by crespo on 2/20/17.
@@ -83,17 +84,6 @@ public class ClassUtils {
     }
 
     public static <T> Object newInstance(Class<T> clazz, final Randomizer randomizer) {
-        if (Modifier.isAbstract(clazz.getModifiers())) {
-            if (clazz.getName().equals(List.class.getName())) {
-                return new ArrayList();
-            } else if (clazz.getName().equals(Set.class.getName())) {
-                return new HashSet<Object>();
-            } else if (clazz.getName().equals(Queue.class.getName())) {
-                return new LinkedList<Object>();
-            } else if (clazz.getName().equals(Map.class.getName())) {
-                return new HashMap<Object, Object>();
-            }
-        }
         if (Modifier.isInterface(clazz.getModifiers())) {
             return Proxy.newProxyInstance(
                     clazz.getClassLoader(),
@@ -182,8 +172,9 @@ public class ClassUtils {
             String key = method.toString();
             if (args != null) {
                 for (Object object : args) {
-                    key += object.getClass().toString();
-                    key += object.toString();
+                    key += object.getClass().hashCode();
+                    key += object.hashCode();
+                    key += object.toString().hashCode();
                 }
             }
             key += seed;

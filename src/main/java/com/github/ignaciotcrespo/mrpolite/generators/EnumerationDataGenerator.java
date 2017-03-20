@@ -23,35 +23,45 @@
  */
 package com.github.ignaciotcrespo.mrpolite.generators;
 
+import com.github.ignaciotcrespo.mrpolite.PoliteDesire;
+import com.github.ignaciotcrespo.mrpolite.utils.PowerClass;
 import com.github.ignaciotcrespo.mrpolite.utils.Randomizer;
 
-/**
- * Created by crespo on 2/28/17.
- */
-public class Generators {
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Enumeration;
 
-    public static DataGenerator[] createDefault(Randomizer randomizer) {
-        return new DataGenerator[]{
-                new EnumDataGenerator(randomizer),
-                new BooleanDataGenerator(randomizer),
-                new ByteDataGenerator(randomizer),
-                new ShortDataGenerator(randomizer),
-                new CharDataGenerator(randomizer),
-                new IntegerDataGenerator(randomizer),
-                new LongDataGenerator(randomizer),
-                new FloatDataGenerator(randomizer),
-                new DoubleDataGenerator(randomizer),
-                new StringDataGenerator(randomizer),
-                new DateDataGenerator(randomizer),
-                new CalendarDataGenerator(randomizer),
-                new EnumMapDataGenerator(randomizer),
-                new ListDataGenerator(randomizer),
-                new SetDataGenerator(randomizer),
-                new QueueDataGenerator(randomizer),
-                new MapDataGenerator(randomizer),
-                new EnumerationDataGenerator(randomizer),
-                new IteratorDataGenerator(randomizer),
-        };
+import static com.github.ignaciotcrespo.mrpolite.MrPolite.one;
+
+/**
+ * Creates an ArrayList for List.
+ */
+class EnumerationDataGenerator extends RandomGenerator {
+
+    EnumerationDataGenerator(Randomizer randomizer) {
+        super(randomizer);
     }
 
+    @Override
+    public boolean canProcess(Class<?> type) {
+        return type.equals(Enumeration.class);
+    }
+
+    @Override
+    public Object getValue(PowerClass clazz, Type[] generics) {
+        PoliteDesire<ArrayList, ArrayList> desire = one(ArrayList.class)
+                .withSeed(mRandomizer.getSeed())
+                .withCollectionSizeRange(mRandomizer.getCollectionRange().getMin(), mRandomizer.getCollectionRange().getMax());
+        final ArrayList list;
+        if (generics != null && generics.length > 0) {
+            Class[] classes = new Class[generics.length];
+            Arrays.asList(generics).toArray(classes);
+            list = desire.withGenerics(classes).please();
+        } else {
+            list = desire.please();
+        }
+        return Collections.enumeration(list);
+    }
 }

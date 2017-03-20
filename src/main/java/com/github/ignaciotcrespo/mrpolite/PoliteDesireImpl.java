@@ -25,6 +25,7 @@ package com.github.ignaciotcrespo.mrpolite;
 
 import com.github.ignaciotcrespo.mrpolite.annotations.VisibleForTesting;
 import com.github.ignaciotcrespo.mrpolite.constraints.Constraints;
+import com.github.ignaciotcrespo.mrpolite.utils.Randomizer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +39,7 @@ abstract class PoliteDesireImpl<C, V> implements PoliteDesire<C, V> {
     private int depth = RandomObject.DEFAULT_DEPTH;
     @VisibleForTesting
     long seed;
-    private Range collectionSizeRange = RandomObject.DEFAULT_COLLECTION_RANGE;
+    private Range collectionSizeRange = Randomizer.DEFAULT_COLLECTION_RANGE;
     private final List<String> excludeRegex = new ArrayList<String>();
     private final List<Class<?>> excludeClasses = new ArrayList<Class<?>>();
     private Class<?>[] generics = new Class[0];

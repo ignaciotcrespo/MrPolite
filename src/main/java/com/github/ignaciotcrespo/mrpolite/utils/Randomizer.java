@@ -23,6 +23,8 @@
  */
 package com.github.ignaciotcrespo.mrpolite.utils;
 
+import com.github.ignaciotcrespo.mrpolite.Range;
+
 import java.util.Random;
 
 /**
@@ -30,8 +32,11 @@ import java.util.Random;
  */
 public class Randomizer {
 
+    public static final Range DEFAULT_COLLECTION_RANGE = new Range(2, 5);
+
     private final Random random;
     private final long seed;
+    private Range collectionSizeRange = DEFAULT_COLLECTION_RANGE;
 
     public Randomizer() {
         random = new Random();
@@ -74,5 +79,17 @@ public class Randomizer {
 
     public long getSeed() {
         return seed;
+    }
+
+    public int getRandomCollectionSize() {
+        return nextInt(collectionSizeRange.getMax() - collectionSizeRange.getMin()) + collectionSizeRange.getMin();
+    }
+
+    public void setRandomCollectionSize(Range collectionSizeRange) {
+        this.collectionSizeRange = collectionSizeRange;
+    }
+
+    public Range getCollectionRange() {
+        return collectionSizeRange;
     }
 }

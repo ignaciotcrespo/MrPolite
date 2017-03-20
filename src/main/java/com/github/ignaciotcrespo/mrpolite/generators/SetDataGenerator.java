@@ -21,25 +21,31 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.github.ignaciotcrespo.mrpolite;
+package com.github.ignaciotcrespo.mrpolite.generators;
+
+import com.github.ignaciotcrespo.mrpolite.utils.PowerClass;
+import com.github.ignaciotcrespo.mrpolite.utils.Randomizer;
+
+import java.lang.reflect.Type;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
- * Represents a numeric range.
+ * Creates a HashSet for Set.
  */
-public class Range {
-    private final int min;
-    private final int max;
+class SetDataGenerator extends RandomGenerator {
 
-    public Range(int min, int max) {
-        this.min = min;
-        this.max = max;
+    SetDataGenerator(Randomizer randomizer) {
+        super(randomizer);
     }
 
-    public int getMin() {
-        return min;
+    @Override
+    public boolean canProcess(Class<?> type) {
+        return type.equals(Set.class);
     }
 
-    public int getMax() {
-        return max;
+    @Override
+    public Object getValue(PowerClass clazz, Type[] generics) {
+        return new HashSet();
     }
 }

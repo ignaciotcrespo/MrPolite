@@ -3,6 +3,8 @@ package com.github.ignaciotcrespo.mrpolite;
 import com.github.ignaciotcrespo.mrpolite.classesfortest.*;
 import org.junit.Test;
 
+import java.util.*;
+
 import static com.github.ignaciotcrespo.mrpolite.MrPolite.one;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -78,6 +80,55 @@ public class RandomObject_collections_Tests {
         Class_WithCollections_Nested object = one(Class_WithCollections_Nested.class).please();
 
         object.assertValidData(2, 5);
+    }
+
+    @Test
+    public void list() throws Exception {
+        List object = one(List.class).please();
+
+        assertThat(object).isInstanceOf(ArrayList.class);
+    }
+
+    @Test
+    public void set() throws Exception {
+        Set object = one(Set.class).please();
+
+        assertThat(object).isInstanceOf(HashSet.class);
+    }
+
+    @Test
+    public void queue() throws Exception {
+        Queue object = one(Queue.class).please();
+
+        assertThat(object).isInstanceOf(LinkedList.class);
+    }
+
+    @Test
+    public void map() throws Exception {
+        Map object = one(Map.class).please();
+
+        assertThat(object).isInstanceOf(HashMap.class);
+    }
+
+    @Test
+    public void iterable() throws Exception {
+        Iterable object = one(Iterable.class).please();
+
+        assertThat(object).isInstanceOf(ArrayList.class);
+    }
+
+    @Test
+    public void enumeration() throws Exception {
+        Enumeration object = one(Enumeration.class).please();
+
+        assertThat(object).isNotNull();
+    }
+
+    @Test
+    public void iterator() throws Exception {
+        Iterator object = one(Iterator.class).please();
+
+        assertThat(object).isNotNull();
     }
 
     @Test

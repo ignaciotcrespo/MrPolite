@@ -40,7 +40,6 @@ import java.util.*;
  */
 class RandomObject {
 
-    static final Range DEFAULT_COLLECTION_RANGE = new Range(2, 5);
     static final int DEFAULT_DEPTH = 3;
 
     private int depth = DEFAULT_DEPTH;
@@ -48,7 +47,6 @@ class RandomObject {
     private DataGenerator[] generators;
 
     private final List<Constraint> constraints = new ArrayList<Constraint>();
-    private Range collectionSizeRange = DEFAULT_COLLECTION_RANGE;
     private List<String> excludeFields = new ArrayList<String>();
     private List<Class<?>> excludeClasses = new ArrayList<Class<?>>();
     private Randomizer randomizer = new Randomizer();
@@ -110,7 +108,7 @@ class RandomObject {
 
     private GeneratedValue getRandomArray(PowerField field) {
         GeneratedValue generatedValue = new GeneratedValue();
-        Object array = PowerClass.newArray(field.getType(), getRandomCollectionSize());
+        Object array = PowerClass.newArray(field.getType(), randomizer.getRandomCollectionSize());
         randomizeArray(array, field);
         generatedValue.setValue(array);
         return generatedValue;
@@ -145,7 +143,7 @@ class RandomObject {
     private void randomizeCollection(Object collection, Type[] genericTypes) {
         if (collection instanceof Collection || collection instanceof Map) {
             List items = new ArrayList();
-            int randomCollectionSize = getRandomCollectionSize();
+            int randomCollectionSize = randomizer.getRandomCollectionSize();
             for (int i = 0; i < randomCollectionSize; i++) {
                 Type type = genericTypes.length > 0 ? genericTypes[0] : Object.class;
                 GeneratedValue generatedValue = randomizeType(type);
@@ -197,10 +195,6 @@ class RandomObject {
                 }
             }
         }
-    }
-
-    private int getRandomCollectionSize() {
-        return randomizer.nextInt(collectionSizeRange.max - collectionSizeRange.min) + collectionSizeRange.min;
     }
 
     private GeneratedValue generateValue(PowerField field, PowerClass rawType, PowerClass type, Type[] generics) {
@@ -274,7 +268,7 @@ class RandomObject {
 
 
     RandomObject collectionSizeRange(Range collectionSizeRange) {
-        this.collectionSizeRange = collectionSizeRange;
+        randomizer.setRandomCollectionSize(collectionSizeRange);
         return this;
     }
 

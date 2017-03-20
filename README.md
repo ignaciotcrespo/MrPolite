@@ -55,6 +55,7 @@ for other interfaces a proxy is created returning random objects on each method.
 
 # Current Version
 * The current stable version is `1.0.6`
+* The current snapshot version is `1.0.7.1-SNAPSHOT`
 
 # Android support
 MrPolite works fine in android, it is compiled with JDK 1.6 and tested on real projects.
