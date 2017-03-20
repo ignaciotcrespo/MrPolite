@@ -21,37 +21,16 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.github.ignaciotcrespo.mrpolite.constraints;
-
-import com.github.ignaciotcrespo.mrpolite.utils.PowerClass;
-import com.github.ignaciotcrespo.mrpolite.utils.PowerField;
-import com.github.ignaciotcrespo.mrpolite.utils.Randomizer;
+package com.github.ignaciotcrespo.mrpolite.classesfortest;
 
 /**
- * Created by crespo on 2/23/17.
+ * Created by crespo on 3/19/17.
  */
-class TypeValueConstraint<K> extends Constraint {
+public class Class_withCharSequence {
 
-    private final Class<K> clazz;
-    private final K value;
+    public String string;
+    public StringBuffer stringBuffer;
+    public StringBuilder stringBuilder;
 
-    TypeValueConstraint(Class<K> clazz, K value) {
-        this.clazz = clazz;
-        this.value = value;
-    }
 
-    @Override
-    public Object apply(PowerField field, Object oldValue, Randomizer randomizer) {
-        return value;
-    }
-
-    @Override
-    public boolean canApply(Object value) {
-        return clazz.isAssignableFrom(value.getClass());
-    }
-
-    @Override
-    public boolean canApplyType(PowerClass type) {
-        return type.is(clazz);
-    }
 }

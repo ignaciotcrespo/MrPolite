@@ -1,12 +1,15 @@
 package com.github.ignaciotcrespo.mrpolite;
 
 import com.github.ignaciotcrespo.mrpolite.classesfortest.Class_WithPrimitives;
+import com.github.ignaciotcrespo.mrpolite.classesfortest.Class_withCharSequence;
+import org.assertj.core.api.Assertions;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.List;
 
 import static com.github.ignaciotcrespo.mrpolite.MrPolite.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 /**
@@ -75,4 +78,15 @@ public class RandomObject_strings_Tests {
         }
     }
 
+    @Test
+    public void charSequence() throws Exception {
+        Class_withCharSequence object = one(Class_withCharSequence.class)
+                .withSeed(2345)
+                .please();
+
+        assertThat(object.string).isEqualTo("ef065488-02f3-ce34-8fc2-e5aabab3e9fa");
+        assertThat(object.stringBuffer.toString()).isEqualTo("0dea0db7-b097-ac56-402e-851ee2eafa94");
+        assertThat(object.stringBuilder.toString()).isEqualTo("cf977524-fd99-618c-9032-2f8ba4aaee83");
+
+    }
 }

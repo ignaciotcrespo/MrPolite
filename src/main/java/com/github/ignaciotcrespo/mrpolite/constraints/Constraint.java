@@ -23,6 +23,7 @@
  */
 package com.github.ignaciotcrespo.mrpolite.constraints;
 
+import com.github.ignaciotcrespo.mrpolite.utils.PowerClass;
 import com.github.ignaciotcrespo.mrpolite.utils.PowerField;
 import com.github.ignaciotcrespo.mrpolite.utils.Randomizer;
 
@@ -34,4 +35,8 @@ public abstract class Constraint {
     public abstract Object apply(PowerField field, Object value, Randomizer randomizer);
 
     public abstract boolean canApply(Object value);
+
+    public boolean canApplyType(PowerClass type){
+        return false;
+    }
 }

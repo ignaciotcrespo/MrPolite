@@ -40,12 +40,20 @@ class StringDataGenerator extends RandomGenerator {
 
     @Override
     public boolean canProcess(Class<?> type) {
-        return type.equals(String.class);
+        return type.equals(String.class)
+                || type.equals(StringBuffer.class)
+                || type.equals(StringBuilder.class);
     }
 
     @Override
     public Object getValue(PowerClass clazz, Type[] generics) {
-        return new UUID(mRandomizer.nextLong(), mRandomizer.nextLong()).toString();
+        String string = new UUID(mRandomizer.nextLong(), mRandomizer.nextLong()).toString();
+        if (clazz.is(StringBuffer.class)) {
+            return new StringBuffer(string);
+        } else if (clazz.is(StringBuilder.class)) {
+            return new StringBuilder(string);
+        }
+        return string;
     }
 
 }

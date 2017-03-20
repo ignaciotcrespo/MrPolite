@@ -54,7 +54,7 @@ Mr. Polite kindly checks for the most common interfaces like `List`, `Set`, `Map
 for other interfaces a proxy is created returning random objects on each method.
 
 # Current Version
-* The current stable version is `1.0.5`
+* The current stable version is `1.0.6`
 
 # Android support
 MrPolite works fine in android, it is compiled with JDK 1.6 and tested on real projects.
@@ -72,7 +72,7 @@ The variables declared with `val` are generated ok, for constants declared with 
 # Adding Mr Polite to your project
 Using gradle: 
 ```properties
-compile 'com.github.ignaciotcrespo:mrpolite:1.0.5'
+compile 'com.github.ignaciotcrespo:mrpolite:1.0.6'
 ```
 
 # Contribution

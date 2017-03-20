@@ -124,7 +124,7 @@ class RandomObject {
             randomizeCollection(generatedValue.getValue(), field.getGenerics());
         }
         return generatedValue;
-        }
+    }
 
     <T> T randomObject(Class<T> clazz) {
         GeneratedValue generatedValue = randomizeClass(new PowerClass(clazz, genericTypesInClass));
@@ -207,16 +207,21 @@ class RandomObject {
         GeneratedValue generatedValue = new GeneratedValue();
         DataGenerator generator = getDataGenerator(rawType);
         generatedValue.setValue(generator.getValue(type, generics));
-        if (generatedValue.getValue() != null) {
-            for (Constraint constraint : constraints) {
-                if (constraint.canApply(generatedValue.getValue())) {
-                    Object apply = constraint.apply(field, generatedValue.getValue(), randomizer);
-                    generatedValue.setFromConstraint(!generatedValue.getValue().equals(apply));
-                    generatedValue.setValue(apply);
-                }
+        Object value = generatedValue.getValue();
+        for (Constraint constraint : constraints) {
+            if (value != null && constraint.canApply(value)) {
+                applyConstraint(field, generatedValue, constraint);
+            } else if (value == null && constraint.canApplyType(type)) {
+                applyConstraint(field, generatedValue, constraint);
             }
         }
         return generatedValue;
+    }
+
+    private void applyConstraint(PowerField field, GeneratedValue generatedValue, Constraint constraint) {
+        Object apply = constraint.apply(field, generatedValue.getValue(), randomizer);
+        generatedValue.setFromConstraint(!apply.equals(generatedValue.getValue()));
+        generatedValue.setValue(apply);
     }
 
     private GeneratedValue getRandomObject(PowerClass type) {

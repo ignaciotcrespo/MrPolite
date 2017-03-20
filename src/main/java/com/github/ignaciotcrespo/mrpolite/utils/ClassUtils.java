@@ -34,7 +34,6 @@ import java.util.*;
 public class ClassUtils {
 
     private static final Map<String, Class<?>> namePrimitiveMap = new HashMap<String, Class<?>>();
-    private static final HashMap<String, Object> values = new HashMap<String, Object>();
 
     static {
         namePrimitiveMap.put("boolean", Boolean.TYPE);
@@ -158,6 +157,9 @@ public class ClassUtils {
     }
 
     private static class InterfaceInvocationHandler implements InvocationHandler {
+
+        private static final HashMap<String, Object> values = new HashMap<String, Object>();
+
         private final Randomizer randomizer;
         private final Class clazz;
 
@@ -186,17 +188,6 @@ public class ClassUtils {
             }
             key += seed;
             return key;
-        }
-
-        private long seedForArgs(Object[] args) {
-            long seed = 31;
-            if (args != null) {
-                for (Object object : args) {
-                    seed *= object.getClass().hashCode();
-                    seed *= object.hashCode();
-                }
-            }
-            return seed;
         }
 
         @Override

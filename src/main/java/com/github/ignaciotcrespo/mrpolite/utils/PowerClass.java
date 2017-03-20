@@ -27,6 +27,7 @@ import com.github.ignaciotcrespo.mrpolite.GeneratedValue;
 import com.github.ignaciotcrespo.mrpolite.generators.DataGenerator;
 
 import java.lang.reflect.*;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -192,5 +193,19 @@ public class PowerClass {
 
     public boolean isValidDepth(int depth) {
         return this.depth < depth;
+    }
+
+    @Override
+    public String toString() {
+        return "PowerClass{" +
+                "depth=" + depth +
+                ", clazz=" + clazz +
+                ", generics=" + Arrays.toString(generics) +
+                ", currentInstance=" + currentInstance +
+                '}';
+    }
+
+    public <K> boolean is(Class<K> clazz) {
+        return this.clazz.equals(clazz);
     }
 }

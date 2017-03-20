@@ -23,6 +23,7 @@
  */
 package com.github.ignaciotcrespo.mrpolite.constraints;
 
+import com.github.ignaciotcrespo.mrpolite.utils.PowerClass;
 import com.github.ignaciotcrespo.mrpolite.utils.PowerField;
 import com.github.ignaciotcrespo.mrpolite.utils.Randomizer;
 
@@ -38,5 +39,10 @@ class StringFieldNameConstraint extends Constraint {
     @Override
     public boolean canApply(Object value) {
         return value instanceof String;
+    }
+
+    @Override
+    public boolean canApplyType(PowerClass type) {
+        return type.is(String.class);
     }
 }
