@@ -25,6 +25,7 @@ package com.github.ignaciotcrespo.mrpolite;
 
 import com.github.ignaciotcrespo.mrpolite.annotations.VisibleForTesting;
 import com.github.ignaciotcrespo.mrpolite.constraints.Constraints;
+import com.github.ignaciotcrespo.mrpolite.generators.DataGenerator;
 import com.github.ignaciotcrespo.mrpolite.utils.Randomizer;
 
 import java.util.ArrayList;
@@ -45,6 +46,7 @@ abstract class PoliteDesireImpl<C, V> implements PoliteDesire<C, V> {
     private Class<?>[] generics = new Class[0];
     private boolean override = true;
     private boolean overrideFinals;
+    private List<DataGenerator> newGenerators = new ArrayList<DataGenerator>();
 
     public <T> PoliteDesireImpl() {
         mRandom = RandomObject.newInstance();
@@ -59,7 +61,8 @@ abstract class PoliteDesireImpl<C, V> implements PoliteDesire<C, V> {
                 .collectionSizeRange(collectionSizeRange)
                 .generics(generics)
                 .overrideValues(override)
-                .overrideFinals(overrideFinals);
+                .overrideFinals(overrideFinals)
+                .withDataGenerators(newGenerators);
     }
 
     @Override
@@ -143,6 +146,12 @@ abstract class PoliteDesireImpl<C, V> implements PoliteDesire<C, V> {
     @Override
     public PoliteDesire<C, V> overrideFinals() {
         this.overrideFinals = true;
+        return this;
+    }
+
+    @Override
+    public PoliteDesire<C, V> withDataGenerator(DataGenerator dataGenerator) {
+        this.newGenerators.add(dataGenerator);
         return this;
     }
 }

@@ -23,6 +23,8 @@
  */
 package com.github.ignaciotcrespo.mrpolite;
 
+import com.github.ignaciotcrespo.mrpolite.generators.DataGenerator;
+
 /**
  * Represents how the data must be generated, and also allows to build the requested object using {@link #please()}.
  */
@@ -171,4 +173,12 @@ public interface PoliteDesire<C, V> {
      * @return the same {@link PoliteDesire}
      */
     PoliteDesire<C, V> overrideFinals();
+
+    /**
+     * Add a specific data generator for object creation.
+     *
+     * @param dataGenerator the new data generator
+     * @return the same {@link PoliteDesire}
+     */
+    PoliteDesire<C, V> withDataGenerator(DataGenerator dataGenerator);
 }

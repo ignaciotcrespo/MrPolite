@@ -53,6 +53,7 @@ class RandomObject {
     private Class<?>[] genericTypesInClass = new Class[0];
     private boolean override = true;
     private boolean overrideFinals;
+    private List<DataGenerator> newGenerators = new ArrayList<DataGenerator>();
 
     private RandomObject() {
         // hide constructor
@@ -228,6 +229,11 @@ class RandomObject {
     }
 
     private DataGenerator getDataGenerator(PowerClass type) {
+        for (DataGenerator generator : newGenerators) {
+            if (type.canGenerateData(generator)) {
+                return generator;
+            }
+        }
         for (DataGenerator generator : generators) {
             if (type.canGenerateData(generator)) {
                 return generator;
@@ -314,6 +320,11 @@ class RandomObject {
 
     public RandomObject overrideFinals(boolean overrideFinals) {
         this.overrideFinals = overrideFinals;
+        return this;
+    }
+
+    public RandomObject withDataGenerators(List<DataGenerator> newGenerators) {
+        this.newGenerators = newGenerators;
         return this;
     }
 }
